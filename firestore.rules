@@ -1,0 +1,40 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Posts collection - public read, restricted write
+    match /posts/{postId} {
+      // Allow public read only for published posts
+      allow read: if resource.data.status == 'published';
+      
+      // Only allow writes from authenticated service accounts
+      // In production, restrict this further to specific service account
+      allow write: if false;
+    }
+    
+    // IPL matches collection
+    match /ipl_matches/{matchId} {
+      allow read: if true;
+      allow write: if false;
+    }
+    
+    // IPL teams collection
+    match /ipl_teams/{teamId} {
+      allow read: if true;
+      allow write: if false;
+    }
+    
+    // IPL players collection
+    match /ipl_players/{playerId} {
+      allow read: if true;
+      allow write: if false;
+    }
+    
+    // Analytics/stats collection (optional)
+    match /analytics/{docId} {
+      allow read: if false;
+      allow write: if false;
+    }
+  }
+}

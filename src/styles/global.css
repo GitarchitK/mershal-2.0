@@ -1,0 +1,60 @@
+@import "tailwindcss/theme" layer(theme);
+@import "tailwindcss/preflight" layer(base);
+@import "tailwindcss/utilities" layer(utilities);
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #dc2626;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #b91c1c;
+}
+
+/* Line clamp utilities */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Smooth transitions */
+a, button {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Focus styles for accessibility */
+a:focus, button:focus {
+  outline: 2px solid #dc2626;
+  outline-offset: 2px;
+}
+
+/* Custom red theme colors */
+:root {
+  --color-primary: #dc2626;
+  --color-primary-dark: #b91c1c;
+  --color-primary-light: #ef4444;
+}

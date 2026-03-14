@@ -1,0 +1,38 @@
+{
+  "name": "mershal",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "seed": "node scripts/seed-data.js",
+    "automation": "node automation/index.js",
+    "automation:dev": "nodemon automation/index.js",
+    "generate:sitemap": "node automation/utils/sitemap.js",
+    "setup": "node scripts/setup-automation.js",
+    "publish": "node automation/cli.js"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/node": "^10.0.1",
+    "@google/generative-ai": "^0.21.0",
+    "@tailwindcss/vite": "^4.2.1",
+    "astro": "^6.0.4",
+    "dotenv": "^16.4.5",
+    "firebase": "^11.2.0",
+    "firebase-admin": "^13.0.2",
+    "googleapis": "^144.0.0",
+    "node-cron": "^3.0.3",
+    "node-fetch": "^3.3.2",
+    "openai": "^4.73.0",
+    "tailwindcss": "^4.2.1",
+    "typescript": "^5.7.3"
+  },
+  "devDependencies": {
+    "firebase-tools": "^15.10.0",
+    "nodemon": "^3.1.9"
+  }
+}

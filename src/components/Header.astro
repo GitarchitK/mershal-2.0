@@ -1,0 +1,143 @@
+---
+import { getCurrentWeather, getWeatherEmoji } from '../lib/weather';
+
+const categories = [
+  { name: 'Home', slug: '/' },
+  { name: 'IPL', slug: '/ipl' },
+  { name: 'Live TV', slug: '/live-tv' },
+  { name: 'Videos', slug: '/videos' },
+  { name: 'Kolkata', slug: '/kolkata' },
+  { name: 'Bangladesh', slug: '/bangladesh' },
+  { name: 'Sports', slug: '/sports' },
+  { name: 'Technology', slug: '/technology' }
+];
+
+// Fetch weather data
+const weatherData = await getCurrentWeather('Kolkata');
+const currentTemp = weatherData?.current.temp_c || 25;
+const weatherEmoji = weatherData ? getWeatherEmoji(weatherData.current.condition.text) : '🌤️';
+---
+
+<header class="bg-white shadow-md sticky top-0 z-50">
+  <!-- Top Info Bar -->
+  <div class="bg-gray-100 border-b border-gray-200">
+    <div class="container mx-auto px-4 py-2">
+      <div class="flex items-center justify-between text-sm">
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-2 text-gray-700">
+            <svg class="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+            </svg>
+            <span id="live-date" class="font-medium">Loading...</span>
+          </div>
+          <span class="text-gray-400">|</span>
+          <div class="flex items-center gap-2 text-gray-700">
+            <svg class="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+            </svg>
+            <span id="live-time" class="font-medium">Loading...</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 text-gray-700">
+          <span class="text-2xl">{weatherEmoji}</span>
+          <span id="temperature" class="font-medium">{currentTemp}°C</span>
+          <span class="text-gray-500 text-xs">Kolkata</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mx-auto px-4">
+    <!-- Main Header -->
+    <div class="flex items-center justify-between py-3 border-b border-gray-200">
+      <!-- Hidden hamburger menu - using bottom nav instead -->
+      <div class="hidden lg:flex items-center gap-4 text-sm">
+        <a href="/about" class="text-gray-600 hover:text-red-600 transition font-medium">About</a>
+        <span class="text-gray-300">|</span>
+        <a href="/contact" class="text-gray-600 hover:text-red-600 transition font-medium">Contact</a>
+        <span class="text-gray-300">|</span>
+        <a href="/privacy" class="text-gray-600 hover:text-red-600 transition font-medium">Privacy</a>
+        <span class="text-gray-300">|</span>
+        <a href="/terms" class="text-gray-600 hover:text-red-600 transition font-medium">Terms</a>
+      </div>
+      <div class="w-8 lg:hidden"></div>
+      
+      <a href="/" class="flex flex-col items-center">
+        <span class="text-3xl font-bold text-red-600 logo-font tracking-tight">Mershal</span>
+        <span class="text-xs text-gray-500 -mt-1">by Navroll Studio</span>
+      </a>
+      
+      <div class="flex items-center gap-3">
+        <button class="px-4 py-1.5 bg-white border-2 border-red-600 text-red-600 rounded-full text-sm font-semibold hover:bg-red-600 hover:text-white transition">
+          APP ↓
+        </button>
+        <button class="text-2xl text-gray-700 hover:text-red-600">👤</button>
+      </div>
+    </div>
+    
+    <!-- Navigation -->
+    <nav class="flex items-center gap-6 py-3 overflow-x-auto scrollbar-hide">
+      {categories.map(cat => (
+        <a 
+          href={cat.slug} 
+          class="text-gray-700 hover:text-red-600 whitespace-nowrap font-semibold text-sm uppercase tracking-wide transition-colors"
+        >
+          {cat.name}
+        </a>
+      ))}
+      <button class="text-gray-700 hover:text-red-600">▼</button>
+    </nav>
+  </div>
+</header>
+
+<script>
+  function updateDateTime() {
+    const now = new Date();
+    
+    // Format date
+    const dateOptions: Intl.DateTimeFormatOptions = { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    };
+    const dateStr = now.toLocaleDateString('en-US', dateOptions);
+    
+    // Format time
+    const timeOptions: Intl.DateTimeFormatOptions = { 
+      hour: '2-digit', 
+      minute: '2-digit', 
+      second: '2-digit',
+      hour12: true 
+    };
+    const timeStr = now.toLocaleTimeString('en-US', timeOptions);
+    
+    // Update DOM
+    const dateElement = document.getElementById('live-date');
+    const timeElement = document.getElementById('live-time');
+    
+    if (dateElement) dateElement.textContent = dateStr;
+    if (timeElement) timeElement.textContent = timeStr;
+  }
+  
+  // Update immediately
+  updateDateTime();
+  
+  // Update every second
+  setInterval(updateDateTime, 1000);
+
+</script>
+
+<style>
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .logo-font {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 800;
+  }
+</style>

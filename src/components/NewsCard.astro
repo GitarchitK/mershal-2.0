@@ -1,0 +1,27 @@
+---
+interface Props {
+  id: string;
+  title: string;
+  imageUrl: string;
+  category?: string;
+  featured?: boolean;
+}
+
+const { id, title, imageUrl, category, featured = false } = Astro.props;
+---
+
+<a href={`/news/${id}`} class={`block bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 ${featured ? 'col-span-2' : ''}`}>
+  <div class="relative">
+    <img src={imageUrl} alt={title} class={`w-full object-cover ${featured ? 'h-64' : 'h-48'}`} />
+    {category && (
+      <span class="absolute top-3 left-3 bg-red-600 text-white px-3 py-1.5 text-xs font-bold rounded shadow-lg">
+        {category}
+      </span>
+    )}
+  </div>
+  <div class="p-4">
+    <h3 class={`font-bold text-gray-900 line-clamp-2 hover:text-red-600 transition-colors ${featured ? 'text-xl' : 'text-base'}`}>
+      {title}
+    </h3>
+  </div>
+</a>
