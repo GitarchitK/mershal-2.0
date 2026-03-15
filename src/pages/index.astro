@@ -16,7 +16,7 @@ let errorMessage = '';
 // Check if Firebase is properly configured
 const isFirebaseConfigured = adminDb !== null;
 
-if (isFirebaseConfigured) {
+if (isFirebaseConfigured && adminDb) {
   try {
     console.log('Fetching articles from Firestore...');
     const snapshot = await adminDb.collection('posts')
