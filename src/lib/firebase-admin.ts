@@ -1,23 +1,32 @@
 import admin from 'firebase-admin';
 
+// Use process.env for Vercel compatibility
+const projectId = process.env.FIREBASE_ADMIN_PROJECT_ID || import.meta.env.FIREBASE_ADMIN_PROJECT_ID;
+const clientEmail = process.env.FIREBASE_ADMIN_CLIENT_EMAIL || import.meta.env.FIREBASE_ADMIN_CLIENT_EMAIL;
+const privateKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY || import.meta.env.FIREBASE_ADMIN_PRIVATE_KEY;
+
 // Check if Firebase Admin credentials are properly configured
-const hasValidCredentials = 
-  import.meta.env.FIREBASE_ADMIN_PROJECT_ID &&
-  import.meta.env.FIREBASE_ADMIN_CLIENT_EMAIL &&
-  import.meta.env.FIREBASE_ADMIN_PRIVATE_KEY;
+const hasValidCredentials = projectId && clientEmail && privateKey;
 
 if (!admin.apps.length && hasValidCredentials) {
   try {
     admin.initializeApp({
       credential: admin.credential.cert({
-        projectId: import.meta.env.FIREBASE_ADMIN_PROJECT_ID,
-        clientEmail: import.meta.env.FIREBASE_ADMIN_CLIENT_EMAIL,
-        privateKey: import.meta.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, '\n')
+        projectId,
+        clientEmail,
+        privateKey: privateKey.replace(/\\n/g, '\n')
       })
     });
+    console.log('Firebase Admin initialized successfully');
   } catch (error) {
-    console.warn('Firebase Admin initialization failed:', error);
+    console.error('Firebase Admin initialization failed:', error);
   }
+} else if (!hasValidCredentials) {
+  console.error('Firebase credentials missing:', {
+    hasProjectId: !!projectId,
+    hasClientEmail: !!clientEmail,
+    hasPrivateKey: !!privateKey
+  });
 }
 
 // Export with null checks

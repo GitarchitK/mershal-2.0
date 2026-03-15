@@ -15,7 +15,7 @@ interface WeatherData {
 }
 
 export async function getCurrentWeather(city: string = 'Kolkata'): Promise<WeatherData | null> {
-  const apiKey = import.meta.env.WEATHER_API_KEY;
+  const apiKey = process.env.WEATHER_API_KEY || import.meta.env.WEATHER_API_KEY;
   
   console.log('Weather API Key present:', !!apiKey);
   console.log('Weather API Key length:', apiKey?.length || 0);
