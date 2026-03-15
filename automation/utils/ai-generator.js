@@ -30,6 +30,64 @@ function countWords(text) {
   return text.trim().split(/\s+/).length;
 }
 
+async function generateThumbnail(topic, category) {
+  try {
+    // Extract keywords from topic for better image search
+    const keywords = topic
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, '')
+      .split(' ')
+      .filter(word => word.length > 3)
+      .slice(0, 3)
+      .join(',');
+    
+    // Use Unsplash API for high-quality, relevant images
+    const unsplashAccessKey = process.env.UNSPLASH_ACCESS_KEY || 'your-access-key';
+    const searchQuery = keywords || category;
+    
+    // Fallback to category-based images from Unsplash
+    const categoryImages = {
+      sports: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=1200&h=630&fit=crop',
+      technology: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&h=630&fit=crop',
+      business: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&h=630&fit=crop',
+      politics: 'https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=1200&h=630&fit=crop',
+      entertainment: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200&h=630&fit=crop',
+      world: 'https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=1200&h=630&fit=crop',
+      ipl: 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=1200&h=630&fit=crop',
+      cricket: 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=1200&h=630&fit=crop',
+    };
+    
+    // Try to fetch from Unsplash if API key is available
+    if (unsplashAccessKey && unsplashAccessKey !== 'your-access-key') {
+      try {
+        const response = await fetch(
+          `https://api.unsplash.com/photos/random?query=${encodeURIComponent(searchQuery)}&orientation=landscape&w=1200&h=630`,
+          {
+            headers: {
+              'Authorization': `Client-ID ${unsplashAccessKey}`
+            }
+          }
+        );
+        
+        if (response.ok) {
+          const data = await response.json();
+          return data.urls.regular;
+        }
+      } catch (error) {
+        console.log('Unsplash API error, using fallback image');
+      }
+    }
+    
+    // Return category-based fallback image
+    return categoryImages[category.toLowerCase()] || categoryImages.world;
+    
+  } catch (error) {
+    console.error('Error generating thumbnail:', error);
+    // Ultimate fallback
+    return 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1200&h=630&fit=crop';
+  }
+}
+
 export async function generateArticle(topic, category, keywords = []) {
   // Validate AI client is initialized
   if (config.ai.provider === 'openai' && !openai) {
@@ -113,6 +171,9 @@ Format the response as JSON:
     const readingTime = calculateReadingTime(wordCount);
     const slug = generateSlug(articleData.title);
     
+    // Generate thumbnail
+    const featuredImage = await generateThumbnail(topic, category);
+    
     return {
       ...articleData,
       slug,
@@ -121,6 +182,7 @@ Format the response as JSON:
       category,
       author: 'Mershal Editorial Team',
       status: 'published',
+      featuredImage,
     };
   } catch (error) {
     console.error('Error generating article:', error);
@@ -235,6 +297,9 @@ Write 800-1000 words in HTML format.`;
     const readingTime = calculateReadingTime(wordCount);
     const slug = generateSlug(articleData.title);
     
+    // Generate thumbnail for IPL article
+    const featuredImage = await generateThumbnail(`${matchData.team1} vs ${matchData.team2} cricket`, 'ipl');
+    
     return {
       ...articleData,
       slug,
@@ -243,6 +308,7 @@ Write 800-1000 words in HTML format.`;
       category: 'ipl',
       author: 'Mershal Sports Desk',
       status: 'published',
+      featuredImage,
     };
   } catch (error) {
     console.error('Error generating IPL article:', error);
