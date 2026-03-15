@@ -27,7 +27,7 @@ export const config = {
 
   // Google Indexing API
   indexing: {
-    enabled: false, // Set to true after setting up Google Indexing API
+    enabled: true, // Set to true after setting up Google Indexing API
     serviceAccountEmail: process.env.GOOGLE_INDEXING_EMAIL,
     privateKey: process.env.GOOGLE_INDEXING_PRIVATE_KEY?.replace(/\\n/g, '\n'),
   },
