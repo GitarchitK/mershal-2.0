@@ -11,6 +11,7 @@
     "seed": "node scripts/seed-data.js",
     "automation": "node automation/index.js",
     "automation:dev": "nodemon automation/index.js",
+    "auto:publish": "node automation/auto-publish.js",
     "generate:sitemap": "node automation/utils/sitemap.js",
     "setup": "node scripts/setup-automation.js",
     "publish": "node automation/cli.js",
