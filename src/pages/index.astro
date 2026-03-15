@@ -13,7 +13,10 @@ import { getCurrentWeather, getWeatherEmoji } from '../lib/weather';
 let articles: any[] = [];
 let errorMessage = '';
 
-if (adminDb) {
+// Check if Firebase is properly configured
+const isFirebaseConfigured = adminDb !== null;
+
+if (isFirebaseConfigured) {
   try {
     console.log('Fetching articles from Firestore...');
     const snapshot = await adminDb.collection('posts')
@@ -42,12 +45,17 @@ if (adminDb) {
     errorMessage = error instanceof Error ? error.message : 'Failed to load articles';
   }
 } else {
-  console.warn('Firebase Admin not initialized');
-  errorMessage = 'Firebase not configured';
+  console.warn('Firebase Admin not initialized - check environment variables');
+  errorMessage = 'Database not configured. Please check environment variables.';
 }
 
-// Fetch weather data
-const weatherData = await getCurrentWeather('Kolkata');
+// Fetch weather data with error handling
+let weatherData = null;
+try {
+  weatherData = await getCurrentWeather('Kolkata');
+} catch (error) {
+  console.error('Weather fetch failed:', error);
+}
 
 // Default weather values (fallback)
 const weather = {
