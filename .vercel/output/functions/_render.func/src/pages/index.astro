@@ -1,0 +1,150 @@
+---
+export const prerender = false;
+
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import BottomNav from '../components/BottomNav.astro';
+import NewsCard from '../components/NewsCard.astro';
+import { adminDb } from '../lib/firebase-admin';
+import { getCurrentWeather, getWeatherEmoji } from '../lib/weather';
+
+// Fetch news articles from Firestore
+let articles: any[] = [];
+let errorMessage = '';
+
+if (adminDb) {
+  try {
+    console.log('Fetching articles from Firestore...');
+    const snapshot = await adminDb.collection('posts')
+      .where('status', '==', 'published')
+      .orderBy('publishedAt', 'desc')
+      .limit(20)
+      .get();
+    
+    console.log('Articles found:', snapshot.size);
+    
+    articles = snapshot.docs.map(doc => {
+      const data = doc.data();
+      console.log('Article:', doc.id, data.title);
+      return {
+        id: doc.id,
+        slug: data.slug,
+        title: data.title,
+        excerpt: data.excerpt,
+        featuredImage: data.featuredImage,
+        category: data.category,
+        publishedAt: data.publishedAt,
+      };
+    });
+  } catch (error) {
+    console.error('Error fetching articles:', error);
+    errorMessage = error instanceof Error ? error.message : 'Failed to load articles';
+  }
+} else {
+  console.warn('Firebase Admin not initialized');
+  errorMessage = 'Firebase not configured';
+}
+
+// Fetch weather data
+const weatherData = await getCurrentWeather('Kolkata');
+
+// Default weather values (fallback)
+const weather = {
+  city: weatherData?.location.name || 'Kolkata',
+  country: weatherData?.location.country || 'India',
+  temp: weatherData?.current.temp_c || 25,
+  condition: weatherData?.current.condition.text || 'Partly Cloudy',
+  emoji: weatherData ? getWeatherEmoji(weatherData.current.condition.text) : '⛅',
+  humidity: weatherData?.current.humidity || 65,
+  wind: weatherData?.current.wind_kph || 12
+};
+---
+
+<Layout title="Home">
+  <Header />
+  
+  <main class="container mx-auto px-4 py-6 pb-20 md:pb-6">
+    <!-- Featured News -->
+    {articles.length > 0 && (
+      <div class="mb-8">
+        <a href={`/news/${articles[0].slug}`} class="block">
+          <div class="relative rounded-2xl overflow-hidden shadow-2xl hover:shadow-3xl transition-all">
+            <img 
+              src={articles[0].featuredImage} 
+              alt={articles[0].title}
+              class="w-full h-96 object-cover"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent"></div>
+            <div class="absolute bottom-0 left-0 right-0 p-8">
+              <span class="bg-red-600 text-white px-4 py-2 text-sm font-bold rounded-md shadow-md inline-block mb-4">
+                {articles[0].category}
+              </span>
+              <h2 class="text-3xl md:text-4xl font-bold text-white mb-3 leading-tight">
+                {articles[0].title}
+              </h2>
+              <p class="text-gray-200 text-lg line-clamp-2">
+                {articles[0].excerpt}
+              </p>
+            </div>
+          </div>
+        </a>
+      </div>
+    )}
+    
+    <!-- Latest News Section -->
+    <div class="mb-6">
+      <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+        <span class="w-1 h-8 bg-red-600 mr-3"></span>
+        Latest News
+      </h2>
+    </div>
+    
+    <!-- News Grid -->
+    {articles.length > 1 ? (
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        {articles.slice(1).map(article => (
+          <a href={`/news/${article.slug}`} class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all">
+            <img src={article.featuredImage} alt={article.title} class="w-full h-48 object-cover" />
+            <div class="p-4">
+              <span class="text-xs font-bold text-red-600 uppercase">{article.category}</span>
+              <h3 class="font-bold text-gray-900 mt-2 mb-2 line-clamp-2 hover:text-red-600 transition">
+                {article.title}
+              </h3>
+              <p class="text-sm text-gray-600 line-clamp-2">{article.excerpt}</p>
+            </div>
+          </a>
+        ))}
+      </div>
+    ) : articles.length === 0 ? (
+      <div class="text-center py-16 bg-gray-50 rounded-lg mb-8">
+        <div class="text-6xl mb-4">📰</div>
+        <h3 class="text-2xl font-bold text-gray-900 mb-2">No Articles Yet</h3>
+        <p class="text-gray-600 mb-4">Articles will appear here once the automation system publishes them.</p>
+        {errorMessage && (
+          <p class="text-sm text-red-600 mb-2">Error: {errorMessage}</p>
+        )}
+        <p class="text-sm text-gray-500">Run: <code class="bg-gray-200 px-2 py-1 rounded">npm run publish</code> to create your first article</p>
+      </div>
+    ) : null}
+    
+    <!-- Weather Widget -->
+    <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-lg p-6 mb-8 text-white">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm opacity-90 mb-1">{weather.city}, {weather.country}</p>
+          <p class="text-5xl font-bold">{weather.temp}°C</p>
+          <p class="text-sm opacity-90 mt-2">{weather.condition}</p>
+        </div>
+        <div class="text-right">
+          <div class="text-6xl mb-2">{weather.emoji}</div>
+          <p class="text-sm opacity-90">Humidity: {weather.humidity}%</p>
+          <p class="text-sm opacity-90">Wind: {weather.wind} km/h</p>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <Footer />
+  <BottomNav />
+</Layout>

@@ -1,0 +1,20 @@
+import admin from 'firebase-admin';
+
+const hasValidCredentials = "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC5DSLecRaSr3dw\nUi+X9TOTb4ZcMxBZPUnIdSqUTj7kA+Fm6M+gZslFF7Mn+gQBmOsPf+zn/Eh8L5CH\n7XkVzznZDDxzzOQpoi8bqZm+jJ2QdyeF/wJipgyF+f9kQCPp9kititwQQTKV+zQP\nYN2g0guMwUz1sQ5CoCJeK2RYsWJ/A234tLcNviAzcA06anKtDj10mCBbxe7F5ocK\nVY9UzGsTT8PVsZsSx2gB8rKfhKwFjTb2ylHJG4yA+gU9xUA96twmB/djGrewH/0g\n5ksvTAP3MN6n7G8zsewUVCibVRwZGDMptvxTqdRTYKB/9hI2QndY9tVXoPJ8pMCU\nzmMQ7PGXAgMBAAECggEARNAcN9Cg3sIuLY/6T80oNTrDIXUBrtWqIsdjIowoOd0x\ni/WmA9VFIhLKleKUa82kF3rwK2I2yCtd2RYXMWOCdPJmZn96FvtO/j/mwqOCki6k\n/WCTUADEZmvNK0fosv9ZDmO1Krw75eboeJGCSOPi1KArELAbB+6JaTBEm/C2mlkX\neGcQNrbZGpcq/HQSVizm//qLLkzcER9iufdAw0JRPxHj3RUX57+JMbvUZThqpE8u\n55tI9G8tPjb0R0Ce3V0VMzSskJSD7As6YtKtecgmMRiP7vhu4tV3Sx/+Jb8EOrM1\n03yVjF+DUIkx9ihUf1+sjRf7iUu2H270bHG7Qgl94QKBgQDnJAcaWXzdQTQ37cIg\nM5YJyAPs2TXL0vA9vk5/xWbetY2ALl2QsS3X8pAiOqyOxYzQlvqXwqmX86Svu9ny\nWx45bj6C4OuO+peDu3rmpfnSM6IKM1KX88xWrlovs+xK4FPpoqsZRduDvCta8a+z\nxcI+j3kfP1RtdnDDESaL4WeZtwKBgQDM9CIwnCAceAgv341H0KjfZHsVUQNLJQ2j\nsJZgZxW1cf6M4Xymre5zQljsv73cFTv8BLQxlyNWdIe2tBhQl0x9kiqXuOK1DHTP\nfZRF6oyoUK2SLqXJM8gLKHrm1WyL7+BrAjERN2cyBEwZF3yk4BFAxzdrR2dcB2UA\nJDcgCBLnIQKBgGItdmrlydi9Am4jKkq9PqSm9avb0zLhRTQkqnkxIvHEEfd5Ojrk\nV0GbgUdYvsTh+l77UjO19o1ZawFN/FQqCduBDUJQQR35KPRGZPylUUjMr64/gHyU\njJ3g7uPGO77OLDZX5u8UMhpxicTWVbg5brld/aedIcJhBaKFnWba9kNfAoGAJ29q\nDLRdsVyfJqb7BjBt7d3lmOpnmdPdVfuqU45CLRFsCytv0ppw4RiJB7S1EV28lvdI\nvKn6EK6HVm48p3UVMKwpKdxXMsLczve4yeMhgVlUrGXxXE9sVElLrJKwOhTDt5NK\nYaepYYRWKBXO0+KRL0elsCyjBKAfnPFa8fzbtkECgYEAn5GWDCMPEl0NVHQv+TGy\n8p+3G5LDNbWcBCWb248oUvm53V2ErRuVSqOtdtPwB3Uay7lNLlVfy9bzDPZE5xhS\nEt/rdDhmARYwlnEF6r2bHPsF8D8mYxafZpQDOfoIzXBIY7oRgIHVf0FKQCDRqgdV\n86jmTyHZKNFLZgZhtEwE01s=\n-----END PRIVATE KEY-----\n";
+if (!admin.apps.length && hasValidCredentials) {
+  try {
+    admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId: "bhaskar-352a7",
+        clientEmail: "firebase-adminsdk-fbsvc@bhaskar-352a7.iam.gserviceaccount.com",
+        privateKey: "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC5DSLecRaSr3dw\nUi+X9TOTb4ZcMxBZPUnIdSqUTj7kA+Fm6M+gZslFF7Mn+gQBmOsPf+zn/Eh8L5CH\n7XkVzznZDDxzzOQpoi8bqZm+jJ2QdyeF/wJipgyF+f9kQCPp9kititwQQTKV+zQP\nYN2g0guMwUz1sQ5CoCJeK2RYsWJ/A234tLcNviAzcA06anKtDj10mCBbxe7F5ocK\nVY9UzGsTT8PVsZsSx2gB8rKfhKwFjTb2ylHJG4yA+gU9xUA96twmB/djGrewH/0g\n5ksvTAP3MN6n7G8zsewUVCibVRwZGDMptvxTqdRTYKB/9hI2QndY9tVXoPJ8pMCU\nzmMQ7PGXAgMBAAECggEARNAcN9Cg3sIuLY/6T80oNTrDIXUBrtWqIsdjIowoOd0x\ni/WmA9VFIhLKleKUa82kF3rwK2I2yCtd2RYXMWOCdPJmZn96FvtO/j/mwqOCki6k\n/WCTUADEZmvNK0fosv9ZDmO1Krw75eboeJGCSOPi1KArELAbB+6JaTBEm/C2mlkX\neGcQNrbZGpcq/HQSVizm//qLLkzcER9iufdAw0JRPxHj3RUX57+JMbvUZThqpE8u\n55tI9G8tPjb0R0Ce3V0VMzSskJSD7As6YtKtecgmMRiP7vhu4tV3Sx/+Jb8EOrM1\n03yVjF+DUIkx9ihUf1+sjRf7iUu2H270bHG7Qgl94QKBgQDnJAcaWXzdQTQ37cIg\nM5YJyAPs2TXL0vA9vk5/xWbetY2ALl2QsS3X8pAiOqyOxYzQlvqXwqmX86Svu9ny\nWx45bj6C4OuO+peDu3rmpfnSM6IKM1KX88xWrlovs+xK4FPpoqsZRduDvCta8a+z\nxcI+j3kfP1RtdnDDESaL4WeZtwKBgQDM9CIwnCAceAgv341H0KjfZHsVUQNLJQ2j\nsJZgZxW1cf6M4Xymre5zQljsv73cFTv8BLQxlyNWdIe2tBhQl0x9kiqXuOK1DHTP\nfZRF6oyoUK2SLqXJM8gLKHrm1WyL7+BrAjERN2cyBEwZF3yk4BFAxzdrR2dcB2UA\nJDcgCBLnIQKBgGItdmrlydi9Am4jKkq9PqSm9avb0zLhRTQkqnkxIvHEEfd5Ojrk\nV0GbgUdYvsTh+l77UjO19o1ZawFN/FQqCduBDUJQQR35KPRGZPylUUjMr64/gHyU\njJ3g7uPGO77OLDZX5u8UMhpxicTWVbg5brld/aedIcJhBaKFnWba9kNfAoGAJ29q\nDLRdsVyfJqb7BjBt7d3lmOpnmdPdVfuqU45CLRFsCytv0ppw4RiJB7S1EV28lvdI\nvKn6EK6HVm48p3UVMKwpKdxXMsLczve4yeMhgVlUrGXxXE9sVElLrJKwOhTDt5NK\nYaepYYRWKBXO0+KRL0elsCyjBKAfnPFa8fzbtkECgYEAn5GWDCMPEl0NVHQv+TGy\n8p+3G5LDNbWcBCWb248oUvm53V2ErRuVSqOtdtPwB3Uay7lNLlVfy9bzDPZE5xhS\nEt/rdDhmARYwlnEF6r2bHPsF8D8mYxafZpQDOfoIzXBIY7oRgIHVf0FKQCDRqgdV\n86jmTyHZKNFLZgZhtEwE01s=\n-----END PRIVATE KEY-----\n"?.replace(/\\n/g, "\n")
+      })
+    });
+  } catch (error) {
+    console.warn("Firebase Admin initialization failed:", error);
+  }
+}
+const adminDb = admin.apps.length > 0 ? admin.firestore() : null;
+admin.apps.length > 0 ? admin.auth() : null;
+
+export { adminDb as a };
