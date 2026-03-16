@@ -97,33 +97,68 @@ export async function generateArticle(topic, category, keywords = []) {
     throw new Error('Gemini client not initialized. Check GEMINI_API_KEY in .env file.');
   }
 
-  const prompt = `You are a professional journalist writing for a news website in March 2026. Write a comprehensive, SEO-optimized news article about: "${topic}"
+  const prompt = `You are an award-winning journalist and senior editor at a top-tier news publication. Write a professional, well-researched news article that reads exactly like human-written content.
 
-IMPORTANT: This is for a news site in 2026. Write about CURRENT events and developments. Do NOT reference dates like 2023, 2024, or "last year" unless specifically relevant. Write as if reporting on events happening NOW or very recently.
+TOPIC: "${topic}"
+CATEGORY: ${category}
+CURRENT DATE: March 16, 2026
 
-Category: ${category}
-Keywords to include: ${keywords.join(', ')}
+WRITING GUIDELINES FOR HUMAN-LIKE QUALITY:
 
-Requirements:
-- Write 800-1200 words
-- Use journalistic tone for 2026
-- Include current statistics and facts (2025-2026 data)
-- Structure with proper headings (H2, H3)
-- Write in HTML format with proper tags
-- Make it engaging and informative
-- Include quotes if relevant
-- Ensure content is unique and not plagiarized
-- DO NOT mention old dates like 2023, 2024 unless specifically about historical events
+1. **PROFESSIONAL JOURNALISM STYLE**
+   - Write like a seasoned journalist, not an AI
+   - Use active voice, varied sentence structures
+   - Include specific details, names, dates, numbers
+   - Balance short punchy sentences with longer explanatory ones
+   - Avoid robotic or repetitive phrasing
 
-Format the response as JSON:
+2. **WELL-RESEARCHED CONTENT**
+   - Include specific facts, statistics, and data points
+   - Mention real organizations, institutions, and experts
+   - Reference current events and developments
+   - Provide context and background when relevant
+   - Include quotes from hypothetical but realistic sources
+
+3. **HUMAN-LIKE READABILITY**
+   - Vary paragraph lengths naturally (some short, some medium)
+   - Mix simple and complex sentences
+   - Use transitional phrases naturally
+   - Avoid list-heavy content
+   - Write flowing prose, not bullet points
+   - Include rhetorical questions occasionally
+   - Use contractions naturally (don't, it's, we're)
+
+4. **MAXIMUM READABILITY (Grade 8-10 level)**
+   - Average sentence length: 15-20 words
+   - Average paragraph length: 3-4 sentences
+   - Use clear, direct language
+   - Avoid jargon unless necessary (explain if used)
+   - Use bullet points sparingly, only for key facts
+   - Bold key points in **double asterisks** for emphasis
+
+5. **STRUCTURE**
+   - Engaging lead paragraph (who, what, when, where, why)
+   - Clear subheadings (H2, H3) that guide the reader
+   - Logical flow of information
+   - Strong conclusion that summarizes key points
+
+6. **SEO OPTIMIZATION**
+   - Natural keyword integration
+   - Compelling headline (60-70 chars)
+   - SEO meta description (150-160 chars)
+   - Relevant tags
+
+FORMAT YOUR RESPONSE AS JSON:
 {
-  "title": "Compelling headline (60-70 characters) - current 2026 news",
-  "excerpt": "Brief summary (150-160 characters) about current developments",
-  "content": "Full HTML article with proper formatting - current 2026 news",
-  "seoTitle": "SEO optimized title (50-60 characters)",
-  "seoDescription": "Meta description (150-160 characters)",
-  "tags": ["tag1", "tag2", "tag3", "tag4", "tag5"]
-}`;
+  "title": "Compelling, newsworthy headline (60-70 chars)",
+  "excerpt": "Engaging summary that makes readers want to click (150-160 chars)",
+  "content": "Full HTML article with proper formatting - professional journalism style",
+  "seoTitle": "SEO optimized title (50-60 chars)",
+  "seoDescription": "Meta description (150-160 chars) for search engines",
+  "tags": ["primary-tag", "secondary-tag", "topic", "category", "related"]
+}
+
+REMEMBER: Write as if you're a human journalist reporting on breaking news. Make it feel authentic, specific, and professionally crafted.`;
 
   try {
     let articleData;
