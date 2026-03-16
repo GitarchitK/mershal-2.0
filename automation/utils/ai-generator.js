@@ -123,6 +123,8 @@ WRITING GUIDELINES FOR HUMAN-LIKE QUALITY:
    - Vary paragraph lengths naturally (some short, some medium)
    - Mix simple and complex sentences
    - Use transitional phrases naturally
+   - Use **bold text** for emphasis on key points
+   - Use numbered lists with **bold numbers** for key facts
    - Avoid list-heavy content
    - Write flowing prose, not bullet points
    - Include rhetorical questions occasionally
@@ -133,12 +135,15 @@ WRITING GUIDELINES FOR HUMAN-LIKE QUALITY:
    - Average paragraph length: 3-4 sentences
    - Use clear, direct language
    - Avoid jargon unless necessary (explain if used)
-   - Use bullet points sparingly, only for key facts
-   - Bold key points in **double asterisks** for emphasis
+   - Use **bold** for important terms and key points
 
-5. **STRUCTURE**
+5. **MODERN STRUCTURE WITH BOLD EMPHASIS**
    - Engaging lead paragraph (who, what, when, where, why)
-   - Clear subheadings (H2, H3) that guide the reader
+   - Clear subheadings (H2, H3) with decorative underline
+   - Use **<span class="highlight-number">1</span>** for numbered highlights
+   - Use **<b>bold text</b>** for key terms and important points
+   - Use **<div class="key-point">...</div>** for key takeaways
+   - Use **<div class="stats-box">...</div>** for statistics
    - Logical flow of information
    - Strong conclusion that summarizes key points
 
@@ -152,13 +157,13 @@ FORMAT YOUR RESPONSE AS JSON:
 {
   "title": "Compelling, newsworthy headline (60-70 chars)",
   "excerpt": "Engaging summary that makes readers want to click (150-160 chars)",
-  "content": "Full HTML article with proper formatting - professional journalism style",
+  "content": "Full HTML article with <b>bold text</b> for emphasis, <span class='highlight-number'>1</span> for numbered points, and professional formatting",
   "seoTitle": "SEO optimized title (50-60 chars)",
   "seoDescription": "Meta description (150-160 chars) for search engines",
   "tags": ["primary-tag", "secondary-tag", "topic", "category", "related"]
 }
 
-REMEMBER: Write as if you're a human journalist reporting on breaking news. Make it feel authentic, specific, and professionally crafted.`;
+REMEMBER: Write as if you're a human journalist reporting on breaking news. Make it feel authentic, specific, and professionally crafted. Use **bold text** liberally for emphasis on important points.`;
 
   try {
     let articleData;

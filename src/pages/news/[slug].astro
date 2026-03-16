@@ -211,7 +211,7 @@ const publishedDate = article.publishedAt?.toDate?.() || new Date();
 </Layout>
 
 <style>
-  /* Maximum Readability Article Styles */
+  /* Modern Professional Article Styles */
   .article-content {
     font-size: 1.125rem;
     line-height: 1.9;
@@ -228,6 +228,19 @@ const publishedDate = article.publishedAt?.toDate?.() || new Date();
     color: #111827;
     line-height: 1.4;
     letter-spacing: -0.02em;
+    position: relative;
+    padding-bottom: 0.75rem;
+  }
+  
+  .article-content h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, #dc2626, #f87171);
+    border-radius: 2px;
   }
   
   .article-content h3 {
@@ -257,6 +270,11 @@ const publishedDate = article.publishedAt?.toDate?.() || new Date();
     color: #4b5563;
     font-size: 1.0625rem;
     line-height: 1.7;
+    padding-left: 0.5rem;
+  }
+  
+  .article-content li::marker {
+    color: #dc2626;
   }
   
   .article-content a {
@@ -264,28 +282,41 @@ const publishedDate = article.publishedAt?.toDate?.() || new Date();
     text-decoration: underline;
     text-underline-offset: 2px;
     font-weight: 500;
-    transition: color 0.2s ease;
+    transition: all 0.2s ease;
   }
   
   .article-content a:hover {
     color: #b91c1c;
+    background: #fef2f2;
   }
   
   .article-content blockquote {
-    border-left: 4px solid #dc2626;
+    border: none;
     margin: 2.5rem 0;
-    padding: 1.5rem 2rem;
-    font-style: italic;
-    color: #4b5563;
-    background: linear-gradient(to right, #fef2f2, #f9fafb);
-    border-radius: 0 0.75rem 0.75rem 0;
-    font-size: 1.125rem;
-    line-height: 1.8;
+    padding: 2rem;
+    background: linear-gradient(135deg, #fef2f2 0%, #fff 100%);
+    border-radius: 1rem;
+    position: relative;
+  }
+  
+  .article-content blockquote::before {
+    content: '"';
+    position: absolute;
+    top: -0.5rem;
+    left: 1rem;
+    font-size: 5rem;
+    color: #dc2626;
+    opacity: 0.2;
+    font-family: Georgia, serif;
+    line-height: 1;
   }
   
   .article-content blockquote p {
     margin-bottom: 0;
     color: #4b5563;
+    font-size: 1.125rem;
+    line-height: 1.8;
+    font-style: italic;
   }
   
   .article-content strong {
@@ -298,37 +329,131 @@ const publishedDate = article.publishedAt?.toDate?.() || new Date();
   }
   
   .article-content img {
-    border-radius: 0.75rem;
+    border-radius: 1rem;
     margin: 2.5rem 0;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
     width: 100%;
     max-width: 100%;
   }
   
   .article-content hr {
     border: none;
-    border-top: 1px solid #e5e7eb;
+    border-top: 2px solid #e5e7eb;
     margin: 3rem 0;
+    position: relative;
   }
   
-  .article-content .highlight {
-    background: linear-gradient(120deg, #fef3c7 0%, #fef9c3 100%);
-    padding: 0.25rem 0.5rem;
+  .article-content hr::after {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 8px;
+    background: #dc2626;
+    border-radius: 4px;
+  }
+  
+  /* Bold text emphasis */
+  .article-content b,
+  .article-content strong {
+    font-weight: 700;
+    color: #111827;
+    background: linear-gradient(120deg, transparent 0%, transparent 0%, rgba(220, 38, 38, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
+    padding: 0.1rem 0.25rem;
     border-radius: 0.25rem;
   }
   
+  /* Key point callout boxes */
   .article-content .key-point {
-    background: #f0fdf4;
+    background: linear-gradient(135deg, #f0fdf4 0%, #ecfccb 100%);
     border-left: 4px solid #22c55e;
-    padding: 1rem 1.5rem;
+    padding: 1.5rem 2rem;
     margin: 2rem 0;
-    border-radius: 0 0.5rem 0.5rem 0;
+    border-radius: 0 1rem 1rem 0;
   }
   
   .article-content .key-point p {
     margin-bottom: 0;
     color: #166534;
+    font-weight: 600;
+  }
+  
+  /* Warning/Important callout */
+  .article-content .important {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    border-left: 4px solid #dc2626;
+    padding: 1.5rem 2rem;
+    margin: 2rem 0;
+    border-radius: 0 1rem 1rem 0;
+  }
+  
+  .article-content .important p {
+    margin-bottom: 0;
+    color: #991b1b;
     font-weight: 500;
+  }
+  
+  /* Numbered highlights */
+  .article-content .highlight-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    background: linear-gradient(135deg, #dc2626, #f87171);
+    color: white;
+    font-weight: 700;
+    border-radius: 50%;
+    margin-right: 0.75rem;
+    font-size: 0.875rem;
+    flex-shrink: 0;
+  }
+  
+  /* Modern list items with bold starts */
+  .article-content .modern-list li {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background: #f9fafb;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+  }
+  
+  .article-content .modern-list li:hover {
+    background: #f3f4f6;
+    transform: translateX(0.25rem);
+  }
+  
+  /* Stats box */
+  .article-content .stats-box {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+    border-radius: 1rem;
+  }
+  
+  .article-content .stats-box .stat {
+    text-align: center;
+    color: white;
+  }
+  
+  .article-content .stats-box .stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #f87171;
+    line-height: 1;
+  }
+  
+  .article-content .stats-box .stat-label {
+    font-size: 0.875rem;
+    color: #9ca3af;
+    margin-top: 0.5rem;
   }
   
   /* Mobile responsiveness */
@@ -354,8 +479,15 @@ const publishedDate = article.publishedAt?.toDate?.() || new Date();
     }
     
     .article-content blockquote {
-      padding: 1rem 1.25rem;
-      font-size: 1rem;
+      padding: 1.5rem;
+    }
+    
+    .article-content blockquote::before {
+      font-size: 4rem;
+    }
+    
+    .article-content .stats-box {
+      grid-template-columns: repeat(2, 1fr);
     }
   }
 </style>
