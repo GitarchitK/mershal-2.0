@@ -9,12 +9,6 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    # Opt into Node.js 24 to avoid deprecation warnings
-    defaults:
-      run:
-        shell: bash
-        env:
-          FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     
     steps:
       - name: Checkout code
