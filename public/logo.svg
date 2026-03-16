@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" fill="none">
+  <!-- Background circle -->
+  <circle cx="30" cy="30" r="28" fill="#DC2626"/>
+  <!-- M letter -->
+  <text x="30" y="38" font-family="Arial Black, sans-serif" font-size="32" font-weight="900" fill="white" text-anchor="middle">M</text>
+  <!-- Rest of text -->
+  <text x="65" y="38" font-family="Arial Black, sans-serif" font-size="28" font-weight="900" fill="#1F2937">ershal</text>
+</svg>
