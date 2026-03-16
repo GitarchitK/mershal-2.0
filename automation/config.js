@@ -3,6 +3,20 @@ import dotenv from 'dotenv';
 // Load environment variables
 dotenv.config();
 
+// Helper function to fix private key format
+function fixPrivateKey(key) {
+  if (!key) return key;
+  // Handle literal \n strings
+  if (key.includes('\\n')) {
+    key = key.replace(/\\n/g, '\n');
+  }
+  // Ensure proper PEM format
+  if (!key.includes('-----BEGIN PRIVATE KEY-----') && !key.includes('-----BEGIN RSA PRIVATE KEY-----')) {
+    key = `-----BEGIN PRIVATE KEY-----\n${key}\n-----END PRIVATE KEY-----`;
+  }
+  return key;
+}
+
 export const config = {
   // AI Configuration
   ai: {
@@ -16,7 +30,7 @@ export const config = {
   firebase: {
     projectId: process.env.FIREBASE_ADMIN_PROJECT_ID,
     clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
-    privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+    privateKey: fixPrivateKey(process.env.FIREBASE_ADMIN_PRIVATE_KEY),
   },
 
   // Deployment Configuration
@@ -29,7 +43,7 @@ export const config = {
   indexing: {
     enabled: true, // Set to true after setting up Google Indexing API
     serviceAccountEmail: process.env.GOOGLE_INDEXING_EMAIL,
-    privateKey: process.env.GOOGLE_INDEXING_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+    privateKey: fixPrivateKey(process.env.GOOGLE_INDEXING_PRIVATE_KEY),
   },
 
   // Content Generation Settings
