@@ -6,27 +6,17 @@ import { savePost } from './utils/firebase.js';
 import { triggerDeployment } from './utils/deployment.js';
 import { submitUrlToGoogle } from './utils/indexing.js';
 import { config } from './config.js';
+import { allTopics, getRandomTopics } from './topics.js';
 
 dotenv.config();
 
-// Trending topics pool
-const trendingTopics = [
-  { topic: 'Latest technology innovations', category: 'technology' },
-  { topic: 'Global economic developments', category: 'business' },
-  { topic: 'International political news', category: 'politics' },
-  { topic: 'Sports championship updates', category: 'sports' },
-  { topic: 'Entertainment industry news', category: 'entertainment' },
-  { topic: 'World news and events', category: 'world' },
-  { topic: 'IPL cricket updates', category: 'ipl' },
-  { topic: 'Tech startup funding news', category: 'technology' },
-  { topic: 'Climate change developments', category: 'world' },
-  { topic: 'Space exploration updates', category: 'technology' },
-];
+// Use custom topics from topics.js
+const trendingTopics = allTopics;
 
 async function publishArticle() {
   try {
-    // Pick random topic
-    const randomTopic = trendingTopics[Math.floor(Math.random() * trendingTopics.length)];
+    // Pick random topic from your custom topics
+    const randomTopic = getRandomTopics(1)[0];
     
     console.log(`\n📝 Generating article about: ${randomTopic.topic}`);
     console.log(`   Category: ${randomTopic.category}\n`);
