@@ -97,26 +97,29 @@ export async function generateArticle(topic, category, keywords = []) {
     throw new Error('Gemini client not initialized. Check GEMINI_API_KEY in .env file.');
   }
 
-  const prompt = `You are a professional journalist writing for a news website. Write a comprehensive, SEO-optimized news article about: "${topic}"
+  const prompt = `You are a professional journalist writing for a news website in March 2026. Write a comprehensive, SEO-optimized news article about: "${topic}"
+
+IMPORTANT: This is for a news site in 2026. Write about CURRENT events and developments. Do NOT reference dates like 2023, 2024, or "last year" unless specifically relevant. Write as if reporting on events happening NOW or very recently.
 
 Category: ${category}
 Keywords to include: ${keywords.join(', ')}
 
 Requirements:
 - Write 800-1200 words
-- Use journalistic tone
-- Include relevant statistics and facts
+- Use journalistic tone for 2026
+- Include current statistics and facts (2025-2026 data)
 - Structure with proper headings (H2, H3)
 - Write in HTML format with proper tags
 - Make it engaging and informative
 - Include quotes if relevant
 - Ensure content is unique and not plagiarized
+- DO NOT mention old dates like 2023, 2024 unless specifically about historical events
 
 Format the response as JSON:
 {
-  "title": "Compelling headline (60-70 characters)",
-  "excerpt": "Brief summary (150-160 characters)",
-  "content": "Full HTML article with proper formatting",
+  "title": "Compelling headline (60-70 characters) - current 2026 news",
+  "excerpt": "Brief summary (150-160 characters) about current developments",
+  "content": "Full HTML article with proper formatting - current 2026 news",
   "seoTitle": "SEO optimized title (50-60 characters)",
   "seoDescription": "Meta description (150-160 characters)",
   "tags": ["tag1", "tag2", "tag3", "tag4", "tag5"]
