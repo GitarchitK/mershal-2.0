@@ -32,6 +32,7 @@ export const customTopics = [
   
   // Politics
   { topic: 'Indian government policy updates', category: 'politics' },
+  { topic: 'Iran USA x Israel War updates', category: 'politics' },
   { topic: 'Election news and analysis', category: 'politics' },
   { topic: 'Legislative changes', category: 'politics' },
   { topic: 'Political controversies and debates', category: 'politics' },
