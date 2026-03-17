@@ -1,6 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import OpenAI from 'openai';
 import { config } from '../config.js';
+import { researchTopic, formatResearchForPrompt } from './research.js';
 
 // Initialize AI clients based on configuration
 let genAI = null;
@@ -97,27 +98,40 @@ export async function generateArticle(topic, category, keywords = []) {
     throw new Error('Gemini client not initialized. Check GEMINI_API_KEY in .env file.');
   }
 
+  // Research topic first for real, current information
+  const research = await researchTopic(topic, category);
+  const researchContext = formatResearchForPrompt(research);
+
   const prompt = `You are an award-winning journalist and senior editor at a top-tier news publication. Write a professional, well-researched news article that reads exactly like human-written content.
 
 TOPIC: "${topic}"
 CATEGORY: ${category}
 CURRENT DATE: March 16, 2026
 
+CRITICAL REQUIREMENTS - READ THIS FIRST:
+1. You MUST use the research data provided below - do NOT make up facts
+2. Include specific dates, numbers, names from the research
+3. If research doesn't have enough info, say "According to recent reports..." rather than inventing
+4. Only claim something as fact if it's in the research data
+5. Use phrases like "reports indicate", "sources say", "according to recent information" when appropriate
+
+${researchContext}
+
 WRITING GUIDELINES FOR HUMAN-LIKE QUALITY:
 
 1. **PROFESSIONAL JOURNALISM STYLE**
    - Write like a seasoned journalist, not an AI
    - Use active voice, varied sentence structures
-   - Include specific details, names, dates, numbers
+   - Include specific details, names, dates, numbers from research
    - Balance short punchy sentences with longer explanatory ones
    - Avoid robotic or repetitive phrasing
 
-2. **WELL-RESEARCHED CONTENT**
-   - Include specific facts, statistics, and data points
-   - Mention real organizations, institutions, and experts
-   - Reference current events and developments
-   - Provide context and background when relevant
-   - Include quotes from hypothetical but realistic sources
+2. **FACT-BASED CONTENT**
+   - Only include information from the research sources above
+   - If you don't have specific data, acknowledge uncertainty
+   - Reference specific organizations, institutions from research
+   - Include quotes only if they appear in research
+   - Don't invent statistics or claims
 
 3. **HUMAN-LIKE READABILITY**
    - Vary paragraph lengths naturally (some short, some medium)
@@ -153,7 +167,7 @@ WRITING GUIDELINES FOR HUMAN-LIKE QUALITY:
    - SEO meta description (150-160 chars)
    - Relevant tags
 
-FORMAT YOUR RESPONSE AS JSON:
+FORMAT YOUR RESPONSE AS VALID JSON:
 {
   "title": "Compelling, newsworthy headline (60-70 chars)",
   "excerpt": "Engaging summary that makes readers want to click (150-160 chars)",
@@ -163,7 +177,11 @@ FORMAT YOUR RESPONSE AS JSON:
   "tags": ["primary-tag", "secondary-tag", "topic", "category", "related"]
 }
 
-REMEMBER: Write as if you're a human journalist reporting on breaking news. Make it feel authentic, specific, and professionally crafted. Use **bold text** liberally for emphasis on important points.`;
+REMEMBER: 
+- Use ONLY information from the research data provided
+- If research is limited, acknowledge that in the article
+- Make it feel authentic, specific, and professionally crafted
+- Use **bold text** liberally for emphasis on important points`;
 
   try {
     let articleData;
