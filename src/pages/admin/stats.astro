@@ -10,31 +10,31 @@ let stats = {
   totalArticles: 0,
   publishedToday: 0,
   totalTopics: 0,
-  categories: {}
+  categories: {} as Record<string, number>
 };
 
 try {
   // Total articles
-  const articlesSnap = await adminDb.collection('posts').get();
-  stats.totalArticles = articlesSnap.size;
+  const articlesSnap = await adminDb?.collection('posts').get();
+  stats.totalArticles = articlesSnap?.size || 0;
   
   // Published today
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const todaySnap = await adminDb.collection('posts')
+  const todaySnap = await adminDb?.collection('posts')
     .where('publishedAt', '>=', today)
     .get();
-  stats.publishedToday = todaySnap.size;
+  stats.publishedToday = todaySnap?.size || 0;
   
   // Total topics
-  const topicsSnap = await adminDb.collection('topicQueue').get();
-  stats.totalTopics = topicsSnap.size;
+  const topicsSnap = await adminDb?.collection('topicQueue').get();
+  stats.totalTopics = topicsSnap?.size || 0;
   
   // Articles by category for international audience
   const categories = ['usa', 'canada', 'australia', 'technology', 'business', 'politics', 'world', 'entertainment'];
   for (const cat of categories) {
-    const catSnap = await adminDb.collection('posts').where('category', '==', cat).get();
-    stats.categories[cat] = catSnap.size;
+    const catSnap = await adminDb?.collection('posts').where('category', '==', cat).get();
+    stats.categories[cat] = catSnap?.size || 0;
   }
 } catch (error) {
   console.error('Error fetching stats:', error);

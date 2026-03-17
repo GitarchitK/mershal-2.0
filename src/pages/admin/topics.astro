@@ -18,7 +18,7 @@ if (Astro.request.method === 'POST') {
       const topic = data.get('topic');
       const category = data.get('category');
       
-      if (topic && category) {
+      if (topic && category && adminDb) {
         await adminDb.collection('topicQueue').add({
           topic,
           category,
@@ -30,12 +30,14 @@ if (Astro.request.method === 'POST') {
       }
     } else if (action === 'delete') {
       const id = data.get('id');
-      await adminDb.collection('topicQueue').doc(id.toString()).delete();
-      message = 'Topic deleted!';
-      messageType = 'success';
+      if (id && adminDb) {
+        await adminDb.collection('topicQueue').doc(id.toString()).delete();
+        message = 'Topic deleted!';
+        messageType = 'success';
+      }
     }
   } catch (error) {
-    message = 'Error: ' + error.message;
+    message = 'Error: ' + (error instanceof Error ? error.message : 'Unknown error');
     messageType = 'error';
   }
 }
@@ -43,11 +45,13 @@ if (Astro.request.method === 'POST') {
 // Fetch topics
 let topics: any[] = [];
 try {
-  const snapshot = await adminDb.collection('topicQueue')
-    .orderBy('createdAt', 'desc')
-    .limit(50)
-    .get();
-  topics = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  if (adminDb) {
+    const snapshot = await adminDb.collection('topicQueue')
+      .orderBy('createdAt', 'desc')
+      .limit(50)
+      .get();
+    topics = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  }
 } catch (error) {
   console.error('Error fetching topics:', error);
 }
