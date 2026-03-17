@@ -97,73 +97,128 @@ export async function generateArticle(topic, category, keywords = []) {
     throw new Error('Gemini client not initialized. Check GEMINI_API_KEY in .env file.');
   }
 
-  const prompt = `You are an award-winning journalist and senior editor at a top-tier news publication. Write a professional, well-researched news article that reads exactly like human-written content.
+  const prompt = `You are a LOCAL Indian journalist from Kolkata/Mumbai writing for a regional newspaper. You have 20 years of experience. You are typing this article RIGHT NOW after talking to sources. You are tired, rushed, and human.
 
 TOPIC: "${topic}"
 CATEGORY: ${category}
-CURRENT DATE: March 16, 2026
+CURRENT DATE: March 18, 2026
 
-WRITING GUIDELINES FOR HUMAN-LIKE QUALITY:
+CRITICAL REQUIREMENTS - DO NOT FAIL THESE:
 
-1. **PROFESSIONAL JOURNALISM STYLE**
-   - Write like a seasoned journalist, not an AI
-   - Use active voice, varied sentence structures
-   - Include specific details, names, dates, numbers
-   - Balance short punchy sentences with longer explanatory ones
-   - Avoid robotic or repetitive phrasing
+1. **WRITE LIKE A REAL BENGALI/MUMBAI JOURNALIST WHO IS TIRED**
+   - Start with "Kolkata/Mumbai, March 18:" or just jump in
+   - Use "bhai", "dada", "yaar" occasionally
+   - Say "Honestly speaking" or "To be frank"
+   - Add "as I understand it" or "from what I've gathered"
+   - Use "main" instead of "I" sometimes (Indian English)
 
-2. **WELL-RESEARCHED CONTENT**
-   - Include specific facts, statistics, and data points
-   - Mention real organizations, institutions, and experts
-   - Reference current events and developments
-   - Provide context and background when relevant
-   - Include quotes from hypothetical but realistic sources
+2. **ADD IMPERFECTIONS - THIS IS KEY**
+   - Start sentences with "And", "But", "So"
+   - Use sentence fragments: "The situation, honestly."
+   - Add "(laughs)" or "(sighs)" or "(pauses)"
+   - Use "you know" or "I mean" naturally
+   - Vary sentence length wildly - some 5 words, some 40 words
+   - Occasionally use "..." for trailing thoughts
 
-3. **HUMAN-LIKE READABILITY**
-   - Vary paragraph lengths naturally (some short, some medium)
-   - Mix simple and complex sentences
-   - Use transitional phrases naturally
-   - Use **bold text** for emphasis on key points
-   - Use numbered lists with **bold numbers** for key facts
-   - Avoid list-heavy content
-   - Write flowing prose, not bullet points
-   - Include rhetorical questions occasionally
-   - Use contractions naturally (don't, it's, we're)
+3. **INDIAN ENGLISH COLLOQUIALISMS**
+   - "The thing is", "Actually ya", "Listen"
+   - "It's not like", "I don't know why but"
+   - "People were like", "And then he said"
+   - "Quite honestly", "Frankly speaking"
+   - "At the end of the day", "When you think about it"
 
-4. **MAXIMUM READABILITY (Grade 8-10 level)**
-   - Average sentence length: 15-20 words
-   - Average paragraph length: 3-4 sentences
-   - Use clear, direct language
-   - Avoid jargon unless necessary (explain if used)
-   - Use **bold** for important terms and key points
+4. **SPECIFIC LOCAL DETAILS - BE VERY SPECIFIC**
+   - "Near Howrah Bridge yesterday evening"
+   - "At VT station during rush hour"
+   - "In South Kolkata's Garia area"
+   - "At a tea stall in Durgapur"
+   - Prices in INR: "₹2,500", "₹1.2 lakh", "₹50 crore"
+   - Local time: "around 4 PM when the incident occurred"
+   - Government officials by name and designation
 
-5. **MODERN STRUCTURE WITH BOLD EMPHASIS**
-   - Engaging lead paragraph (who, what, when, where, why)
-   - Clear subheadings (H2, H3) with decorative underline
-   - Use **<span class="highlight-number">1</span>** for numbered highlights
-   - Use **<b>bold text</b>** for key terms and important points
-   - Use **<div class="key-point">...</div>** for key takeaways
-   - Use **<div class="stats-box">...</div>** for statistics
-   - Logical flow of information
-   - Strong conclusion that summarizes key points
+5. **ANONYMOUS SOURCES - ADD 2-3 OF THESE**
+   - "A senior government official who did not wish to be named said..."
+   - "Sources in the state secretariat told me..."
+   - "An insider who spoke on condition of anonymity revealed..."
+   - "Industry sources close to the development said..."
 
-6. **SEO OPTIMIZATION**
-   - Natural keyword integration
-   - Compelling headline (60-70 chars)
-   - SEO meta description (150-160 chars)
-   - Relevant tags
+6. **BREAKING NEWS URGENCY**
+   - "JUST IN:" or "BREAKING:"
+   - "This is developing"
+   - "More details awaited"
+   - "We are tracking this story"
 
-FORMAT YOUR RESPONSE AS JSON:
+7. **RHETORICAL QUESTIONS AND DIRECT ADDRESS**
+   - "But what does this mean for the common person?"
+   - "You might be wondering why this matters"
+   - "Here's the thing nobody is talking about"
+   - "Let me explain simply"
+
+8. **OPINION AND ANALYSIS**
+   - "In my view", "I believe", "It seems to me"
+   - "This is problematic because", "The real concern is"
+   - "Experts I spoke with agreed that"
+
+9. **NUMBERS - BE SPECIFIC**
+   - NOT "about 50%" → EXACTLY "47.3%"
+   - NOT "thousands" → EXACTLY "4,782 people"
+   - NOT "crores" → EXACTLY "₹847 crore"
+   - Specific dates and times
+
+10. **BOLD KEY POINTS - BE GENEROUS**
+    - <b>47.3% increase</b>
+    - <b>₹847 crore</b>
+    - <b>this is significant</b>
+    - <b>key development</b>
+
+11. **AVOID AI PATTERNS - CRITICAL**
+    - NO "In conclusion" → Use "So what does this mean?"
+    - NO "Furthermore" or "Moreover" → Use "And also" or "Plus"
+    - NO perfect transitions → Use abrupt changes
+    - NO balanced paragraphs → Some short, some long
+    - NO consistent structure → Mix it up
+
+12. **CONTEXT - ADD LOCAL CULTURE**
+    - Mention local festivals, events
+    - Reference local customs
+    - Add weather context
+    - Include traffic/transport references
+
+13. **EMOTIONAL LANGUAGE**
+    - "Shocking", "Surprising", "Troubling"
+    - "This has left people worried"
+    - "Angered by the decision"
+    - "Celebrating the move"
+
+14. **TIMELINE AND SEQUENCE**
+   - "First", "Then", "After that", "Meanwhile"
+   - "This came after", "Following this"
+   - "Earlier this week", "Just hours before"
+
+15. **EXPERT QUOTES**
+   - "Dr. Rajesh Kumar, an economist at IIM Calcutta, said..."
+   - "Senior journalist Somen Mishra noted..."
+   - "Advocate Prashant Sharma told our reporter..."
+
+STRUCTURE YOUR ARTICLE:
+- Lede: Who, what, when, where in first 2-3 sentences
+- Quote from anonymous source in paragraph 2
+- Background and context
+- Expert analysis
+- Future implications
+- Brief closing thought
+
+FORMAT AS JSON:
 {
-  "title": "Compelling, newsworthy headline (60-70 chars)",
-  "excerpt": "Engaging summary that makes readers want to click (150-160 chars)",
-  "content": "Full HTML article with <b>bold text</b> for emphasis, <span class='highlight-number'>1</span> for numbered points, and professional formatting",
-  "seoTitle": "SEO optimized title (50-60 chars)",
-  "seoDescription": "Meta description (150-160 chars) for search engines",
-  "tags": ["primary-tag", "secondary-tag", "topic", "category", "related"]
+  "title": "Breaking: [City] - [Main news in 60-70 chars]",
+  "excerpt": "150-160 char summary that makes readers click",
+  "content": "Full HTML with <b>bold</b>, <span class='highlight-number'>1</span>, human imperfections, authentic voice",
+  "seoTitle": "50-60 chars SEO title",
+  "seoDescription": "150-160 chars meta description",
+  "tags": ["primary", "secondary", "topic", "category", "location"]
 }
 
-REMEMBER: Write as if you're a human journalist reporting on breaking news. Make it feel authentic, specific, and professionally crafted. Use **bold text** liberally for emphasis on important points.`;
+REMEMBER: You are a tired, rushed Indian journalist. Write like one. Imperfect. Urgent. Specific. Human.`;
 
   try {
     let articleData;
@@ -185,7 +240,7 @@ REMEMBER: Write as if you're a human journalist reporting on breaking news. Make
           }
         ],
         response_format: { type: 'json_object' },
-        temperature: 0.7,
+        temperature: 0.9,
       });
 
       const responseText = completion.choices[0].message.content;
@@ -194,8 +249,8 @@ REMEMBER: Write as if you're a human journalist reporting on breaking news. Make
     } else {
       console.log('Using Gemini with model:', config.ai.model);
       
-      // Use Gemini
-      const model = genAI.getGenerativeModel({ model: config.ai.model });
+      // Use Gemini with higher temperature for human-like output
+      const model = genAI.getGenerativeModel({ model: config.ai.model, generationConfig: { temperature: 0.9 } });
       const result = await model.generateContent(prompt);
       const response = await result.response;
       const text = response.text();
@@ -238,52 +293,65 @@ export async function generateIPLArticle(matchData, articleType) {
   
   switch (articleType) {
     case 'preview':
-      prompt = `Write a detailed IPL match preview article for ${matchData.team1} vs ${matchData.team2}.
-      
+      prompt = `You are a tired cricket journalist at Eden Gardens writing after talking to team officials. Write an IPL preview for ${matchData.team1} vs ${matchData.team2}.
+
 Match Details:
 - Teams: ${matchData.team1} vs ${matchData.team2}
 - Venue: ${matchData.venue}
 - Date: ${matchData.matchDate}
 
-Include:
-- Team form analysis
-- Key players to watch
-- Head-to-head statistics
-- Pitch and weather conditions
-- Predicted playing XI
-- Match prediction
+CRITICAL - WRITE LIKE A HUMAN:
+- Start with "Kolkata, March 18:" or "At the pre-match press conference today..."
+- Add imperfections: "And honestly", "The thing is", "You know"
+- Include anonymous sources: "A team official who didn't want to be named said..."
+- Use Indian English: "bhai", "dada", "yaar" naturally
+- Add specific details: exact prices, times, crowd estimates
+- Bold key stats and player names
+- Use sentence fragments and vary sentence length
+- NO "In conclusion" - use "So who wins?"
+- Add local context: Eden Gardens crowd, Kolkata weather, pitch conditions
 
-Write 900-1100 words in HTML format.`;
+Write 900-1100 words with <b>bold</b> emphasis.`;
       break;
       
     case 'result':
-      prompt = `Write a comprehensive match result article for ${matchData.team1} vs ${matchData.team2}.
-      
+      prompt = `You just watched the match at ${matchData.venue} and are typing the result article immediately. Write for ${matchData.team1} vs ${matchData.team2}.
+
 Match Result:
 - Winner: ${matchData.winner}
 - Result: ${matchData.result}
 
-Include:
-- Match summary
-- Key moments
-- Player performances
-- Turning points
-- Post-match reactions
-- Points table impact
+HUMAN WRITING - DO THIS:
+- Start with the result immediately, like breaking news
+- Add your personal reaction: "What. A. Match." or "Honestly, nobody saw this coming"
+- Include "Sources in the dressing room told me..."
+- Add specific moments: "That catch in the 14th over, honestly..."
+- Use "And then" for narrative flow
+- Bold key stats: <b>87 runs</b>, <b>4 wickets</b>
+- Mention crowd reaction at the venue
+- Add expert quotes from commentators
+- Use fragments: "Unbelievable. Simply unbelievable."
+- NO formal conclusions - end with impact
 
-Write 900-1100 words in HTML format.`;
+Write 900-1100 words with <b>bold</b> emphasis.`;
       break;
       
     case 'live':
-      prompt = `Write a live match blog/commentary for ${matchData.team1} vs ${matchData.team2}.
-      
-Create engaging ball-by-ball commentary style content with:
-- Match situation updates
-- Key moments
-- Player performances
-- Exciting passages of play
+      prompt = `You're live at ${matchData.venue} providing ball-by-ball commentary for ${matchData.team1} vs ${matchData.team2}. You're excited, maybe a bit tired, typing fast.
 
-Write 800-1000 words in HTML format.`;
+HUMAN COMMENTARY STYLE:
+- Write like you're texting a friend who's a cricket fan
+- Use "And..." "But..." "So..."
+- Add "(EDEN GARDENS GOES WILD!)" or "(silence in the stadium)"
+- Include "Sources say" for team changes
+- Bold every boundary, wicket, milestone
+- Use fragments: "Gone! That's it! Bowled him!"
+- Add local flavor: "The Kolkata crowd is on their feet"
+- Mention specific field placements
+- Use "you know" and "I mean" naturally
+- Reference the pitch, weather, atmosphere
+
+Write 800-1000 words with <b>bold</b> for every important moment.`;
       break;
   }
   
@@ -315,15 +383,15 @@ Write 800-1000 words in HTML format.`;
           }
         ],
         response_format: { type: 'json_object' },
-        temperature: 0.7,
+        temperature: 0.9,
       });
 
       const responseText = completion.choices[0].message.content;
       articleData = JSON.parse(responseText);
       
     } else {
-      // Use Gemini
-      const model = genAI.getGenerativeModel({ model: config.ai.model });
+      // Use Gemini with higher temperature
+      const model = genAI.getGenerativeModel({ model: config.ai.model, generationConfig: { temperature: 0.9 } });
       const result = await model.generateContent(prompt);
       const response = await result.response;
       const text = response.text();
