@@ -731,6 +731,39 @@ const structuredData = {
       color: black;
     }
   }
+    }
+    
+    .article-content li {
+      padding: 0.5rem 1rem;
+    }
+    
+    .article-content .timeline {
+      padding-left: 1.5rem;
+    }
+    
+    .article-content .timeline-item {
+      padding: 1rem;
+    }
+  }
+  
+  /* Print Styles */
+  @media print {
+    .article-content {
+      font-size: 12pt;
+      line-height: 1.5;
+      color: black;
+    }
+    
+    .article-content h2::after,
+    .article-content h3::before {
+      display: none;
+    }
+    
+    .article-content .stats-box {
+      background: #f5f5f5;
+      color: black;
+    }
+  }
     align-items: center;
     justify-content: center;
     width: 2rem;
