@@ -2,7 +2,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import OpenAI from 'openai';
 import { config } from '../config.js';
 import { researchTopic, formatResearchForPrompt } from './research.js';
-import { generateSEOKeywords, generateSEOSubheadings } from './seo-optimizer.js';
+import { generateSEOKeywords, generateSEOSubheadings, generateInternalLinks } from './seo-optimizer.js';
 
 // Initialize AI clients based on configuration
 let genAI = null;
@@ -114,6 +114,7 @@ export async function generateArticle(topic, category, keywords = []) {
   // Generate SEO keywords and subheadings
   const seoKeywords = generateSEOKeywords(topic, category);
   const suggestedSubheadings = generateSEOSubheadings(topic, seoKeywords);
+  const internalLinks = generateInternalLinks(category, topic);
   
   const keywordContext = `
 MANDATORY SEO KEYWORDS TO USE:
@@ -124,6 +125,9 @@ Trending Modifiers: ${seoKeywords.trending.slice(0, 4).join(', ')}
 
 SUGGESTED SUBHEADINGS (use 2-3 of these):
 ${suggestedSubheadings.map((h, i) => `${i + 1}. ${h}`).join('\n')}
+
+INTERNAL LINKS TO USE (MANDATORY - include 2-3 of these):
+${internalLinks.map(link => `- <a href="${link.url}">${link.text}</a> (use when discussing ${link.context})`).join('\n')}
 
 KEYWORD DENSITY TARGETS:
 - Primary keyword "${topic}": 3-5 times (0.5-1% density)
@@ -339,10 +343,36 @@ USE THESE ELEMENTS STRATEGICALLY:
 - 2-3 expert quotes in blockquotes
 - 3-5 numbered highlights with <span class="highlight-number">
 - Strong emphasis with <strong> tags on important terms
+- **2-3 INTERNAL LINKS (CRITICAL FOR SEO)** using format: <a href="/category/technology">Technology News</a>
+
+INTERNAL LINKING STRATEGY (MANDATORY):
+You MUST include 2-3 internal links in every article using this exact format:
+- <a href="/category/usa">USA News</a>
+- <a href="/category/canada">Canada News</a>  
+- <a href="/category/australia">Australia News</a>
+- <a href="/category/technology">Technology News</a>
+- <a href="/category/business">Business News</a>
+- <a href="/category/politics">Politics News</a>
+- <a href="/category/world">World News</a>
+- <a href="/category/entertainment">Entertainment News</a>
+
+INTERNAL LINK PLACEMENT:
+1. One link in the first 3 paragraphs (contextually relevant)
+2. One link in the middle of the article (related topic)
+3. One link near the end (call-to-action style)
+
+EXAMPLES OF GOOD INTERNAL LINKING:
+✅ "For more updates on similar developments, check our <a href="/category/technology">Technology News</a> section."
+✅ "This follows recent trends we've covered in <a href="/category/business">Business News</a>."
+✅ "Stay informed with the latest <a href="/category/world">World News</a> and global developments."
+
+BENEFITS: Internal links boost SEO, increase crawl depth, improve Google News ranking, and keep readers engaged.
 
 REMEMBER: You're not just writing an article—you're creating a Google-ranking machine. Every word should serve the dual purpose of informing readers and satisfying search algorithms. Make it so good that people can't stop reading and Google can't ignore it.
 
-Write like Priya Sharma would: confident, insider knowledge, slightly conversational, but absolutely authoritative. This article MUST rank #1.`;
+CRITICAL: You MUST include 2-3 internal links using the provided URLs above. This is essential for SEO and Google News ranking.
+
+Write like Sarah Mitchell would: confident, international perspective, slightly conversational, but absolutely authoritative. This article MUST rank #1 globally.`;
 
   try {
     let articleData;

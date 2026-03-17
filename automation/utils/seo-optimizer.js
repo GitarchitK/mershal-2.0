@@ -89,6 +89,53 @@ export function optimizeContentForSEO(content, keywords) {
   return optimizedContent;
 }
 
+export function generateInternalLinks(category, topic) {
+  const linkMap = {
+    usa: [
+      { url: '/category/politics', text: 'Politics News', context: 'political developments' },
+      { url: '/category/business', text: 'Business News', context: 'economic impact' },
+      { url: '/category/technology', text: 'Technology News', context: 'tech innovations' }
+    ],
+    canada: [
+      { url: '/category/usa', text: 'USA News', context: 'cross-border relations' },
+      { url: '/category/business', text: 'Business News', context: 'trade developments' },
+      { url: '/category/world', text: 'World News', context: 'international affairs' }
+    ],
+    australia: [
+      { url: '/category/world', text: 'World News', context: 'global developments' },
+      { url: '/category/business', text: 'Business News', context: 'economic trends' },
+      { url: '/category/technology', text: 'Technology News', context: 'tech sector' }
+    ],
+    technology: [
+      { url: '/category/business', text: 'Business News', context: 'market impact' },
+      { url: '/category/usa', text: 'USA News', context: 'Silicon Valley updates' },
+      { url: '/category/world', text: 'World News', context: 'global tech trends' }
+    ],
+    business: [
+      { url: '/category/technology', text: 'Technology News', context: 'tech sector' },
+      { url: '/category/usa', text: 'USA News', context: 'market developments' },
+      { url: '/category/world', text: 'World News', context: 'global markets' }
+    ],
+    politics: [
+      { url: '/category/usa', text: 'USA News', context: 'political developments' },
+      { url: '/category/world', text: 'World News', context: 'international relations' },
+      { url: '/category/business', text: 'Business News', context: 'policy impact' }
+    ],
+    world: [
+      { url: '/category/usa', text: 'USA News', context: 'US involvement' },
+      { url: '/category/politics', text: 'Politics News', context: 'diplomatic relations' },
+      { url: '/category/business', text: 'Business News', context: 'global economy' }
+    ],
+    entertainment: [
+      { url: '/category/usa', text: 'USA News', text: 'Hollywood updates' },
+      { url: '/category/technology', text: 'Technology News', context: 'streaming platforms' },
+      { url: '/category/world', text: 'World News', context: 'international entertainment' }
+    ]
+  };
+  
+  return linkMap[category] || linkMap.world;
+}
+
 export function generateMetaTags(title, description, keywords, category) {
   return {
     title: title,
