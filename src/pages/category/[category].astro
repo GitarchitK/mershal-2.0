@@ -7,6 +7,18 @@ import Footer from '../../components/Footer.astro';
 import BottomNav from '../../components/BottomNav.astro';
 import { adminDb } from '../../lib/firebase-admin';
 
+interface Article {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  featuredImage: string;
+  category: string;
+  status: string;
+  publishedAt: any;
+  readingTime: number;
+}
+
 const { category } = Astro.params;
 
 const validCategories = ['india', 'politics', 'sports', 'entertainment', 'business', 'technology', 'ipl', 'world'];
@@ -17,7 +29,7 @@ if (!category || !validCategories.includes(category.toLowerCase())) {
 
 const categoryName = category.charAt(0).toUpperCase() + category.slice(1);
 
-let articles: any[] = [];
+let articles: Article[] = [];
 
 if (adminDb) {
   try {
@@ -33,7 +45,20 @@ if (adminDb) {
     console.log(`Found ${snapshot.size} articles for category: ${category}`);
     
     // Get articles and sort them manually by publishedAt
-    const articlesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const articlesData: Article[] = snapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        title: data.title || '',
+        slug: data.slug || '',
+        excerpt: data.excerpt || '',
+        featuredImage: data.featuredImage || '',
+        category: data.category || '',
+        status: data.status || '',
+        publishedAt: data.publishedAt,
+        readingTime: data.readingTime || 0
+      };
+    });
     
     // Sort by publishedAt descending (most recent first)
     articlesData.sort((a, b) => {
@@ -54,7 +79,20 @@ if (adminDb) {
         .limit(30)
         .get();
       
-      const mappedArticles = fallbackSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const mappedArticles: Article[] = fallbackSnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          title: data.title || '',
+          slug: data.slug || '',
+          excerpt: data.excerpt || '',
+          featuredImage: data.featuredImage || '',
+          category: data.category || '',
+          status: data.status || '',
+          publishedAt: data.publishedAt,
+          readingTime: data.readingTime || 0
+        };
+      });
       
       // Filter and sort
       articles = mappedArticles
