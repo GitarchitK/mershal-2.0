@@ -1,5 +1,7 @@
 # Mershal News Portal
 
+*Last updated: March 17, 2026*
+
 A modern news portal built with Astro SSR and Firebase backend.
 
 ## Features

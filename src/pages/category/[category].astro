@@ -9,7 +9,7 @@ import { adminDb } from '../../lib/firebase-admin';
 
 const { category } = Astro.params;
 
-const validCategories = ['usa', 'canada', 'australia', 'technology', 'business', 'politics', 'world', 'entertainment', 'sports'];
+const validCategories = ['sports', 'technology', 'business', 'politics', 'entertainment', 'world', 'ipl', 'cricket'];
 
 if (!category || !validCategories.includes(category.toLowerCase())) {
   return Astro.redirect('/404');

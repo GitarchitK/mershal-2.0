@@ -54,16 +54,14 @@ export const config = {
     schedulerInterval: 30, // minutes
   },
 
-  // Categories for international audience
+  // Categories
   categories: [
-    'usa',
-    'canada', 
-    'australia',
+    'sports',
     'technology',
     'business',
     'politics',
+    'entertainment',
     'world',
-    'entertainment'
   ],
 
   // IPL Configuration

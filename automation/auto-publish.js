@@ -2,7 +2,7 @@
 
 import dotenv from 'dotenv';
 import { generateArticle } from './utils/ai-generator.js';
-import { savePost, getFirestore } from './utils/firebase.js';
+import { savePost } from './utils/firebase.js';
 import { triggerDeployment } from './utils/deployment.js';
 import { submitUrlToGoogle } from './utils/indexing.js';
 import { config } from './config.js';
@@ -10,39 +10,13 @@ import { allTopics, getRandomTopics } from './topics.js';
 
 dotenv.config();
 
-async function getNextTopic() {
-  const db = getFirestore();
-  
-  // Try to get topic from Firestore first
-  try {
-    const snapshot = await db.collection('topicQueue')
-      .orderBy('createdAt', 'asc')
-      .limit(1)
-      .get();
-    
-    if (!snapshot.empty) {
-      const doc = snapshot.docs[0];
-      const topicData = doc.data();
-      const topicId = doc.id;
-      
-      // Delete from queue after getting
-      await doc.ref.delete();
-      
-      console.log(`📱 Mobile app topic: ${topicData.topic}`);
-      return { topic: topicData.topic, category: topicData.category };
-    }
-  } catch (error) {
-    console.log('No topics in Firestore, using local topics...');
-  }
-  
-  // Fall back to local topics
-  return getRandomTopics(1)[0];
-}
+// Use custom topics from topics.js
+const trendingTopics = allTopics;
 
 async function publishArticle() {
   try {
-    // Get next topic (from mobile app or local)
-    const randomTopic = await getNextTopic();
+    // Pick random topic from your custom topics
+    const randomTopic = getRandomTopics(1)[0];
     
     console.log(`\n📝 Generating article about: ${randomTopic.topic}`);
     console.log(`   Category: ${randomTopic.category}\n`);

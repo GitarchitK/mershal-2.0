@@ -31,17 +31,11 @@ export const GET: APIRoute = async () => {
         .orderBy('publishedAt', 'desc')
         .get();
       
-      posts = snapshot.docs.map(doc => {
-        const data = doc.data();
-        return {
-          slug: data.slug,
-          title: data.title,
-          publishedAt: data.publishedAt ? new Date(data.publishedAt) : new Date(),
-          language: data.language || 'en',
-          country: data.country || 'US',
-          category: data.category,
-        };
-      });
+      posts = snapshot.docs.map(doc => ({
+        slug: doc.data().slug,
+        title: doc.data().title,
+        publishedAt: doc.data().publishedAt?.toDate?.() || new Date(),
+      }));
     } catch (error) {
       console.error('Error fetching posts for news sitemap:', error);
     }
@@ -59,16 +53,11 @@ export const GET: APIRoute = async () => {
     <news:news>
       <news:publication>
         <news:name>${siteName}</news:name>
-        <news:language>${post.language}</news:language>
+        <news:language>en</news:language>
       </news:publication>
       <news:publication_date>${post.publishedAt.toISOString()}</news:publication_date>
       <news:title>${escapeXml(post.title)}</news:title>
-      <news:genres>PressRelease, Blog</news:genres>
-      <news:keywords>${post.category}</news:keywords>
     </news:news>
-    <lastmod>${post.publishedAt.toISOString()}</lastmod>
-    <changefreq>never</changefreq>
-    <priority>1.0</priority>
   </url>
 `;
   });

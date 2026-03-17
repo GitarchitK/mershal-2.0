@@ -3,18 +3,18 @@ import { getCurrentWeather, getWeatherEmoji } from '../lib/weather';
 
 const categories = [
   { name: 'Home', slug: '/' },
-  { name: 'USA', slug: '/category/usa' },
-  { name: 'Canada', slug: '/category/canada' },
-  { name: 'Australia', slug: '/category/australia' },
-  { name: 'Global', slug: '/category/world' },
+  { name: 'IPL', slug: '/ipl' },
+  { name: 'Kolkata', slug: '/category/kolkata' },
+  { name: 'Bangladesh', slug: '/category/bangladesh' },
+  { name: 'Sports', slug: '/category/sports' },
   { name: 'Technology', slug: '/category/technology' },
   { name: 'Business', slug: '/category/business' },
-  { name: 'Politics', slug: '/category/politics' }
+  { name: 'Entertainment', slug: '/category/entertainment' }
 ];
 
-// Fetch weather data for international audience
-const weatherData = await getCurrentWeather('New York');
-const currentTemp = weatherData?.current.temp_c || 22;
+// Fetch weather data
+const weatherData = await getCurrentWeather('Kolkata');
+const currentTemp = weatherData?.current.temp_c || 25;
 const weatherEmoji = weatherData ? getWeatherEmoji(weatherData.current.condition.text) : '🌤️';
 ---
 
@@ -43,7 +43,7 @@ const weatherEmoji = weatherData ? getWeatherEmoji(weatherData.current.condition
         <div class="flex items-center gap-1 md:gap-2 text-gray-700">
           <span class="text-lg md:text-2xl">{weatherEmoji}</span>
           <span id="temperature" class="font-medium">{currentTemp}°C</span>
-          <span class="text-gray-500 text-xs hidden md:inline">New York</span>
+          <span class="text-gray-500 text-xs hidden md:inline">Kolkata</span>
         </div>
       </div>
     </div>
@@ -65,9 +65,8 @@ const weatherEmoji = weatherData ? getWeatherEmoji(weatherData.current.condition
       <div class="w-8 lg:hidden"></div>
       
       <a href="/" class="flex items-center gap-2">
-        <img src="/logo.svg" alt="Mershal" class="hidden md:block h-10 lg:h-12" />
-        <img src="/logo-mobile.svg" alt="Mershal" class="md:hidden h-8" />
-        <span class="text-xs text-gray-500 hidden lg:block">by Navroll Studio</span>
+        <img src="/logo.svg" alt="Mershal" class="h-10 md:h-12" />
+        <span class="text-xs text-gray-500 hidden md:block">by Navroll Studio</span>
       </a>
       
       <div class="flex items-center gap-3">
