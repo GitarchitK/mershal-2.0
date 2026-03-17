@@ -33,10 +33,10 @@ if (adminDb) {
     console.log(`Found ${snapshot.size} articles for category: ${category}`);
     
     // Get articles and sort them manually by publishedAt
-    let articlesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as any[];
+    const articlesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     
     // Sort by publishedAt descending (most recent first)
-    articlesData.sort((a: any, b: any) => {
+    articlesData.sort((a, b) => {
       const aTime = a.publishedAt?.toDate?.() || new Date(0);
       const bTime = b.publishedAt?.toDate?.() || new Date(0);
       return bTime.getTime() - aTime.getTime();
@@ -54,10 +54,12 @@ if (adminDb) {
         .limit(30)
         .get();
       
-      articles = fallbackSnapshot.docs
-        .map(doc => ({ id: doc.id, ...doc.data() })) as any[]
-        .filter((article: any) => article.status === 'published')
-        .sort((a: any, b: any) => {
+      const mappedArticles = fallbackSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      
+      // Filter and sort
+      articles = mappedArticles
+        .filter(article => article.status === 'published')
+        .sort((a, b) => {
           const aTime = a.publishedAt?.toDate?.() || new Date(0);
           const bTime = b.publishedAt?.toDate?.() || new Date(0);
           return bTime.getTime() - aTime.getTime();
