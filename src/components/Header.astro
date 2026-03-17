@@ -65,8 +65,9 @@ const weatherEmoji = weatherData ? getWeatherEmoji(weatherData.current.condition
       <div class="w-8 lg:hidden"></div>
       
       <a href="/" class="flex items-center gap-2">
-        <img src="/logo.svg" alt="Mershal" class="h-10 md:h-12" />
-        <span class="text-xs text-gray-500 hidden md:block">by Navroll Studio</span>
+        <img src="/logo.svg" alt="Mershal" class="hidden md:block h-10 lg:h-12" />
+        <img src="/logo-mobile.svg" alt="Mershal" class="md:hidden h-8" />
+        <span class="text-xs text-gray-500 hidden lg:block">by Navroll Studio</span>
       </a>
       
       <div class="flex items-center gap-3">
