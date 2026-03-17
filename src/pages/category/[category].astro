@@ -9,7 +9,7 @@ import { adminDb } from '../../lib/firebase-admin';
 
 const { category } = Astro.params;
 
-const validCategories = ['india', 'politics', 'sports', 'entertainment', 'business', 'technology', 'ipl'];
+const validCategories = ['india', 'politics', 'sports', 'entertainment', 'business', 'technology', 'ipl', 'world'];
 
 if (!category || !validCategories.includes(category.toLowerCase())) {
   return Astro.redirect('/404');
@@ -21,13 +21,15 @@ let articles: any[] = [];
 
 if (adminDb) {
   try {
+    console.log(`Fetching articles for category: "${category}"`);
     const snapshot = await adminDb.collection('posts')
-      .where('category', '==', category)
+      .where('category', '==', category.toLowerCase())
       .where('status', '==', 'published')
       .orderBy('publishedAt', 'desc')
       .limit(30)
       .get();
     
+    console.log(`Found ${snapshot.size} articles for category: ${category}`);
     articles = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
   } catch (error) {
     console.error('Error fetching articles:', error);
