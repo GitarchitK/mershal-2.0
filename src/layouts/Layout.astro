@@ -15,6 +15,24 @@ const { title, description = 'Mershal - Your trusted news source' } = Astro.prop
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="Mershal Editorial Team" />
+    <meta name="language" content="English" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://mershal.in" />
+    <meta property="og:title" content={`${title} | Mershal`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content="https://mershal.in/favicon.svg" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://mershal.in" />
+    <meta property="twitter:title" content={`${title} | Mershal`} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content="https://mershal.in/favicon.svg" />
+    
     <title>{title} | Mershal</title>
     <!-- Favicon with cache busting -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=3" />
@@ -22,6 +40,35 @@ const { title, description = 'Mershal - Your trusted news source' } = Astro.prop
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "NewsMediaOrganization",
+      "name": "Mershal",
+      "url": "https://mershal.in",
+      "logo": "https://mershal.in/favicon.svg",
+      "description": "Your trusted source for breaking news, sports, technology, and entertainment updates",
+      "sameAs": [
+        "https://facebook.com/mershal",
+        "https://twitter.com/mershal",
+        "https://instagram.com/mershal"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+91-98765-43210",
+        "contactType": "customer service",
+        "email": "contact@mershal.in"
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Kolkata",
+        "addressRegion": "West Bengal",
+        "addressCountry": "India"
+      }
+    }
+    </script>
   </head>
   <body class="bg-gray-100">
     <slot />

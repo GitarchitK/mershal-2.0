@@ -11,6 +11,16 @@ Allow: /
 Sitemap: https://mershal.in/sitemap.xml
 Sitemap: https://mershal.in/news-sitemap.xml
 
+# AdSense crawlers
+User-agent: Mediapartners-Google
+Allow: /
+
+User-agent: AdsBot-Google
+Allow: /
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1
+
 # Disallow admin/private areas (if any)
 Disallow: /api/
 `;
