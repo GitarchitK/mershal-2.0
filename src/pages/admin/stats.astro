@@ -30,8 +30,8 @@ try {
   const topicsSnap = await adminDb.collection('topicQueue').get();
   stats.totalTopics = topicsSnap.size;
   
-  // Articles by category
-  const categories = ['sports', 'technology', 'business', 'politics', 'entertainment', 'world', 'ipl'];
+  // Articles by category for international audience
+  const categories = ['usa', 'canada', 'australia', 'technology', 'business', 'politics', 'world', 'entertainment'];
   for (const cat of categories) {
     const catSnap = await adminDb.collection('posts').where('category', '==', cat).get();
     stats.categories[cat] = catSnap.size;

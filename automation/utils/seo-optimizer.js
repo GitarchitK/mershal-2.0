@@ -10,13 +10,16 @@ export function generateSEOKeywords(topic, category) {
     `${topic} update`
   ];
   
-  // Location-based keywords for Indian audience
+  // Location-based keywords for international audience
   const locationKeywords = [
-    `${topic} India`,
-    `${topic} Mumbai`,
-    `${topic} Delhi`,
-    `${topic} Kolkata`,
-    `${topic} Bangalore`
+    `${topic} USA`,
+    `${topic} United States`,
+    `${topic} Canada`,
+    `${topic} Australia`,
+    `${topic} UK`,
+    `${topic} global`,
+    `${topic} international`,
+    `${topic} worldwide`
   ];
   
   // Category-specific keywords
