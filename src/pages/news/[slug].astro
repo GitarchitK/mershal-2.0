@@ -80,7 +80,7 @@ const structuredData = {
 
 <Layout title={article.seoTitle || article.title} description={article.seoDescription || article.excerpt}>
   <!-- Google News Structured Data -->
-  <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(structuredData)}></script>
   
   <Header />
   
