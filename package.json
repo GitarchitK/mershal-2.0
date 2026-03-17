@@ -18,7 +18,8 @@
     "test:indexing": "node automation/test-indexing.js",
     "update:thumbnails": "node scripts/update-thumbnails.js",
     "reindex:all": "node scripts/reindex-all-articles.js",
-    "debug:categories": "node scripts/debug-categories.js"
+    "debug:categories": "node scripts/debug-categories.js",
+    "test:category": "node scripts/test-category-query.js"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",

@@ -22,17 +22,51 @@ let articles: any[] = [];
 if (adminDb) {
   try {
     console.log(`Fetching articles for category: "${category}"`);
+    
+    // First try with just category and status filters (no orderBy to avoid index requirement)
     const snapshot = await adminDb.collection('posts')
       .where('category', '==', category.toLowerCase())
       .where('status', '==', 'published')
-      .orderBy('publishedAt', 'desc')
       .limit(30)
       .get();
     
     console.log(`Found ${snapshot.size} articles for category: ${category}`);
-    articles = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    
+    // Get articles and sort them manually by publishedAt
+    let articlesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    
+    // Sort by publishedAt descending (most recent first)
+    articlesData.sort((a, b) => {
+      const aTime = a.publishedAt?.toDate?.() || new Date(0);
+      const bTime = b.publishedAt?.toDate?.() || new Date(0);
+      return bTime.getTime() - aTime.getTime();
+    });
+    
+    articles = articlesData;
   } catch (error) {
     console.error('Error fetching articles:', error);
+    
+    // Fallback: try without status filter if the above fails
+    try {
+      console.log('Trying fallback query without status filter...');
+      const fallbackSnapshot = await adminDb.collection('posts')
+        .where('category', '==', category.toLowerCase())
+        .limit(30)
+        .get();
+      
+      articles = fallbackSnapshot.docs
+        .map(doc => ({ id: doc.id, ...doc.data() }))
+        .filter(article => article.status === 'published')
+        .sort((a, b) => {
+          const aTime = a.publishedAt?.toDate?.() || new Date(0);
+          const bTime = b.publishedAt?.toDate?.() || new Date(0);
+          return bTime.getTime() - aTime.getTime();
+        });
+        
+      console.log(`Fallback found ${articles.length} articles`);
+    } catch (fallbackError) {
+      console.error('Fallback query also failed:', fallbackError);
+    }
   }
 }
 ---
