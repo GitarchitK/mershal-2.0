@@ -1,0 +1,164 @@
+---
+export const prerender = false;
+
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import BottomNav from '../components/BottomNav.astro';
+---
+
+<Layout title="Cookie Policy" description="Mershal Cookie Policy - Learn about how we use cookies and similar technologies">
+  <Header />
+  
+  <main class="container mx-auto px-4 py-8 pb-20 md:pb-8">
+    <div class="max-w-4xl mx-auto">
+      <h1 class="text-4xl font-bold text-gray-900 mb-8">Cookie Policy</h1>
+      
+      <div class="bg-blue-50 border-l-4 border-blue-500 p-6 mb-8">
+        <p class="text-blue-800">
+          <strong>Last updated:</strong> March 17, 2026
+        </p>
+      </div>
+
+      <div class="prose prose-lg max-w-none">
+        <h2>What are Cookies?</h2>
+        <p>Cookies are small text files that are placed on your computer or mobile device when you visit a website. They are widely used to make websites work more efficiently and provide information to website owners.</p>
+
+        <h2>How We Use Cookies</h2>
+        <p>Mershal uses cookies to:</p>
+        <ul>
+          <li>Ensure our website functions properly</li>
+          <li>Remember your preferences and settings</li>
+          <li>Analyze how visitors use our website</li>
+          <li>Provide personalized content and advertisements</li>
+          <li>Improve our services and user experience</li>
+        </ul>
+
+        <h2>Types of Cookies We Use</h2>
+        
+        <h3>1. Essential Cookies</h3>
+        <p>These cookies are necessary for our website to function properly. They enable basic functions like page navigation and access to secure areas. The website cannot function properly without these cookies.</p>
+        <ul>
+          <li><strong>Session cookies:</strong> Temporary cookies that expire when you close your browser</li>
+          <li><strong>Security cookies:</strong> Help protect against security threats</li>
+          <li><strong>Functionality cookies:</strong> Remember your preferences and settings</li>
+        </ul>
+
+        <h3>2. Analytics Cookies</h3>
+        <p>These cookies help us understand how visitors interact with our website by collecting and reporting information anonymously. We use this information to improve our website.</p>
+        <ul>
+          <li><strong>Google Analytics:</strong> Tracks website usage and visitor behavior</li>
+          <li><strong>Performance cookies:</strong> Monitor website performance and loading times</li>
+        </ul>
+
+        <h3>3. Advertising Cookies</h3>
+        <p>These cookies are used to make advertising messages more relevant to you. They perform functions like preventing the same ad from continuously reappearing and ensuring ads are properly displayed.</p>
+        <ul>
+          <li><strong>Google AdSense:</strong> Delivers personalized advertisements</li>
+          <li><strong>Targeting cookies:</strong> Build a profile of your interests</li>
+          <li><strong>Social media cookies:</strong> Enable sharing on social platforms</li>
+        </ul>
+
+        <h2>Third-Party Cookies</h2>
+        <p>We may allow third-party companies to place cookies on our website for the following purposes:</p>
+        <ul>
+          <li><strong>Google:</strong> Analytics and advertising services</li>
+          <li><strong>Social Media Platforms:</strong> Sharing and integration features</li>
+          <li><strong>Advertising Partners:</strong> Relevant ad delivery</li>
+        </ul>
+
+        <h2>Managing Your Cookie Preferences</h2>
+        <p>You have several options for managing cookies:</p>
+        
+        <h3>Cookie Consent Banner</h3>
+        <p>When you first visit our website, you'll see a cookie consent banner. You can:</p>
+        <ul>
+          <li>Accept all cookies</li>
+          <li>Decline non-essential cookies</li>
+          <li>Customize your preferences</li>
+        </ul>
+
+        <h3>Browser Settings</h3>
+        <p>You can control cookies through your browser settings:</p>
+        <ul>
+          <li><strong>Chrome:</strong> Settings > Privacy and security > Cookies and other site data</li>
+          <li><strong>Firefox:</strong> Options > Privacy & Security > Cookies and Site Data</li>
+          <li><strong>Safari:</strong> Preferences > Privacy > Cookies and website data</li>
+          <li><strong>Edge:</strong> Settings > Cookies and site permissions</li>
+        </ul>
+
+        <h2>Impact of Disabling Cookies</h2>
+        <p>If you choose to disable cookies, some features of our website may not function properly:</p>
+        <ul>
+          <li>Personalized content may not be available</li>
+          <li>Your preferences may not be remembered</li>
+          <li>Some interactive features may not work</li>
+          <li>Analytics data may not be collected</li>
+        </ul>
+
+        <h2>Cookie Retention</h2>
+        <p>Different cookies have different retention periods:</p>
+        <ul>
+          <li><strong>Session cookies:</strong> Deleted when you close your browser</li>
+          <li><strong>Persistent cookies:</strong> Remain for a set period (typically 1-2 years)</li>
+          <li><strong>Analytics cookies:</strong> Usually retained for 2 years</li>
+          <li><strong>Advertising cookies:</strong> Typically retained for 30 days to 2 years</li>
+        </ul>
+
+        <h2>Updates to This Policy</h2>
+        <p>We may update this cookie policy from time to time to reflect changes in our practices or for other operational, legal, or regulatory reasons.</p>
+
+        <h2>Contact Us</h2>
+        <p>If you have any questions about our use of cookies, please contact us at:</p>
+        <ul>
+          <li>Email: privacy@mershal.in</li>
+          <li>Address: Kolkata, West Bengal, India</li>
+        </ul>
+      </div>
+    </div>
+  </main>
+  
+  <Footer />
+  <BottomNav />
+</Layout>
+
+<style>
+  .prose h2 {
+    color: #1f2937;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .prose h3 {
+    color: #374151;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .prose p {
+    margin-bottom: 1rem;
+    line-height: 1.7;
+  }
+  
+  .prose ul {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+  }
+  
+  .prose li {
+    margin-bottom: 0.5rem;
+  }
+  
+  .prose a {
+    color: #dc2626;
+    text-decoration: underline;
+  }
+  
+  .prose a:hover {
+    color: #b91c1c;
+  }
+</style>
