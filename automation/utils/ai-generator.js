@@ -405,6 +405,18 @@ Write like Priya Sharma would: confident, insider knowledge, slightly conversati
       author: 'Mershal Editorial Team',
       status: 'published',
       featuredImage,
+      // Google News metadata
+      publishedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      language: 'en',
+      country: 'US', // Primary target for international audience
+      region: 'North America',
+      // Additional SEO metadata
+      articleType: 'news',
+      source: 'Mershal',
+      publisher: 'Mershal News',
+      dateModified: new Date().toISOString(),
+      datePublished: new Date().toISOString(),
     };
   } catch (error) {
     console.error('Error generating article:', error);
@@ -531,6 +543,17 @@ Write 800-1000 words in HTML format.`;
       author: 'Mershal Sports Desk',
       status: 'published',
       featuredImage,
+      // Google News metadata
+      publishedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      language: 'en',
+      country: 'US',
+      region: 'Global',
+      articleType: 'sports',
+      source: 'Mershal',
+      publisher: 'Mershal News',
+      dateModified: new Date().toISOString(),
+      datePublished: new Date().toISOString(),
     };
   } catch (error) {
     console.error('Error generating IPL article:', error);

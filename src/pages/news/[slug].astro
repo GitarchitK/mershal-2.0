@@ -44,10 +44,44 @@ if (!article) {
   return Astro.redirect('/404');
 }
 
-const publishedDate = article.publishedAt?.toDate?.() || new Date();
+const publishedDate = article.publishedAt ? new Date(article.publishedAt) : new Date();
+const updatedDate = article.updatedAt ? new Date(article.updatedAt) : publishedDate;
+
+// Google News structured data
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "NewsArticle",
+  "headline": article.title,
+  "description": article.excerpt,
+  "image": article.featuredImage,
+  "datePublished": publishedDate.toISOString(),
+  "dateModified": updatedDate.toISOString(),
+  "author": {
+    "@type": "Organization",
+    "name": article.author || "Mershal Editorial Team"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Mershal News",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://mershal.in/logo.svg"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": `https://mershal.in/news/${article.slug}`
+  },
+  "articleSection": article.category,
+  "inLanguage": article.language || "en",
+  "spatialCoverage": article.country || "US"
+};
 ---
 
 <Layout title={article.seoTitle || article.title} description={article.seoDescription || article.excerpt}>
+  <!-- Google News Structured Data -->
+  <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  
   <Header />
   
   <main class="bg-gray-50">
