@@ -1,7 +1,7 @@
 ---
 interface Props {
   id: string;
-  slug: string;
+  slug?: string;
   title: string;
   imageUrl: string;
   category?: string;
@@ -11,7 +11,7 @@ interface Props {
 const { id, slug, title, imageUrl, category, featured = false } = Astro.props;
 ---
 
-<a href={`/news/${slug}`} class={`block bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 ${featured ? 'col-span-2' : ''}`}>
+<a href={`/news/${slug || id}`} class={`block bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 ${featured ? 'col-span-2' : ''}`}>
   <div class="relative">
     <img src={imageUrl} alt={title} class={`w-full object-cover ${featured ? 'h-64' : 'h-48'}`} />
     {category && (

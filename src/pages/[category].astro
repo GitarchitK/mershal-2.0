@@ -87,6 +87,7 @@ if (adminDb) {
       {articles.map(article => (
         <NewsCard 
           id={article.id}
+          slug={article.slug}
           title={article.title}
           imageUrl={article.imageUrl}
           category={article.category}
