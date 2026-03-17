@@ -113,6 +113,9 @@
 <script>
   // Cookie consent functionality
   class CookieConsent {
+    consentBanner: HTMLElement | null;
+    modal: HTMLElement | null;
+    
     constructor() {
       this.consentBanner = document.getElementById('cookie-consent');
       this.modal = document.getElementById('cookie-modal');
@@ -134,38 +137,38 @@
       document.getElementById('accept-all-modal')?.addEventListener('click', () => this.acceptAll());
       
       // Close modal on backdrop click
-      this.modal?.addEventListener('click', (e) => {
+      this.modal?.addEventListener('click', (e: Event) => {
         if (e.target === this.modal) this.hideModal();
       });
     }
     
-    hasConsent() {
+    hasConsent(): boolean {
       return localStorage.getItem('cookie-consent') !== null;
     }
     
-    showBanner() {
+    showBanner(): void {
       setTimeout(() => {
         this.consentBanner?.classList.remove('translate-y-full');
       }, 1000);
     }
     
-    hideBanner() {
+    hideBanner(): void {
       this.consentBanner?.classList.add('translate-y-full');
     }
     
-    showModal() {
+    showModal(): void {
       this.modal?.classList.remove('hidden');
       this.modal?.classList.add('flex');
       document.body.style.overflow = 'hidden';
     }
     
-    hideModal() {
+    hideModal(): void {
       this.modal?.classList.add('hidden');
       this.modal?.classList.remove('flex');
       document.body.style.overflow = '';
     }
     
-    acceptAll() {
+    acceptAll(): void {
       const consent = {
         essential: true,
         analytics: true,
@@ -179,7 +182,7 @@
       this.loadScripts(consent);
     }
     
-    declineAll() {
+    declineAll(): void {
       const consent = {
         essential: true,
         analytics: false,
@@ -192,9 +195,12 @@
       this.loadScripts(consent);
     }
     
-    savePreferences() {
-      const analyticsChecked = document.getElementById('analytics-cookies')?.checked || false;
-      const advertisingChecked = document.getElementById('advertising-cookies')?.checked || false;
+    savePreferences(): void {
+      const analyticsElement = document.getElementById('analytics-cookies') as HTMLInputElement;
+      const advertisingElement = document.getElementById('advertising-cookies') as HTMLInputElement;
+      
+      const analyticsChecked = analyticsElement?.checked || false;
+      const advertisingChecked = advertisingElement?.checked || false;
       
       const consent = {
         essential: true,
@@ -209,7 +215,7 @@
       this.loadScripts(consent);
     }
     
-    loadScripts(consent) {
+    loadScripts(consent: { essential: boolean; analytics: boolean; advertising: boolean; timestamp: number }): void {
       // Load Google Analytics if analytics consent given
       if (consent.analytics) {
         this.loadGoogleAnalytics();
@@ -221,12 +227,12 @@
       }
     }
     
-    loadGoogleAnalytics() {
+    loadGoogleAnalytics(): void {
       // Add Google Analytics code here when you have GA tracking ID
       console.log('Google Analytics would be loaded here');
     }
     
-    loadGoogleAdsense() {
+    loadGoogleAdsense(): void {
       // Add Google AdSense code here when you have AdSense publisher ID
       console.log('Google AdSense would be loaded here');
     }
