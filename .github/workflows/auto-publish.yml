@@ -41,6 +41,9 @@ jobs:
           UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
         run: |
           # Generate 2 articles per run
+          echo "🔍 Checking indexing configuration..."
+          node automation/test-indexing.js
+          echo "📝 Publishing articles..."
           node automation/auto-publish.js 2
       
       - name: Summary

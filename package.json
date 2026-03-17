@@ -16,7 +16,8 @@
     "setup": "node scripts/setup-automation.js",
     "publish": "node automation/cli.js",
     "test:indexing": "node automation/test-indexing.js",
-    "update:thumbnails": "node scripts/update-thumbnails.js"
+    "update:thumbnails": "node scripts/update-thumbnails.js",
+    "reindex:all": "node scripts/reindex-all-articles.js"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
