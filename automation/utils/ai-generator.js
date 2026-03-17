@@ -307,11 +307,29 @@ FORMAT AS VALID JSON:
 {
   "title": "SEO-optimized headline with primary keyword (55-60 chars)",
   "excerpt": "Compelling meta description with keywords (150-155 chars)",
-  "content": "Full HTML article optimized for Google ranking with proper keyword density",
+  "content": "Full HTML article with professional styling: <h2>Main Headings</h2>, <h3>Subheadings</h3>, <p>paragraphs</p>, <div class='key-point'><p>💡 Key insights</p></div>, <div class='important'><p>⚠️ Important notes</p></div>, <div class='info-box'><p>ℹ️ Additional info</p></div>, <div class='stats-box'><div class='stat'><div class='stat-value'>123</div><div class='stat-label'>Metric</div></div></div>, <blockquote><p>Expert quotes</p><div class='quote-author'>Expert Name, Title</div></blockquote>, <span class='highlight-number'>1</span> for numbered points, <strong>bold emphasis</strong>",
   "seoTitle": "Primary keyword + secondary keyword + 2026 (50-55 chars)",
   "seoDescription": "Search-optimized description with call-to-action (145-155 chars)",
   "tags": ["primary-keyword", "secondary-keyword", "location", "trending-term", "category"]
 }
+
+PROFESSIONAL STYLING ELEMENTS TO USE:
+
+1. **Key Points**: <div class="key-point"><p>💡 Important insight or takeaway</p></div>
+2. **Warnings**: <div class="important"><p>⚠️ Critical information readers must know</p></div>  
+3. **Info Boxes**: <div class="info-box"><p>ℹ️ Additional context or background</p></div>
+4. **Stats Display**: <div class="stats-box"><div class="stat"><div class="stat-value">₹50 Cr</div><div class="stat-label">Investment</div></div><div class="stat"><div class="stat-value">25%</div><div class="stat-label">Growth</div></div></div>
+5. **Expert Quotes**: <blockquote><p>"Quote text here"</p><div class="quote-author">Expert Name, Position</div></blockquote>
+6. **Numbered Highlights**: <span class="highlight-number">1</span> Key point with number
+7. **Timeline Items**: <div class="timeline"><div class="timeline-item"><p>Event description</p></div></div>
+
+USE THESE ELEMENTS STRATEGICALLY:
+- 1-2 key-point boxes per article
+- 1 important/warning box if relevant  
+- 1 stats-box with 2-4 statistics
+- 2-3 expert quotes in blockquotes
+- 3-5 numbered highlights with <span class="highlight-number">
+- Strong emphasis with <strong> tags on important terms
 
 REMEMBER: You're not just writing an article—you're creating a Google-ranking machine. Every word should serve the dual purpose of informing readers and satisfying search algorithms. Make it so good that people can't stop reading and Google can't ignore it.
 
