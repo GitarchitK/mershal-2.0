@@ -56,12 +56,12 @@ export const config = {
 
   // Categories
   categories: [
-    'sports',
-    'technology',
-    'business',
+    'india',
     'politics',
+    'sports',
     'entertainment',
-    'world',
+    'business',
+    'technology',
   ],
 
   // IPL Configuration
