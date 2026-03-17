@@ -3,4 +3,6 @@
   <rect width="32" height="32" fill="#DC2626" rx="6"/>
   <!-- Letter M -->
   <text x="16" y="24" font-family="Arial Black, sans-serif" font-size="20" font-weight="900" fill="white" text-anchor="middle" letter-spacing="-1px">M</text>
+  <!-- Version marker for cache busting -->
+  <rect width="1" height="1" fill="transparent"/>
 </svg>

@@ -1,0 +1,16 @@
+{
+  "name": "Mershal",
+  "short_name": "Mershal",
+  "description": "Your trusted news source",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "theme_color": "#DC2626",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "start_url": "/"
+}
