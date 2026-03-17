@@ -19,8 +19,12 @@ if (config.ai.provider === 'openai' && config.ai.openaiApiKey) {
 function generateSlug(title) {
   return title
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
+    .replace(/[^\w\s-]/g, '') // Remove special characters except spaces and hyphens
+    .trim()
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+    .substring(0, 70) // Limit to 70 characters for SEO
+    .replace(/-$/, ''); // Remove trailing hyphen if any
 }
 
 function calculateReadingTime(wordCount) {
@@ -28,8 +32,12 @@ function calculateReadingTime(wordCount) {
   return Math.ceil(wordCount / wordsPerMinute);
 }
 
+function stripHtml(html) {
+  return html.replace(/<[^>]*>/g, '').replace(/&[^;]+;/g, ' ');
+}
+
 function countWords(text) {
-  return text.trim().split(/\s+/).length;
+  return stripHtml(text).trim().split(/\s+/).filter(word => word.length > 0).length;
 }
 
 async function generateThumbnail(topic, category) {
