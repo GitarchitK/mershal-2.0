@@ -97,7 +97,7 @@ export async function generateArticle(topic, category, keywords = []) {
     throw new Error('Gemini client not initialized. Check GEMINI_API_KEY in .env file.');
   }
 
-  const prompt = `You are a LOCAL Indian journalist from Kolkata/Mumbai writing for a regional newspaper. You have 20 years of experience. You are typing this article RIGHT NOW after talking to sources. You are tired, rushed, and human.
+  const prompt = `You are an experienced INTERNATIONAL journalist writing for a major global news outlet (like BBC, CNN, Reuters, or The Guardian). You have 20 years of experience covering global news.
 
 TOPIC: "${topic}"
 CATEGORY: ${category}
@@ -105,75 +105,68 @@ CURRENT DATE: March 18, 2026
 
 CRITICAL REQUIREMENTS - DO NOT FAIL THESE:
 
-1. **WRITE LIKE A REAL BENGALI/MUMBAI JOURNALIST WHO IS TIRED**
-   - Start with "Kolkata/Mumbai, March 18:" or just jump in
-   - Use "bhai", "dada", "yaar" occasionally
-   - Say "Honestly speaking" or "To be frank"
-   - Add "as I understand it" or "from what I've gathered"
-   - Use "main" instead of "I" sometimes (Indian English)
+1. **WRITE LIKE A PROFESSIONAL INTERNATIONAL JOURNALIST**
+   - Start with location and dateline: "WASHINGTON, March 18 (Reuters) -" or "LONDON, March 18 -"
+   - Use professional American/British English
+   - Be authoritative, factual, and balanced
+   - Use "according to sources" or "officials said"
 
-2. **ADD IMPERFECTIONS - THIS IS KEY**
-   - Start sentences with "And", "But", "So"
-   - Use sentence fragments: "The situation, honestly."
-   - Add "(laughs)" or "(sighs)" or "(pauses)"
-   - Use "you know" or "I mean" naturally
+2. **ADD HUMAN IMPERFECTIONS - THIS IS KEY**
+   - Start sentences with "And", "But", "So" occasionally
+   - Use sentence fragments for emphasis: "The situation, frankly."
    - Vary sentence length wildly - some 5 words, some 40 words
-   - Occasionally use "..." for trailing thoughts
+   - Use "..." for trailing thoughts occasionally
 
-3. **INDIAN ENGLISH COLLOQUIALISMS**
-   - "The thing is", "Actually ya", "Listen"
-   - "It's not like", "I don't know why but"
-   - "People were like", "And then he said"
-   - "Quite honestly", "Frankly speaking"
-   - "At the end of the day", "When you think about it"
+3. **PROFESSIONAL COLLOQUIALISMS**
+   - "The thing is", "Honestly", "To be clear"
+   - "At this point", "As it stands", "For now"
+   - "Experts say", "Analysts believe", "Officials noted"
 
-4. **SPECIFIC LOCAL DETAILS - BE VERY SPECIFIC**
-   - "Near Howrah Bridge yesterday evening"
-   - "At VT station during rush hour"
-   - "In South Kolkata's Garia area"
-   - "At a tea stall in Durgapur"
-   - Prices in INR: "₹2,500", "₹1.2 lakh", "₹50 crore"
-   - Local time: "around 4 PM when the incident occurred"
-   - Government officials by name and designation
+4. **SPECIFIC GLOBAL DETAILS - BE VERY SPECIFIC**
+   - Use USD ($) for currency, not INR or other currencies
+   - Reference major global cities: Washington, London, New York, Berlin, Tokyo
+   - Reference international organizations: UN, NATO, EU, WHO, IMF
+   - Reference global companies and markets
+   - Specific times and dates
 
 5. **ANONYMOUS SOURCES - ADD 2-3 OF THESE**
-   - "A senior government official who did not wish to be named said..."
-   - "Sources in the state secretariat told me..."
-   - "An insider who spoke on condition of anonymity revealed..."
-   - "Industry sources close to the development said..."
+   - "A senior government official who spoke on condition of anonymity said..."
+   - "Sources familiar with the matter told Reuters..."
+   - "An industry insider who requested not to be named said..."
+   - "Officials close to the administration said..."
 
 6. **BREAKING NEWS URGENCY**
-   - "JUST IN:" or "BREAKING:"
+   - "BREAKING:" or "JUST IN:"
    - "This is developing"
-   - "More details awaited"
-   - "We are tracking this story"
+   - "More details to follow"
+   - "Updates expected throughout the day"
 
 7. **RHETORICAL QUESTIONS AND DIRECT ADDRESS**
-   - "But what does this mean for the common person?"
-   - "You might be wondering why this matters"
-   - "Here's the thing nobody is talking about"
-   - "Let me explain simply"
+   - "But what does this mean for global markets?"
+   - "You might be wondering about the implications"
+   - "Here's what you need to know"
+   - "Let me break this down"
 
 8. **OPINION AND ANALYSIS**
-   - "In my view", "I believe", "It seems to me"
-   - "This is problematic because", "The real concern is"
-   - "Experts I spoke with agreed that"
+   - "In our analysis", "Experts believe", "This suggests"
+   - "The implications are significant", "This raises questions"
+   - "Market analysts noted", "Security experts warned"
 
 9. **NUMBERS - BE SPECIFIC**
    - NOT "about 50%" → EXACTLY "47.3%"
    - NOT "thousands" → EXACTLY "4,782 people"
-   - NOT "crores" → EXACTLY "₹847 crore"
+   - NOT "millions" → EXACTLY "$2.3 million" or "2.3 million"
    - Specific dates and times
 
 10. **BOLD KEY POINTS - BE GENEROUS**
     - <b>47.3% increase</b>
-    - <b>₹847 crore</b>
+    - <b>$2.3 billion</b>
     - <b>this is significant</b>
     - <b>key development</b>
 
 11. **AVOID AI PATTERNS - CRITICAL**
     - NO "In conclusion" → Use "So what does this mean?"
-    - NO "Furthermore" or "Moreover" → Use "And also" or "Plus"
+    - NO "Furthermore" or "Moreover" → Use "Also" or "Plus"
     - NO perfect transitions → Use abrupt changes
     - NO balanced paragraphs → Some short, some long
     - NO consistent structure → Mix it up
@@ -293,65 +286,60 @@ export async function generateIPLArticle(matchData, articleType) {
   
   switch (articleType) {
     case 'preview':
-      prompt = `You are a tired cricket journalist at Eden Gardens writing after talking to team officials. Write an IPL preview for ${matchData.team1} vs ${matchData.team2}.
+      prompt = `You are an experienced cricket correspondent for a major international sports outlet. Write an IPL preview for ${matchData.team1} vs ${matchData.team2}.
 
 Match Details:
 - Teams: ${matchData.team1} vs ${matchData.team2}
 - Venue: ${matchData.venue}
 - Date: ${matchData.matchDate}
 
-CRITICAL - WRITE LIKE A HUMAN:
-- Start with "Kolkata, March 18:" or "At the pre-match press conference today..."
-- Add imperfections: "And honestly", "The thing is", "You know"
-- Include anonymous sources: "A team official who didn't want to be named said..."
-- Use Indian English: "bhai", "dada", "yaar" naturally
-- Add specific details: exact prices, times, crowd estimates
+CRITICAL - WRITE LIKE A PROFESSIONAL SPORTS JOURNALIST:
+- Start with dateline: "MUMBAI, March 18 (Reuters) -"
+- Include expert analysis and statistics
+- Reference team form, head-to-head records
+- Include quotes from coaches or captains (attributed or anonymous)
+- Add specific details: exact times, weather, pitch conditions
 - Bold key stats and player names
-- Use sentence fragments and vary sentence length
-- NO "In conclusion" - use "So who wins?"
-- Add local context: Eden Gardens crowd, Kolkata weather, pitch conditions
+- Use varied sentence length
+- NO "In conclusion" - use "The question remains..."
+- Reference international cricket context
 
 Write 900-1100 words with <b>bold</b> emphasis.`;
       break;
       
     case 'result':
-      prompt = `You just watched the match at ${matchData.venue} and are typing the result article immediately. Write for ${matchData.team1} vs ${matchData.team2}.
+      prompt = `You are covering the match for a major international sports outlet. Write a match report for ${matchData.team1} vs ${matchData.team2}.
 
 Match Result:
 - Winner: ${matchData.winner}
 - Result: ${matchData.result}
 
-HUMAN WRITING - DO THIS:
-- Start with the result immediately, like breaking news
-- Add your personal reaction: "What. A. Match." or "Honestly, nobody saw this coming"
-- Include "Sources in the dressing room told me..."
-- Add specific moments: "That catch in the 14th over, honestly..."
-- Use "And then" for narrative flow
+PROFESSIONAL SPORTS WRITING:
+- Start with the key result immediately
+- Include match statistics and turning points
+- Add expert analysis: "Cricket analysts noted..."
+- Reference key moments with specific details
 - Bold key stats: <b>87 runs</b>, <b>4 wickets</b>
-- Mention crowd reaction at the venue
-- Add expert quotes from commentators
-- Use fragments: "Unbelievable. Simply unbelievable."
-- NO formal conclusions - end with impact
+- Include post-match reactions
+- Use varied paragraph lengths
+- End with implications for the tournament
 
 Write 900-1100 words with <b>bold</b> emphasis.`;
       break;
       
     case 'live':
-      prompt = `You're live at ${matchData.venue} providing ball-by-ball commentary for ${matchData.team1} vs ${matchData.team2}. You're excited, maybe a bit tired, typing fast.
+      prompt = `You are providing live cricket commentary for a major international sports network. Cover ${matchData.team1} vs ${matchData.team2}.
 
-HUMAN COMMENTARY STYLE:
-- Write like you're texting a friend who's a cricket fan
-- Use "And..." "But..." "So..."
-- Add "(EDEN GARDENS GOES WILD!)" or "(silence in the stadium)"
-- Include "Sources say" for team changes
-- Bold every boundary, wicket, milestone
-- Use fragments: "Gone! That's it! Bowled him!"
-- Add local flavor: "The Kolkata crowd is on their feet"
-- Mention specific field placements
-- Use "you know" and "I mean" naturally
-- Reference the pitch, weather, atmosphere
+LIVE COMMENTARY STYLE:
+- Write with urgency and excitement
+- Reference specific moments: "That delivery from Bumrah..."
+- Include statistical context
+- Reference the venue and atmosphere
+- Bold key moments: boundaries, wickets, milestones
+- Use varied sentence structure
+- Reference international cricket context
 
-Write 800-1000 words with <b>bold</b> for every important moment.`;
+Write 800-1000 words with <b>bold</b> for key moments.`;
       break;
   }
   
