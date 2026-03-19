@@ -97,79 +97,80 @@ export async function generateArticle(topic, category, keywords = []) {
     throw new Error('Gemini client not initialized. Check GEMINI_API_KEY in .env file.');
   }
 
-  const prompt = `You are an experienced INTERNATIONAL journalist writing for a major global news outlet (like BBC, CNN, Reuters, or The Guardian). You have 20 years of experience covering global news.
+  const prompt = `You are a senior correspondent for a prestigious international news agency (Al Jazeera, The Times, BBC, Reuters style). Write a comprehensive news article with the authority and depth of world-class journalism.
 
 TOPIC: "${topic}"
 CATEGORY: ${category}
 CURRENT DATE: March 18, 2026
 
-CRITICAL REQUIREMENTS - DO NOT FAIL THESE:
+WRITING STYLE - EMULATE TOP INTERNATIONAL NEWS OUTLETS:
 
-1. **WRITE LIKE A PROFESSIONAL INTERNATIONAL JOURNALIST**
-   - Start with location and dateline: "WASHINGTON, March 18 (Reuters) -" or "LONDON, March 18 -"
-   - Use professional American/British English
-   - Be authoritative, factual, and balanced
-   - Use "according to sources" or "officials said"
+1. **OPENING STRUCTURE (Al Jazeera/Reuters Style)**
+   - Strong dateline: "WASHINGTON, March 18 (Reuters) -" or "LONDON -"
+   - Lead paragraph: Most critical information in first 25-30 words
+   - Second paragraph: Key context or immediate impact
+   - Third paragraph: Attribution to sources or officials
 
-2. **ADD HUMAN IMPERFECTIONS - THIS IS KEY**
-   - Start sentences with "And", "But", "So" occasionally
-   - Use sentence fragments for emphasis: "The situation, frankly."
-   - Vary sentence length wildly - some 5 words, some 40 words
-   - Use "..." for trailing thoughts occasionally
+2. **AUTHORITATIVE TONE (BBC/The Times Style)**
+   - Objective, balanced, factual reporting
+   - Multiple perspectives when relevant
+   - Expert analysis woven throughout
+   - Historical context where appropriate
+   - Clear cause-and-effect relationships
 
-3. **PROFESSIONAL COLLOQUIALISMS**
-   - "The thing is", "Honestly", "To be clear"
-   - "At this point", "As it stands", "For now"
-   - "Experts say", "Analysts believe", "Officials noted"
+3. **SOURCE ATTRIBUTION (Professional Standards)**
+   - "According to officials familiar with the matter..."
+   - "A senior administration official, speaking on condition of anonymity, said..."
+   - "Documents reviewed by this publication show..."
+   - "Industry analysts told reporters..."
+   - Mix attributed and anonymous sources naturally
 
-4. **SPECIFIC GLOBAL DETAILS - BE VERY SPECIFIC**
-   - Use USD ($) for currency, not INR or other currencies
-   - Reference major global cities: Washington, London, New York, Berlin, Tokyo
-   - Reference international organizations: UN, NATO, EU, WHO, IMF
-   - Reference global companies and markets
-   - Specific times and dates
+4. **GLOBAL CONTEXT (International Perspective)**
+   - Reference USD ($) for all financial figures
+   - Cite international organizations: UN, NATO, EU, WHO, World Bank, IMF
+   - Reference major global cities and capitals
+   - Include geopolitical implications
+   - Compare with similar situations in other countries
 
-5. **ANONYMOUS SOURCES - ADD 2-3 OF THESE**
-   - "A senior government official who spoke on condition of anonymity said..."
-   - "Sources familiar with the matter told Reuters..."
-   - "An industry insider who requested not to be named said..."
-   - "Officials close to the administration said..."
+5. **DATA AND SPECIFICITY**
+   - Exact percentages: "47.3%" not "about 47%"
+   - Precise figures: "4,782 people" not "thousands"
+   - Specific dollar amounts: "$2.3 billion" not "billions"
+   - Exact dates and times with time zones when relevant
+   - Statistical context: year-over-year comparisons
 
-6. **BREAKING NEWS URGENCY**
-   - "BREAKING:" or "JUST IN:"
-   - "This is developing"
-   - "More details to follow"
-   - "Updates expected throughout the day"
+6. **PARAGRAPH STRUCTURE**
+   - Vary length: Some 2-3 sentences, others 4-5
+   - Each paragraph advances the story
+   - Use transitional phrases sparingly
+   - Occasional single-sentence paragraphs for impact
+   - Build narrative momentum
 
-7. **RHETORICAL QUESTIONS AND DIRECT ADDRESS**
-   - "But what does this mean for global markets?"
-   - "You might be wondering about the implications"
-   - "Here's what you need to know"
-   - "Let me break this down"
+7. **HUMAN ELEMENTS (Subtle)**
+   - Occasional sentence fragments for emphasis
+   - Strategic use of "And" or "But" to start sentences
+   - Vary sentence length (10-40 words)
+   - Natural flow, not robotic
+   - Conversational authority
 
-8. **OPINION AND ANALYSIS**
-   - "In our analysis", "Experts believe", "This suggests"
-   - "The implications are significant", "This raises questions"
-   - "Market analysts noted", "Security experts warned"
+8. **BOLD FORMATTING (Strategic Emphasis)**
+   - <b>Key statistics and figures</b>
+   - <b>Important names and titles</b>
+   - <b>Critical developments</b>
+   - <b>Breaking news elements</b>
 
-9. **NUMBERS - BE SPECIFIC**
-   - NOT "about 50%" → EXACTLY "47.3%"
-   - NOT "thousands" → EXACTLY "4,782 people"
-   - NOT "millions" → EXACTLY "$2.3 million" or "2.3 million"
-   - Specific dates and times
+9. **AVOID AI PATTERNS**
+   - NO "In conclusion" or "To sum up"
+   - NO "Furthermore" or "Moreover" - use "Also" or natural transitions
+   - NO perfectly balanced sections
+   - NO repetitive sentence structures
+   - NO obvious list formatting in prose
 
-10. **BOLD KEY POINTS - BE GENEROUS**
-    - <b>47.3% increase</b>
-    - <b>$2.3 billion</b>
-    - <b>this is significant</b>
-    - <b>key development</b>
-
-11. **AVOID AI PATTERNS - CRITICAL**
-    - NO "In conclusion" → Use "So what does this mean?"
-    - NO "Furthermore" or "Moreover" → Use "Also" or "Plus"
-    - NO perfect transitions → Use abrupt changes
-    - NO balanced paragraphs → Some short, some long
-    - NO consistent structure → Mix it up
+10. **CLOSING (Professional Standard)**
+    - Forward-looking statement or implications
+    - Unanswered questions or ongoing developments
+    - Expert prediction or analysis
+    - Call to action or "what to watch"
 
 12. **CONTEXT - ADD LOCAL CULTURE**
     - Mention local festivals, events
@@ -196,22 +197,27 @@ CRITICAL REQUIREMENTS - DO NOT FAIL THESE:
 STRUCTURE YOUR ARTICLE:
 - Lede: Who, what, when, where in first 2-3 sentences
 - Quote from anonymous source in paragraph 2
-- Background and context
-- Expert analysis
-- Future implications
-- Brief closing thought
+11. **ARTICLE STRUCTURE (1000-1200 words)**
+    - Lead paragraph (25-30 words)
+    - Context paragraph
+    - Source quotes and attribution
+    - Data and statistics
+    - Expert analysis
+    - Historical context or comparison
+    - Implications and impact
+    - Forward-looking conclusion
 
 FORMAT AS JSON:
 {
-  "title": "Breaking: [City] - [Main news in 60-70 chars]",
-  "excerpt": "150-160 char summary that makes readers click",
-  "content": "Full HTML with <b>bold</b>, <span class='highlight-number'>1</span>, human imperfections, authentic voice",
-  "seoTitle": "50-60 chars SEO title",
-  "seoDescription": "150-160 chars meta description",
-  "tags": ["primary", "secondary", "topic", "category", "location"]
+  "title": "Compelling headline in active voice (60-70 chars)",
+  "excerpt": "Engaging summary highlighting key development (150-160 chars)",
+  "content": "Full HTML article with <b>bold emphasis</b> on key points, professional journalism standards, varied paragraph lengths",
+  "seoTitle": "SEO-optimized title with keywords (50-60 chars)",
+  "seoDescription": "Meta description with key information (150-160 chars)",
+  "tags": ["primary-keyword", "secondary-keyword", "topic", "category", "location"]
 }
 
-REMEMBER: You are a tired, rushed Indian journalist. Write like one. Imperfect. Urgent. Specific. Human.`;
+REMEMBER: Write like Al Jazeera, The Times, BBC, or Reuters. Authoritative. Balanced. Global perspective. Professional standards.`;
 
   try {
     let articleData;
