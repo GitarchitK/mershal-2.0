@@ -23,7 +23,7 @@ export const config = {
     provider: 'openai', // 'gemini' or 'openai'
     geminiApiKey: process.env.GEMINI_API_KEY,
     openaiApiKey: process.env.OPENAI_API_KEY,
-    model: 'gpt-4o-mini', // or 'gpt-4o' for better quality
+    model: 'gpt-4o', // Using GPT-4o for professional quality articles
   },
 
   // Firebase Configuration
