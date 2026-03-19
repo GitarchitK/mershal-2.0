@@ -7,24 +7,43 @@ import { triggerDeployment } from './utils/deployment.js';
 import { submitUrlToGoogle } from './utils/indexing.js';
 import { config } from './config.js';
 import { allTopics, getRandomTopics } from './topics.js';
+import { getTrendingTopics } from './utils/trending.js';
 
 dotenv.config();
 
-// Use custom topics from topics.js
-const trendingTopics = allTopics;
-
-async function publishArticle() {
+async function publishArticle(useTrending = false) {
   try {
-    // Pick random topic from your custom topics
-    const randomTopic = getRandomTopics(1)[0];
+    let selectedTopic;
     
-    console.log(`\n📝 Generating article about: ${randomTopic.topic}`);
-    console.log(`   Category: ${randomTopic.category}\n`);
+    if (useTrending && process.env.NEWS_API_KEY) {
+      // Fetch trending topics from top news sources
+      console.log('📰 Fetching trending topics from international news sources...\n');
+      const trendingTopics = await getTrendingTopics();
+      
+      if (trendingTopics.length > 0) {
+        // Pick a random trending topic
+        selectedTopic = trendingTopics[Math.floor(Math.random() * trendingTopics.length)];
+        console.log(`✓ Selected trending topic from ${selectedTopic.source}`);
+      } else {
+        console.log('⚠️  No trending topics found, using custom topics');
+        selectedTopic = getRandomTopics(1)[0];
+      }
+    } else {
+      // Use custom topics from topics.js
+      selectedTopic = getRandomTopics(1)[0];
+    }
+    
+    console.log(`\n📝 Generating article about: ${selectedTopic.topic}`);
+    console.log(`   Category: ${selectedTopic.category}`);
+    if (selectedTopic.source) {
+      console.log(`   Source: ${selectedTopic.source}`);
+    }
+    console.log();
     
     // Generate article
     const article = await generateArticle(
-      randomTopic.topic,
-      randomTopic.category,
+      selectedTopic.topic,
+      selectedTopic.category,
       []
     );
     
@@ -60,14 +79,20 @@ async function publishArticle() {
 
 async function main() {
   const count = parseInt(process.argv[2]) || 1;
+  const useTrending = process.argv.includes('--trending') || process.env.USE_TRENDING === 'true';
   
-  console.log(`\n🤖 Auto-Publishing ${count} article(s)...\n`);
+  console.log(`\n🤖 Auto-Publishing ${count} article(s)...`);
+  if (useTrending) {
+    console.log('📰 Using trending topics from top news sources\n');
+  } else {
+    console.log('📋 Using custom topics\n');
+  }
   
   let published = 0;
   
   for (let i = 0; i < count; i++) {
     console.log(`\n--- Article ${i + 1} of ${count} ---`);
-    const success = await publishArticle();
+    const success = await publishArticle(useTrending);
     if (success) published++;
     
     // Wait 10 seconds between articles

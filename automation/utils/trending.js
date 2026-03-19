@@ -1,32 +1,94 @@
 import fetch from 'node-fetch';
 
+// Top international news sources
+const NEWS_SOURCES = {
+  bbc: 'bbc-news',
+  cnn: 'cnn',
+  reuters: 'reuters',
+  aljazeera: 'al-jazeera-english',
+  nyt: 'the-new-york-times',
+  guardian: 'the-guardian-uk',
+  washingtonpost: 'the-washington-post',
+  bloomberg: 'bloomberg',
+  techcrunch: 'techcrunch',
+  espn: 'espn',
+};
+
 export async function getTrendingTopics() {
   const topics = [];
   
   try {
-    // Google Trends (using unofficial API or RSS)
-    const googleTrends = await fetchGoogleTrends();
-    topics.push(...googleTrends);
-    
-    // News API
-    const newsTopics = await fetchNewsAPI();
+    // Fetch from top international news sources
+    const newsTopics = await fetchTopNewsHeadlines();
     topics.push(...newsTopics);
     
-    // Reddit trending
-    const redditTopics = await fetchRedditTrending();
-    topics.push(...redditTopics);
+    // Google Trends as backup
+    const googleTrends = await fetchGoogleTrends();
+    topics.push(...googleTrends);
     
   } catch (error) {
     console.error('Error fetching trending topics:', error);
   }
   
-  return topics;
+  // Remove duplicates and return top 50
+  const uniqueTopics = Array.from(
+    new Map(topics.map(t => [t.topic.toLowerCase(), t])).values()
+  );
+  
+  return uniqueTopics.slice(0, 50);
+}
+
+async function fetchTopNewsHeadlines() {
+  const apiKey = process.env.NEWS_API_KEY;
+  if (!apiKey) {
+    console.log('⚠️  NEWS_API_KEY not set. Get free key at https://newsapi.org');
+    return [];
+  }
+  
+  try {
+    // Fetch from multiple top sources
+    const sources = Object.values(NEWS_SOURCES).join(',');
+    const response = await fetch(
+      `https://newsapi.org/v2/top-headlines?sources=${sources}&pageSize=100&apiKey=${apiKey}`
+    );
+    
+    const data = await response.json();
+    
+    if (data.status !== 'ok' || !data.articles) {
+      console.error('NewsAPI error:', data.message || 'Unknown error');
+      return [];
+    }
+    
+    console.log(`✓ Fetched ${data.articles.length} headlines from top sources`);
+    
+    return data.articles
+      .filter(article => article.title && article.description)
+      .map(article => ({
+        topic: cleanHeadline(article.title),
+        source: article.source.name,
+        category: categorizeTopic(article.title + ' ' + article.description),
+        description: article.description,
+        url: article.url,
+        publishedAt: article.publishedAt,
+      }));
+  } catch (error) {
+    console.error('Error fetching NewsAPI:', error);
+    return [];
+  }
+}
+
+function cleanHeadline(title) {
+  // Remove source attribution from headlines
+  return title
+    .replace(/\s*-\s*(BBC|CNN|Reuters|Al Jazeera|NYT|Guardian).*$/i, '')
+    .replace(/\s*\|\s*.*$/, '')
+    .trim();
 }
 
 async function fetchGoogleTrends() {
   try {
-    // Using Google Trends RSS feed
-    const response = await fetch('https://trends.google.com/trends/trendingsearches/daily/rss?geo=IN');
+    // Using Google Trends RSS feed for global trends
+    const response = await fetch('https://trends.google.com/trends/trendingsearches/daily/rss?geo=US');
     const text = await response.text();
     
     // Parse RSS (simplified)
@@ -34,12 +96,12 @@ async function fetchGoogleTrends() {
     if (!titleMatches) return [];
     
     return titleMatches
-      .slice(1, 11) // Skip first title (channel title)
+      .slice(1, 21) // Skip first title (channel title), get 20 trends
       .map(match => {
         const title = match.replace(/<\/?title>/g, '');
         return {
           topic: title,
-          source: 'google-trends',
+          source: 'Google Trends',
           category: categorizeTopic(title),
         };
       });
@@ -50,57 +112,13 @@ async function fetchGoogleTrends() {
 }
 
 async function fetchNewsAPI() {
-  const apiKey = process.env.NEWS_API_KEY;
-  if (!apiKey) return [];
-  
-  try {
-    const response = await fetch(
-      `https://newsapi.org/v2/top-headlines?country=in&pageSize=10&apiKey=${apiKey}`
-    );
-    const data = await response.json();
-    
-    if (!data.articles) return [];
-    
-    return data.articles.map(article => ({
-      topic: article.title,
-      source: 'news-api',
-      category: categorizeTopic(article.title),
-      description: article.description,
-    }));
-  } catch (error) {
-    console.error('Error fetching News API:', error);
-    return [];
-  }
+  // This function is now replaced by fetchTopNewsHeadlines
+  return [];
 }
 
 async function fetchRedditTrending() {
-  try {
-    const subreddits = ['news', 'worldnews', 'technology', 'sports'];
-    const topics = [];
-    
-    for (const subreddit of subreddits) {
-      const response = await fetch(
-        `https://www.reddit.com/r/${subreddit}/hot.json?limit=5`
-      );
-      const data = await response.json();
-      
-      if (data.data && data.data.children) {
-        data.data.children.forEach(post => {
-          topics.push({
-            topic: post.data.title,
-            source: 'reddit',
-            category: categorizeTopic(post.data.title),
-            subreddit,
-          });
-        });
-      }
-    }
-    
-    return topics;
-  } catch (error) {
-    console.error('Error fetching Reddit:', error);
-    return [];
-  }
+  // Disabled - focusing on professional news sources only
+  return [];
 }
 
 function categorizeTopic(title) {
