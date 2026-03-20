@@ -40,7 +40,13 @@
   async function fetchBreakingNews() {
     try {
       const response = await fetch('/api/breaking-news');
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const data = await response.json();
+      console.log('Breaking news data:', data);
       
       if (data.headlines && data.headlines.length > 0) {
         const ticker = document.getElementById('breaking-news-ticker');
@@ -51,14 +57,36 @@
             .map((headline: string) => `<span class="inline-block px-8">🔴 ${headline}</span>`)
             .join('');
         }
+      } else {
+        console.warn('No headlines received');
       }
     } catch (error) {
       console.error('Failed to fetch breaking news:', error);
+      // Show default headlines on error
+      const ticker = document.getElementById('breaking-news-ticker');
+      if (ticker) {
+        const defaultHeadlines = [
+          'Breaking: Global markets show strong performance',
+          'Technology sector announces major innovations',
+          'International leaders meet for climate summit',
+          'Sports world celebrates record-breaking achievements',
+          'Economic indicators point to steady growth',
+          'New developments in space exploration'
+        ];
+        const headlines = defaultHeadlines.concat(defaultHeadlines);
+        ticker.innerHTML = headlines
+          .map((headline: string) => `<span class="inline-block px-8">🔴 ${headline}</span>`)
+          .join('');
+      }
     }
   }
 
   // Fetch on page load
-  fetchBreakingNews();
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', fetchBreakingNews);
+  } else {
+    fetchBreakingNews();
+  }
 
   // Refresh every 5 minutes
   setInterval(fetchBreakingNews, 5 * 60 * 1000);
