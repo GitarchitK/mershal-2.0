@@ -1,0 +1,65 @@
+---
+// Breaking News Ticker Component
+---
+
+<div class="bg-red-600 text-white py-2 overflow-hidden">
+  <div class="container mx-auto px-4">
+    <div class="flex items-center">
+      <div class="flex-shrink-0 font-bold text-sm uppercase tracking-wider mr-4 bg-white text-red-600 px-3 py-1 rounded">
+        Breaking News
+      </div>
+      <div class="flex-1 overflow-hidden">
+        <div id="breaking-news-ticker" class="whitespace-nowrap animate-scroll">
+          <span class="inline-block px-8">Loading breaking news...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .animate-scroll {
+    animation: scroll 60s linear infinite;
+  }
+
+  .animate-scroll:hover {
+    animation-play-state: paused;
+  }
+</style>
+
+<script>
+  async function fetchBreakingNews() {
+    try {
+      const response = await fetch('/api/breaking-news');
+      const data = await response.json();
+      
+      if (data.headlines && data.headlines.length > 0) {
+        const ticker = document.getElementById('breaking-news-ticker');
+        if (ticker) {
+          // Duplicate headlines for seamless loop
+          const headlines = data.headlines.concat(data.headlines);
+          ticker.innerHTML = headlines
+            .map(headline => `<span class="inline-block px-8">🔴 ${headline}</span>`)
+            .join('');
+        }
+      }
+    } catch (error) {
+      console.error('Failed to fetch breaking news:', error);
+    }
+  }
+
+  // Fetch on page load
+  fetchBreakingNews();
+
+  // Refresh every 5 minutes
+  setInterval(fetchBreakingNews, 5 * 60 * 1000);
+</script>

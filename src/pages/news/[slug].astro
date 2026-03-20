@@ -3,6 +3,7 @@ export const prerender = false;
 
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
+import BreakingNews from '../../components/BreakingNews.astro';
 import Footer from '../../components/Footer.astro';
 import BottomNav from '../../components/BottomNav.astro';
 import { adminDb } from '../../lib/firebase-admin';
@@ -49,6 +50,7 @@ const publishedDate = article.publishedAt?.toDate?.() || new Date();
 
 <Layout title={article.seoTitle || article.title} description={article.seoDescription || article.excerpt}>
   <Header />
+  <BreakingNews />
   
   <main class="bg-gray-50">
     <!-- Article Container -->
