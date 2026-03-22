@@ -54,14 +54,13 @@ export const config = {
     schedulerInterval: 30, // minutes
   },
 
-  // Categories
+  // Categories - Tech & Programming focused
   categories: [
-    'india',
-    'politics',
-    'sports',
-    'entertainment',
-    'business',
     'technology',
+    'programming',
+    'tutorials',
+    'apps',
+    'reviews',
   ],
 
   // IPL Configuration

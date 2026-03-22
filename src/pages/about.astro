@@ -1,164 +1,75 @@
 ---
-export const prerender = false;
-
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
+import BreakingNews from '../components/BreakingNews.astro';
 import Footer from '../components/Footer.astro';
 import BottomNav from '../components/BottomNav.astro';
 ---
 
-<Layout title="About Us" description="Learn about Mershal - Your trusted source for breaking news, sports, technology, and entertainment updates">
+<Layout title="About Mershal - Tech Tutorials & Programming Blog" description="Learn programming, web development, and tech skills with Mershal - Your friendly tech blog by Archit Karmakar">
   <Header />
+  <BreakingNews />
   
-  <main class="bg-gray-50">
-    <!-- Hero Section -->
-    <section class="bg-gradient-to-br from-red-600 to-red-700 text-white py-20">
-      <div class="container mx-auto px-4 text-center">
-        <h1 class="text-4xl md:text-6xl font-bold mb-6">About Mershal</h1>
-        <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto opacity-90">
-          Your trusted source for breaking news, sports updates, and comprehensive coverage across India and beyond
+  <main class="container mx-auto px-4 py-8 pb-20 md:pb-8">
+    <div class="max-w-3xl mx-auto">
+      <h1 class="text-4xl font-bold mb-6">About Mershal</h1>
+      
+      <div class="prose prose-lg max-w-none">
+        <p class="text-xl text-gray-600 mb-8">
+          Welcome to <strong>Mershal</strong> - your go-to destination for programming tutorials, tech guides, and developer resources!
         </p>
-      </div>
-    </section>
 
-    <!-- Main Content -->
-    <section class="py-16">
-      <div class="container mx-auto px-4">
-        <div class="max-w-4xl mx-auto">
-          
-          <!-- Mission Section -->
-          <div class="bg-white rounded-xl shadow-lg p-8 mb-12">
-            <h2 class="text-3xl font-bold text-gray-900 mb-6">Our Mission</h2>
-            <p class="text-lg text-gray-700 leading-relaxed mb-4">
-              At Mershal, we are committed to delivering accurate, timely, and comprehensive news coverage to our readers. 
-              Our mission is to keep you informed about the events that matter most, from local Indian news to global developments.
-            </p>
-            <p class="text-lg text-gray-700 leading-relaxed">
-              We believe in the power of information to educate, inspire, and empower our community. Through our dedicated 
-              coverage of politics, sports, technology, business, and entertainment, we strive to be your go-to source for reliable news.
-            </p>
-          </div>
+        <h2 class="text-2xl font-bold mt-8 mb-4">Who Am I?</h2>
+        <p class="mb-4">
+          Hey! I'm <strong>Archit Karmakar</strong>, a full-stack developer and tech enthusiast from India. I started Mershal to share what I learn on my coding journey and help fellow developers level up their skills.
+        </p>
+        <p class="mb-4">
+          With experience in JavaScript, Python, React, Node.js, and more, I write about real-world projects, practical tutorials, and stuff I actually use in my own work.
+        </p>
 
-          <!-- What We Cover -->
-          <div class="bg-white rounded-xl shadow-lg p-8 mb-12">
-            <h2 class="text-3xl font-bold text-gray-900 mb-6">What We Cover</h2>
-            <div class="grid md:grid-cols-2 gap-6">
-              <div class="flex items-start">
-                <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
-                  <svg class="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                  </svg>
-                </div>
-                <div>
-                  <h3 class="text-xl font-bold text-gray-900 mb-2">India News</h3>
-                  <p class="text-gray-600">Local events, cultural festivals, and developments across Indian states</p>
-                </div>
-              </div>
-              
-              <div class="flex items-start">
-                <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
-                  <svg class="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
-                  </svg>
-                </div>
-                <div>
-                  <h3 class="text-xl font-bold text-gray-900 mb-2">Politics</h3>
-                  <p class="text-gray-600">Political developments, elections, and international relations</p>
-                </div>
-              </div>
-              
-              <div class="flex items-start">
-                <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
-                  <svg class="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
-                  </svg>
-                </div>
-                <div>
-                  <h3 class="text-xl font-bold text-gray-900 mb-2">Sports & IPL</h3>
-                  <p class="text-gray-600">Cricket, IPL updates, and comprehensive sports coverage</p>
-                </div>
-              </div>
-              
-              <div class="flex items-start">
-                <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
-                  <svg class="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9 12a1 1 0 102 0V6.414l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 6.414V12z"/>
-                    <path d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"/>
-                  </svg>
-                </div>
-                <div>
-                  <h3 class="text-xl font-bold text-gray-900 mb-2">Technology</h3>
-                  <p class="text-gray-600">Latest tech trends, gadget reviews, and innovation updates</p>
-                </div>
-              </div>
-              
-              <div class="flex items-start">
-                <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
-                  <svg class="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4z"/>
-                    <path d="M6 6a2 2 0 012-2h8a2 2 0 012 2v6a2 2 0 01-2 2H8a2 2 0 01-2-2V6z"/>
-                  </svg>
-                </div>
-                <div>
-                  <h3 class="text-xl font-bold text-gray-900 mb-2">Business</h3>
-                  <p class="text-gray-600">Market updates, startup news, and economic developments</p>
-                </div>
-              </div>
-              
-              <div class="flex items-start">
-                <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
-                  <svg class="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.37 4.37 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z"/>
-                  </svg>
-                </div>
-                <div>
-                  <h3 class="text-xl font-bold text-gray-900 mb-2">Entertainment</h3>
-                  <p class="text-gray-600">Bollywood, Hollywood, music, and celebrity news</p>
-                </div>
-              </div>
-            </div>
-          </div>
+        <h2 class="text-2xl font-bold mt-8 mb-4">What You'll Find Here</h2>
+        <ul class="list-disc pl-6 mb-6 space-y-2">
+          <li><strong>Programming Tutorials</strong> - Step-by-step guides for Python, JavaScript, React, and more</li>
+          <li><strong>Web Development</strong> - Build modern websites with HTML, CSS, React, and Next.js</li>
+          <li><strong>App Development</strong> - Create mobile apps with Flutter, React Native, and more</li>
+          <li><strong>DevOps & Tools</strong> - Docker, Git, VS Code tips, and developer workflows</li>
+          <li><strong>Career Advice</strong> - Job tips, interview prep, and freelance guidance</li>
+          <li><strong>Tech Reviews</strong> - Honest opinions on tools, gadgets, and software</li>
+        </ul>
 
-          <!-- Our Team -->
-          <div class="bg-white rounded-xl shadow-lg p-8 mb-12">
-            <h2 class="text-3xl font-bold text-gray-900 mb-6">Our Team</h2>
-            <p class="text-lg text-gray-700 leading-relaxed mb-4">
-              Mershal is powered by a dedicated team of journalists, editors, and technology professionals who work 
-              around the clock to bring you the latest news and updates.
-            </p>
-            <p class="text-lg text-gray-700 leading-relaxed">
-              Our editorial team combines years of experience in journalism with cutting-edge technology to ensure 
-              that our content is not only timely and accurate but also engaging and accessible to our diverse readership.
-            </p>
-          </div>
+        <h2 class="text-2xl font-bold mt-8 mb-4">My Approach</h2>
+        <p class="mb-4">
+          I write the way I'd explain to a friend - casual, practical, and with real code examples. No fluff, just actionable content that actually helps you build things.
+        </p>
+        <p class="mb-4">
+          Everything here is based on my personal experience building projects. I share what worked, what didn't, and what I'd do differently.
+        </p>
 
-          <!-- Contact -->
-          <div class="bg-gradient-to-br from-red-600 to-red-700 rounded-xl text-white p-8">
-            <h2 class="text-3xl font-bold mb-6">Get in Touch</h2>
-            <p class="text-lg mb-6 opacity-90">
-              Have a story tip, feedback, or want to collaborate with us? We'd love to hear from you.
-            </p>
-            <div class="grid md:grid-cols-2 gap-6">
-              <div>
-                <h3 class="text-xl font-bold mb-2">Editorial</h3>
-                <p class="opacity-90">editorial@mershal.in</p>
-              </div>
-              <div>
-                <h3 class="text-xl font-bold mb-2">Business</h3>
-                <p class="opacity-90">business@mershal.in</p>
-              </div>
-            </div>
-            <div class="mt-6">
-              <a href="/contact" class="bg-white text-red-600 px-6 py-3 rounded-lg font-bold hover:bg-gray-100 transition inline-block">
-                Contact Us
-              </a>
-            </div>
+        <h2 class="text-2xl font-bold mt-8 mb-4">Let's Connect!</h2>
+        <p class="mb-4">
+          Got questions? Want to collaborate? Just want to say hi? Drop me a message on the <a href="/contact" class="text-red-600 hover:underline">contact page</a>!
+        </p>
+        <p class="mb-4">
+          I read and reply to every message. Thanks for being part of this journey! 🚀
+        </p>
+
+        <div class="bg-gray-100 p-6 rounded-lg mt-8">
+          <h3 class="text-xl font-bold mb-3">Tech Stack I Use</h3>
+          <div class="flex flex-wrap gap-2">
+            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">JavaScript</span>
+            <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">Python</span>
+            <span class="bg-cyan-100 text-cyan-800 px-3 py-1 rounded-full text-sm">React</span>
+            <span class="bg-gray-800 text-white px-3 py-1 rounded-full text-sm">Node.js</span>
+            <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">TypeScript</span>
+            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">MongoDB</span>
+            <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">Firebase</span>
+            <span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm">Docker</span>
           </div>
         </div>
       </div>
-    </section>
+    </div>
   </main>
-  
+
   <Footer />
   <BottomNav />
 </Layout>
