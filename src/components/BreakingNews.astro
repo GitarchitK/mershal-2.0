@@ -54,7 +54,7 @@
           // Duplicate headlines for seamless loop
           const headlines = data.headlines.concat(data.headlines);
           ticker.innerHTML = headlines
-            .map((headline) => `<span class="inline-block px-8">🔴 ${headline}</span>`)
+            .map((headline: unknown) => `<span class="inline-block px-8">🔴 ${String(headline)}</span>`)
             .join('');
         }
       } else {
@@ -75,7 +75,7 @@
         ];
         const headlines = defaultHeadlines.concat(defaultHeadlines);
         ticker.innerHTML = headlines
-          .map((headline) => `<span class="inline-block px-8">🔴 ${headline}</span>`)
+          .map((headline: unknown) => `<span class="inline-block px-8">🔴 ${String(headline)}</span>`)
           .join('');
       }
     }
