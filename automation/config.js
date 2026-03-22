@@ -48,8 +48,8 @@ export const config = {
 
   // Content Generation Settings
   content: {
-    minWordCount: 800,
-    maxWordCount: 1200,
+    minWordCount: 1500,
+    maxWordCount: 2500,
     articlesPerDay: 30,
     schedulerInterval: 30, // minutes
   },
