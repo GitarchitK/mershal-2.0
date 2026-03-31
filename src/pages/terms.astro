@@ -3,12 +3,14 @@ export const prerender = false;
 
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
+import BreakingNews from '../components/BreakingNews.astro';
 import Footer from '../components/Footer.astro';
 import BottomNav from '../components/BottomNav.astro';
 ---
 
 <Layout title="Terms of Service" description="Mershal Terms of Service - Rules and guidelines for using our website">
   <Header />
+  <BreakingNews />
   
   <main class="container mx-auto px-4 py-8 pb-20 md:pb-8">
     <div class="max-w-4xl mx-auto">
