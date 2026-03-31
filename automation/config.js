@@ -59,25 +59,7 @@ export const config = {
     'technology',
     'programming',
     'tutorials',
-    'apps',
-    'reviews',
   ],
-
-  // IPL Configuration
-  ipl: {
-    enabled: true,
-    season: 2026,
-    teams: [
-      { code: 'KKR', name: 'Kolkata Knight Riders', slug: 'kolkata-knight-riders' },
-      { code: 'MI', name: 'Mumbai Indians', slug: 'mumbai-indians' },
-      { code: 'RCB', name: 'Royal Challengers Bangalore', slug: 'royal-challengers-bangalore' },
-      { code: 'CSK', name: 'Chennai Super Kings', slug: 'chennai-super-kings' },
-      { code: 'DC', name: 'Delhi Capitals', slug: 'delhi-capitals' },
-      { code: 'RR', name: 'Rajasthan Royals', slug: 'rajasthan-royals' },
-      { code: 'PBKS', name: 'Punjab Kings', slug: 'punjab-kings' },
-      { code: 'SRH', name: 'Sunrisers Hyderabad', slug: 'sunrisers-hyderabad' },
-    ],
-  },
 
   // Site Configuration
   site: {

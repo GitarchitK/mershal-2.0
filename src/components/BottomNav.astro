@@ -2,39 +2,6 @@
 const currentPath = Astro.url.pathname;
 ---
 
-<nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 md:hidden z-50 shadow-lg">
-  <div class="flex justify-around items-center py-2 px-1">
-    <a href="/" class={`flex flex-col items-center justify-center gap-0.5 flex-1 py-1 ${currentPath === '/' ? 'text-red-600' : 'text-gray-600 hover:text-red-600'}`}>
-      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-        <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
-      </svg>
-      <span class="text-[10px] font-semibold">NEWS</span>
-    </a>
-    
-    <a href="/ipl" class={`flex flex-col items-center justify-center gap-0.5 flex-1 py-1 ${currentPath === '/ipl' ? 'text-red-600' : 'text-gray-600 hover:text-red-600'}`}>
-      <span class="text-lg">🏏</span>
-      <span class="text-[10px] font-semibold">IPL</span>
-    </a>
-    
-    <a href="/videos" class={`flex flex-col items-center justify-center gap-0.5 flex-1 py-1 ${currentPath === '/videos' ? 'text-red-600' : 'text-gray-600'}`}>
-      <div class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center -mt-3 shadow-md">
-        <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"/>
-        </svg>
-      </div>
-      <span class="text-[10px] font-semibold mt-0.5">WATCH</span>
-    </a>
-    
-    <a href="/photos" class={`flex flex-col items-center justify-center gap-0.5 flex-1 py-1 ${currentPath === '/photos' ? 'text-red-600' : 'text-gray-600 hover:text-red-600'}`}>
-      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-        <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
-      </svg>
-      <span class="text-[10px] font-semibold">PHOTOS</span>
-    </a>
-    
-    <a href="/kolkata" class={`flex flex-col items-center justify-center gap-0.5 flex-1 py-1 ${currentPath === '/kolkata' ? 'text-red-600' : 'text-gray-600 hover:text-red-600'}`}>
-      <span class="text-lg">🏛️</span>
-      <span class="text-[10px] font-semibold">KOLKATA</span>
-    </a>
-  </div>
+<nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 md:hidden z-50 shadow-lg hidden">
+  <!-- Bottom navigation removed -->
 </nav>
