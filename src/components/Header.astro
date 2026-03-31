@@ -96,7 +96,18 @@ const year = today.getFullYear();
   <div class="container mx-auto px-4">
     <!-- Main Header -->
     <div class="flex items-center justify-between py-3 border-b border-gray-200">
-      <!-- Hidden hamburger menu - using bottom nav instead -->
+      <!-- Mobile Menu Button (3 dots) -->
+      <button 
+        id="mobile-menu-btn"
+        class="lg:hidden text-gray-700 hover:text-red-600 p-2"
+        aria-label="Open menu"
+      >
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/>
+        </svg>
+      </button>
+
+      <!-- Desktop Links -->
       <div class="hidden lg:flex items-center gap-4 text-sm">
         <a href="/about" class="text-gray-600 hover:text-red-600 transition font-medium">About</a>
         <span class="text-gray-300">|</span>
@@ -106,19 +117,13 @@ const year = today.getFullYear();
         <span class="text-gray-300">|</span>
         <a href="/terms" class="text-gray-600 hover:text-red-600 transition font-medium">Terms</a>
       </div>
-      <div class="w-8 lg:hidden"></div>
       
       <a href="/" class="flex flex-col items-center">
         <span class="text-3xl font-bold text-red-600 logo-font tracking-tighter">Mershal</span>
         <span class="text-xs text-gray-500 -mt-1">by Navroll Studio</span>
       </a>
       
-      <div class="flex items-center gap-3 hidden">
-        <button class="px-4 py-1.5 bg-white border-2 border-red-600 text-red-600 rounded-full text-sm font-semibold hover:bg-red-600 hover:text-white transition">
-          APP ↓
-        </button>
-        <button class="text-2xl text-gray-700 hover:text-red-600">👤</button>
-      </div>
+      <div class="w-10 lg:w-auto"></div>
     </div>
     
     <!-- Navigation -->
@@ -133,6 +138,122 @@ const year = today.getFullYear();
       ))}
       <button class="text-gray-700 hover:text-red-600">▼</button>
     </nav>
+  </div>
+
+  <!-- Mobile Sidebar Menu -->
+  <div 
+    id="mobile-sidebar"
+    class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden"
+  >
+    <div 
+      id="sidebar-content"
+      class="fixed left-0 top-0 bottom-0 w-80 bg-white shadow-2xl transform -translate-x-full transition-transform duration-300"
+    >
+      <!-- Sidebar Header -->
+      <div class="bg-red-600 text-white p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-2xl font-bold logo-font">Mershal</h2>
+            <p class="text-sm text-red-100">Tech Blog by Archit</p>
+          </div>
+          <button 
+            id="close-sidebar"
+            class="text-white hover:text-red-200 p-2"
+            aria-label="Close menu"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Sidebar Content -->
+      <div class="overflow-y-auto h-full pb-20">
+        <!-- Categories -->
+        <div class="p-6 border-b border-gray-200">
+          <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Categories</h3>
+          <nav class="space-y-2">
+            <a href="/" class="flex items-center gap-3 text-gray-700 hover:text-red-600 hover:bg-red-50 p-3 rounded-lg transition">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+              </svg>
+              <span class="font-medium">Home</span>
+            </a>
+            <a href="/category/tutorials" class="flex items-center gap-3 text-gray-700 hover:text-red-600 hover:bg-red-50 p-3 rounded-lg transition">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/>
+              </svg>
+              <span class="font-medium">Tutorials</span>
+            </a>
+            <a href="/category/programming" class="flex items-center gap-3 text-gray-700 hover:text-red-600 hover:bg-red-50 p-3 rounded-lg transition">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+              </svg>
+              <span class="font-medium">Programming</span>
+            </a>
+            <a href="/category/technology" class="flex items-center gap-3 text-gray-700 hover:text-red-600 hover:bg-red-50 p-3 rounded-lg transition">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M3 5a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2h-2.22l.123.489.804.804A1 1 0 0113 18H7a1 1 0 01-.707-1.707l.804-.804L7.22 15H5a2 2 0 01-2-2V5zm5.771 7H5V5h10v7H8.771z" clip-rule="evenodd"/>
+              </svg>
+              <span class="font-medium">Tech News</span>
+            </a>
+          </nav>
+        </div>
+
+        <!-- Pages -->
+        <div class="p-6 border-b border-gray-200">
+          <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Pages</h3>
+          <nav class="space-y-2">
+            <a href="/about" class="flex items-center gap-3 text-gray-700 hover:text-red-600 hover:bg-red-50 p-3 rounded-lg transition">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+              </svg>
+              <span class="font-medium">About Archit</span>
+            </a>
+            <a href="/contact" class="flex items-center gap-3 text-gray-700 hover:text-red-600 hover:bg-red-50 p-3 rounded-lg transition">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+              </svg>
+              <span class="font-medium">Contact</span>
+            </a>
+            <a href="/advertise" class="flex items-center gap-3 text-gray-700 hover:text-red-600 hover:bg-red-50 p-3 rounded-lg transition">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M4 2a2 2 0 00-2 2v11a3 3 0 106 0V4a2 2 0 00-2-2H4zm1 14a1 1 0 100-2 1 1 0 000 2zm5-1.757l4.9-4.9a2 2 0 000-2.828L13.485 5.1a2 2 0 00-2.828 0L10 5.757v8.486zM16 18H9.071l6-6H16a2 2 0 012 2v2a2 2 0 01-2 2z" clip-rule="evenodd"/>
+              </svg>
+              <span class="font-medium">Advertise</span>
+            </a>
+          </nav>
+        </div>
+
+        <!-- Legal -->
+        <div class="p-6">
+          <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Legal</h3>
+          <nav class="space-y-2">
+            <a href="/privacy" class="flex items-center gap-3 text-gray-700 hover:text-red-600 hover:bg-red-50 p-3 rounded-lg transition">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+              </svg>
+              <span class="font-medium">Privacy Policy</span>
+            </a>
+            <a href="/terms" class="flex items-center gap-3 text-gray-700 hover:text-red-600 hover:bg-red-50 p-3 rounded-lg transition">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/>
+              </svg>
+              <span class="font-medium">Terms of Service</span>
+            </a>
+            <a href="/cookies" class="flex items-center gap-3 text-gray-700 hover:text-red-600 hover:bg-red-50 p-3 rounded-lg transition">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+                <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/>
+              </svg>
+              <span class="font-medium">Cookie Policy</span>
+            </a>
+          </nav>
+        </div>
+      </div>
+    </div>
   </div>
 </header>
 
@@ -159,6 +280,40 @@ const year = today.getFullYear();
   
   // Update every second
   setInterval(updateDateTime, 1000);
+
+  // Mobile sidebar functionality
+  const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+  const mobileSidebar = document.getElementById('mobile-sidebar');
+  const sidebarContent = document.getElementById('sidebar-content');
+  const closeSidebar = document.getElementById('close-sidebar');
+
+  function openSidebar() {
+    if (mobileSidebar && sidebarContent) {
+      mobileSidebar.classList.remove('hidden');
+      setTimeout(() => {
+        sidebarContent.classList.remove('-translate-x-full');
+      }, 10);
+    }
+  }
+
+  function closeSidebarFunc() {
+    if (sidebarContent && mobileSidebar) {
+      sidebarContent.classList.add('-translate-x-full');
+      setTimeout(() => {
+        mobileSidebar.classList.add('hidden');
+      }, 300);
+    }
+  }
+
+  mobileMenuBtn?.addEventListener('click', openSidebar);
+  closeSidebar?.addEventListener('click', closeSidebarFunc);
+  
+  // Close sidebar when clicking outside
+  mobileSidebar?.addEventListener('click', (e) => {
+    if (e.target === mobileSidebar) {
+      closeSidebarFunc();
+    }
+  });
 </script>
 
 <style>
