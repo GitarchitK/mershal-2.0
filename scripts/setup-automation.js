@@ -72,8 +72,7 @@ async function testAIConnection() {
     console.log('Generating test article...');
     const article = await generateArticle(
       'Test Article: Technology News',
-      'technology',
-      ['test', 'automation']
+      'technology'
     );
     
     console.log('✓ AI connection successful');

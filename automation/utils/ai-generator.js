@@ -1,6 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import OpenAI from 'openai';
 import { config } from '../config.js';
+import { getPostsByCategory, getRecentPosts } from './firebase.js';
 
 // Initialize AI clients based on configuration
 let genAI = null;
@@ -88,7 +89,7 @@ async function generateThumbnail(topic, category) {
   }
 }
 
-export async function generateArticle(topic, category, keywords = []) {
+export async function generateArticle(topic, category) {
   // Validate AI client is initialized
   if (config.ai.provider === 'openai' && !openai) {
     throw new Error('OpenAI client not initialized. Check OPENAI_API_KEY in .env file.');
@@ -97,135 +98,200 @@ export async function generateArticle(topic, category, keywords = []) {
     throw new Error('Gemini client not initialized. Check GEMINI_API_KEY in .env file.');
   }
 
-  const prompt = `You are a professional tech writer creating content for Mershal.in. Write a comprehensive, human-like article that passes AI detection and meets AdSense quality standards.
+  // Fetch existing articles for internal linking
+  let existingArticles = [];
+  try {
+    const categoryPosts = await getPostsByCategory(category, 10);
+    const recentPosts = await getRecentPosts(10);
+    existingArticles = [...categoryPosts, ...recentPosts]
+      .filter((post, index, self) => 
+        index === self.findIndex(p => p.slug === post.slug)
+      )
+      .slice(0, 15)
+      .map(post => ({
+        title: post.title,
+        slug: post.slug,
+        category: post.category
+      }));
+  } catch (error) {
+    console.log('Could not fetch existing articles for internal linking:', error.message);
+  }
+
+  const internalLinkingContext = existingArticles.length > 0 
+    ? `\n\n**INTERNAL LINKING (MANDATORY):**
+You MUST include 3-5 internal links to these existing articles naturally within your content:
+${existingArticles.map(a => `- "${a.title}" - Link: https://mershal.in/news/${a.slug}`).join('\n')}
+
+Add these links naturally in relevant sections using HTML: <a href="https://mershal.in/news/${existingArticles[0]?.slug}">anchor text</a>
+Make sure the anchor text is contextually relevant and flows naturally in the sentence.`
+    : '';
+
+  const prompt = `You are Archit Karmakar, a full-stack developer and tech enthusiast writing for Mershal.in. Create a USEFUL, PRACTICAL, and INFORMATIVE article based on REAL information and current tech trends.
 
 TOPIC: "${topic}"
 CATEGORY: ${category}
 DATE: March 31, 2026
+AUTHOR VOICE: Archit Karmakar (Full Stack Developer & Tech Enthusiast)
 
-CRITICAL: PASS AI DETECTION & ADSENSE REQUIREMENTS
+**CRITICAL REQUIREMENTS:**
 
-**HUMAN WRITING TECHNIQUES (ESSENTIAL):**
+1. **REAL & USEFUL CONTENT**
+   - Base content on actual, current technology information (2026 context)
+   - Include real tools, frameworks, versions, and products
+   - Provide actionable advice readers can implement immediately
+   - Reference actual documentation, official sources, and industry standards
+   - Include specific examples with real code, commands, or configurations
+   - Cite real companies, products, and industry leaders when relevant
 
-1. **VARIED SENTENCE STRUCTURE**
-   - Mix short (5-10 words) and long sentences (20-30 words)
-   - Use fragments occasionally. Like this.
-   - Start sentences with: And, But, So, Because, However
-   - Avoid repetitive patterns
-   - Example: "Python is powerful. But it's also beginner-friendly. And that's why I love it."
+2. **PRACTICAL VALUE**
+   - Solve a real problem or answer a specific question
+   - Include step-by-step instructions where applicable
+   - Provide working code examples (if relevant to topic)
+   - Share real-world use cases and scenarios
+   - Include troubleshooting tips and common pitfalls
+   - Add performance considerations and best practices
 
-2. **NATURAL IMPERFECTIONS**
-   - Use contractions: don't, can't, won't, I'm, you're
-   - Add filler words: actually, basically, essentially, literally
-   - Include hedging: probably, maybe, might, could be
-   - Personal uncertainty: "I think", "In my experience", "From what I've seen"
+3. **CURRENT & ACCURATE (2026)**
+   - Reference latest versions and releases as of 2026
+   - Mention recent industry developments and trends
+   - Include current statistics and data points
+   - Reference recent events or announcements in tech
+   - Stay updated with 2026 technology landscape
 
-3. **CONVERSATIONAL ELEMENTS**
-   - Direct address: "You might be wondering...", "Let me show you..."
-   - Rhetorical questions: "Why does this matter?", "What's the catch?"
-   - Casual transitions: "Anyway", "Moving on", "Here's the thing"
-   - Personal anecdotes: "Last week, I was working on..."
+4. **ARCHIT'S WRITING STYLE**
+   - First-person perspective: "I've been working with...", "In my experience..."
+   - Share personal insights and lessons learned
+   - Conversational yet professional tone
+   - Mix technical depth with accessibility
+   - Use contractions and natural language
+   - Show enthusiasm for technology
+   - Admit when things are tricky or confusing
+   - Example: "I spent hours debugging this, so let me save you the trouble..."
 
-4. **EMOTIONAL & SUBJECTIVE LANGUAGE**
-   - Express opinions: "I personally prefer", "In my view", "I'd argue that"
-   - Show enthusiasm: "This is amazing!", "I was blown away", "Super useful"
-   - Admit struggles: "This confused me at first", "I got stuck here"
-   - Use informal words: "stuff", "things", "pretty cool", "kinda tricky"
+5. **STRUCTURE & FORMATTING**
+   - Use clear H2 and H3 headings
+   - Include code blocks with proper syntax: <pre><code>actual code here</code></pre>
+   - Add bullet points and numbered lists for clarity
+   - Use <strong> tags for important concepts
+   - Include blockquotes for key takeaways
+   - Break content into digestible sections
 
-5. **HUMAN STORYTELLING**
-   - Start with a relatable problem or story
-   - Include specific details: "It was 2 AM on a Friday..."
-   - Share mistakes: "I wasted 3 hours because I forgot..."
-   - Add dialogue or quotes: "My colleague said, 'Why not try...'"
+6. **CODE EXAMPLES (when relevant)**
+   - Provide real, working code snippets
+   - Include comments explaining what code does
+   - Show both basic and advanced examples
+   - Format properly with <pre><code> tags
+   - Include file names or context for code
 
-6. **NATURAL PARAGRAPH FLOW**
-   - Vary paragraph length (1-6 sentences)
-   - Use single-sentence paragraphs for emphasis
-   - Don't make every paragraph the same length
-   - Add transitional phrases between ideas
+7. **INTERNAL LINKING**
+   ${internalLinkingContext}
 
-7. **AUTHENTIC EXPERTISE**
-   - Cite real sources: "According to the official docs..."
-   - Reference actual tools/versions: "In React 18...", "With Python 3.11..."
-   - Mention real companies/products: "Google recommends...", "VS Code has..."
-   - Include current year context: "As of 2026..."
-
-8. **ADSENSE-COMPLIANT CONTENT**
-   - Original, valuable information (not copied)
-   - Proper grammar and spelling
-   - Professional yet friendly tone
-   - No prohibited content
-   - Clear, helpful explanations
-   - Actionable advice
-
-9. **SEO WITHOUT STUFFING**
-   - Use keyword naturally 3-5 times
-   - Include variations and synonyms
-   - Focus on user intent
-   - Answer questions directly
-   - Use descriptive headings
-
-10. **ENGAGEMENT ELEMENTS**
-    - Ask questions to readers
-    - Encourage comments: "What's your experience with this?"
-    - Offer help: "Stuck? Drop a comment below"
-    - Promise updates: "I'll update this if things change"
+8. **SEO & ENGAGEMENT**
+   - Natural keyword usage (3-5 times)
+   - Answer specific questions readers have
+   - Include FAQ section with real questions
+   - Add call-to-action encouraging comments
+   - Use descriptive, benefit-focused headings
 
 **CONTENT STRUCTURE (1800-2500 words):**
 
 <h2>Introduction</h2>
-<p>Start with a hook - a question, story, or relatable problem. Be conversational. Share why this topic matters.</p>
+<p>Hook with a real problem or question. Share why you're writing this and what readers will gain. Be personal and relatable.</p>
 
-<h2>What You'll Learn</h2>
+<h2>What Is [Topic]? (Quick Overview)</h2>
+<p>Clear, concise explanation of the core concept. Define terms. Set context.</p>
+
+<h2>Why [Topic] Matters in 2026</h2>
+<p>Current relevance. Industry trends. Real-world applications. Statistics if available.</p>
+
+<h2>How [Topic] Works (or How to Use It)</h2>
+<p>Detailed explanation with examples. If it's a tutorial, include step-by-step instructions.</p>
+
+<h3>Step 1: [Specific Action]</h3>
+<p>Detailed instructions with code/commands if applicable.</p>
+<pre><code>// Real code example
+const example = "actual working code";
+</code></pre>
+
+<h3>Step 2: [Next Action]</h3>
+<p>Continue with clear, actionable steps.</p>
+
+<h2>Real-World Examples and Use Cases</h2>
+<p>Share specific scenarios where this is useful. Include company examples or project ideas.</p>
+
+<h2>Best Practices and Tips</h2>
 <ul>
-<li>Bullet point 1</li>
-<li>Bullet point 2</li>
-<li>Bullet point 3</li>
+<li><strong>Tip 1:</strong> Specific, actionable advice</li>
+<li><strong>Tip 2:</strong> Another practical tip</li>
+<li><strong>Tip 3:</strong> More useful guidance</li>
 </ul>
 
-<h2>Main Section 1 (with keyword)</h2>
-<p>Detailed explanation with examples. Mix short and long sentences. Add personal experience.</p>
+<h2>Common Mistakes to Avoid</h2>
+<p>Share pitfalls you've encountered or seen. Help readers avoid these issues.</p>
 
-<h3>Subsection</h3>
-<p>More specific details. Include code if relevant.</p>
-
-<h2>Main Section 2</h2>
-<p>Continue with varied structure. Use transitions.</p>
-
-<h2>Common Mistakes (or Tips/Best Practices)</h2>
-<p>Share what NOT to do. Personal stories of errors.</p>
+<h2>Tools and Resources</h2>
+<p>List actual tools, libraries, frameworks, or resources. Include links to official documentation.</p>
 
 <h2>Frequently Asked Questions</h2>
-<h3>Question 1?</h3>
-<p>Direct answer in 50-100 words.</p>
+<h3>Question 1 about the topic?</h3>
+<p>Direct, helpful answer in 50-100 words.</p>
 
-<h3>Question 2?</h3>
-<p>Another helpful answer.</p>
+<h3>Question 2 about the topic?</h3>
+<p>Another clear answer.</p>
+
+<h3>Question 3 about the topic?</h3>
+<p>One more useful answer.</p>
 
 <h2>Conclusion</h2>
-<p>Summarize key points. Call to action. Encourage engagement.</p>
+<p>Summarize key takeaways. Encourage readers to try it out. Ask for their experiences in comments.</p>
 
-**WRITING STYLE EXAMPLES:**
+**WRITING EXAMPLES:**
 
-❌ AI-like: "This comprehensive guide will explore the fundamental concepts of Python programming, providing readers with essential knowledge."
+✅ GOOD (Real & Useful):
+"I've been using React 19 since it dropped in early 2026, and the new Server Components feature is a game-changer. Here's how to set it up in your Next.js 15 project:
 
-✅ Human-like: "So you want to learn Python? Great choice. I've been coding in Python for 5 years, and honestly, it's one of the most beginner-friendly languages out there. Let me show you what I wish someone had told me when I started."
+<pre><code>// app/page.tsx
+async function HomePage() {
+  const data = await fetch('https://api.example.com/data');
+  return <div>{data.title}</div>;
+}
+</code></pre>
 
-❌ AI-like: "It is important to note that proper error handling is crucial for application stability."
+This runs on the server, which means zero JavaScript sent to the client. I tested this on a production app, and we cut our bundle size by 40%."
 
-✅ Human-like: "Here's the thing about error handling - I learned this the hard way. My app crashed in production because I didn't handle a simple null value. Not fun. Let me save you from that embarrassment."
+❌ BAD (Vague & Generic):
+"React is a popular JavaScript library for building user interfaces. It has many features that developers find useful. You can create components and manage state easily."
+
+✅ GOOD (Practical):
+"Here's a mistake I made last week: I forgot to add error handling to my API calls. The app crashed in production. Don't be like me. Always wrap your fetch calls:
+
+<pre><code>try {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error('API failed');
+  const data = await response.json();
+} catch (error) {
+  console.error('Error:', error);
+  // Show user-friendly error message
+}
+</code></pre>"
 
 **FORMAT AS JSON:**
 {
-  "title": "Practical, benefit-focused title (50-60 chars)",
-  "excerpt": "Compelling summary that sounds human (150-160 chars)",
-  "content": "Full HTML article with natural flow, varied sentences, personal touches, 1800-2500 words",
+  "title": "Practical, specific title (50-60 chars)",
+  "excerpt": "Clear value proposition (150-160 chars)",
+  "content": "Full HTML article with real information, code examples, internal links, 1800-2500 words",
   "seoTitle": "Keyword + benefit - Mershal (55-60 chars)",
-  "seoDescription": "Natural meta description with CTA (150-160 chars)",
+  "seoDescription": "Compelling meta description with CTA (150-160 chars)",
   "tags": ["primary-keyword", "secondary-keyword", "tutorial", "2026", "guide"]
 }
 
-REMEMBER: Write like a real person sharing knowledge, not a robot generating content. Be helpful, authentic, and conversational. Vary your sentence structure constantly. Add personality and imperfections.`;
+REMEMBER: 
+- Write as Archit Karmakar sharing real knowledge
+- Include actual code, tools, and examples
+- Make it immediately useful and actionable
+- Add 3-5 internal links naturally
+- Base everything on real, current tech information
+- Be specific, not generic`;
 
   try {
     let articleData;
@@ -239,7 +305,7 @@ REMEMBER: Write like a real person sharing knowledge, not a robot generating con
         messages: [
           {
             role: 'system',
-            content: 'You are a professional human tech writer. Write naturally with varied sentence structure, personal touches, and authentic voice. NEVER use repetitive patterns or robotic language. Mix short and long sentences. Use contractions. Add personality. Be conversational yet professional. Always respond with valid JSON only.'
+            content: 'You are Archit Karmakar, a full-stack developer writing practical, useful tech content. Provide real information, working code examples, and actionable advice. Include internal links naturally. Always respond with valid JSON only.'
           },
           {
             role: 'user',
@@ -247,8 +313,8 @@ REMEMBER: Write like a real person sharing knowledge, not a robot generating con
           }
         ],
         response_format: { type: 'json_object' },
-        temperature: 0.9,
-        top_p: 0.95,
+        temperature: 0.8,
+        top_p: 0.9,
         frequency_penalty: 0.3,
         presence_penalty: 0.3,
       });
@@ -259,8 +325,11 @@ REMEMBER: Write like a real person sharing knowledge, not a robot generating con
     } else {
       console.log('Using Gemini with model:', config.ai.model);
       
-      // Use Gemini with higher temperature for human-like output
-      const model = genAI.getGenerativeModel({ model: config.ai.model, generationConfig: { temperature: 0.9 } });
+      // Use Gemini
+      const model = genAI.getGenerativeModel({ 
+        model: config.ai.model, 
+        generationConfig: { temperature: 0.8 } 
+      });
       const result = await model.generateContent(prompt);
       const response = await result.response;
       const text = response.text();
@@ -288,7 +357,7 @@ REMEMBER: Write like a real person sharing knowledge, not a robot generating con
       wordCount,
       readingTime,
       category,
-      author: 'Mershal Editorial Team',
+      author: 'Archit Karmakar',
       status: 'published',
       featuredImage,
     };

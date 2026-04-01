@@ -43,8 +43,7 @@ async function publishArticle(useTrending = false) {
     // Generate article
     const article = await generateArticle(
       selectedTopic.topic,
-      selectedTopic.category,
-      []
+      selectedTopic.category
     );
     
     console.log('✓ Article generated successfully!');
