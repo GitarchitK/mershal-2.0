@@ -58,3 +58,31 @@ a:focus, button:focus {
   --color-primary-dark: #b91c1c;
   --color-primary-light: #ef4444;
 }
+
+/* Mobile responsiveness - prevent horizontal overflow */
+@media (max-width: 768px) {
+  body {
+    overflow-x: hidden;
+  }
+  
+  * {
+    max-width: 100%;
+  }
+  
+  pre, code {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  img, video, iframe {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
