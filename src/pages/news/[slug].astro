@@ -258,6 +258,58 @@ const publishedDate = article.publishedAt?.toDate?.() || new Date();
   <BottomNav />
 </Layout>
 
+<script>
+  // Add copy button to code blocks
+  document.addEventListener('DOMContentLoaded', () => {
+    const codeBlocks = document.querySelectorAll('.article-content pre');
+    
+    codeBlocks.forEach((block) => {
+      // Create copy button
+      const copyButton = document.createElement('button');
+      copyButton.className = 'copy-code-btn';
+      copyButton.innerHTML = `
+        <svg class="copy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-text">Copy</span>
+      `;
+      
+      copyButton.addEventListener('click', async () => {
+        const code = block.querySelector('code');
+        const text = code?.textContent || '';
+        
+        try {
+          await navigator.clipboard.writeText(text);
+          copyButton.innerHTML = `
+            <svg class="check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span class="copy-text">Copied!</span>
+          `;
+          copyButton.classList.add('copied');
+          
+          setTimeout(() => {
+            copyButton.innerHTML = `
+              <svg class="copy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <span class="copy-text">Copy</span>
+            `;
+            copyButton.classList.remove('copied');
+          }, 2000);
+        } catch (err) {
+          console.error('Failed to copy:', err);
+        }
+      });
+      
+      block.style.position = 'relative';
+      block.appendChild(copyButton);
+    });
+  });
+</script>
+
 <style>
   /* Modern Professional Article Styles */
   .article-content {
@@ -504,38 +556,144 @@ const publishedDate = article.publishedAt?.toDate?.() || new Date();
     margin-top: 0.5rem;
   }
   
-  /* Code blocks and pre-formatted text */
+  /* Code blocks and pre-formatted text - Modern Style */
   .article-content pre {
-    background: #1f2937;
-    color: #f9fafb;
+    position: relative;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    color: #e2e8f0;
     padding: 1.5rem;
     border-radius: 0.75rem;
     overflow-x: auto;
     margin: 2rem 0;
     font-size: 0.875rem;
-    line-height: 1.6;
+    line-height: 1.7;
     max-width: 100%;
     -webkit-overflow-scrolling: touch;
+    border: 1px solid #334155;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   }
   
+  .article-content pre::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+    border-radius: 0.75rem 0.75rem 0 0;
+    border-bottom: 1px solid #475569;
+  }
+  
+  .article-content pre::after {
+    content: '⚫ ⚫ ⚫';
+    position: absolute;
+    top: 12px;
+    left: 16px;
+    font-size: 8px;
+    color: #64748b;
+    letter-spacing: 4px;
+  }
+  
+  .article-content pre code {
+    display: block;
+    background: transparent;
+    color: inherit;
+    padding: 0;
+    padding-top: 40px;
+    font-size: inherit;
+    font-family: 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace;
+    word-wrap: normal;
+    overflow-wrap: normal;
+    white-space: pre;
+  }
+  
+  /* Inline code */
   .article-content code {
-    background: #f3f4f6;
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
     color: #dc2626;
-    padding: 0.2rem 0.4rem;
-    border-radius: 0.25rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.375rem;
     font-size: 0.9em;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-weight: 500;
     word-wrap: break-word;
     overflow-wrap: break-word;
+    border: 1px solid #fecaca;
   }
   
   .article-content pre code {
     background: transparent;
     color: inherit;
     padding: 0;
+    padding-top: 40px;
     font-size: inherit;
+    border: none;
     word-wrap: normal;
     overflow-wrap: normal;
+  }
+  
+  /* Syntax highlighting colors */
+  .article-content pre code .keyword {
+    color: #c792ea;
+  }
+  
+  .article-content pre code .string {
+    color: #c3e88d;
+  }
+  
+  .article-content pre code .function {
+    color: #82aaff;
+  }
+  
+  .article-content pre code .comment {
+    color: #546e7a;
+    font-style: italic;
+  }
+  
+  .article-content pre code .number {
+    color: #f78c6c;
+  }
+  
+  /* Copy button for code blocks */
+  .copy-code-btn {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: rgba(100, 116, 139, 0.8);
+    color: #e2e8f0;
+    border: 1px solid #475569;
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+    backdrop-filter: blur(4px);
+  }
+  
+  .copy-code-btn:hover {
+    background: rgba(71, 85, 105, 0.9);
+    border-color: #64748b;
+    transform: translateY(-1px);
+  }
+  
+  .copy-code-btn.copied {
+    background: rgba(34, 197, 94, 0.8);
+    border-color: #22c55e;
+  }
+  
+  .copy-code-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .copy-text {
+    font-family: system-ui, -apple-system, sans-serif;
   }
   
   /* Ensure all content respects container width */
@@ -594,8 +752,25 @@ const publishedDate = article.publishedAt?.toDate?.() || new Date();
       border-radius: 0;
     }
     
+    .article-content pre code {
+      padding-top: 40px;
+    }
+    
     .article-content code {
       font-size: 0.85em;
+      padding: 0.15rem 0.4rem;
+    }
+    
+    .copy-code-btn {
+      top: 6px;
+      right: 8px;
+      padding: 4px 8px;
+      font-size: 0.7rem;
+    }
+    
+    .copy-code-btn svg {
+      width: 12px;
+      height: 12px;
     }
   }
 </style>
