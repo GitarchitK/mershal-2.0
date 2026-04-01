@@ -304,7 +304,9 @@ const publishedDate = article.publishedAt?.toDate?.() || new Date();
         }
       });
       
-      block.style.position = 'relative';
+      if (block instanceof HTMLElement) {
+        block.style.position = 'relative';
+      }
       block.appendChild(copyButton);
     });
   });
