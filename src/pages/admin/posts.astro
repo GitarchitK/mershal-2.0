@@ -1,84 +1,41 @@
 ---
 export const prerender = false;
+import AdminLayout from '../../layouts/AdminLayout.astro';
+
 const session = Astro.cookies.get('admin_session');
 if (session?.value !== 'authenticated') return Astro.redirect('/admin');
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Posts — Mershal Admin</title>
-  <meta name="robots" content="noindex, nofollow" />
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-950 text-white min-h-screen flex">
+<AdminLayout title="All Posts" activeNav="posts">
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-2xl font-bold text-white">All Posts</h1>
+      <p class="text-gray-400 text-sm mt-1" id="post-count">Loading...</p>
+    </div>
+    <a href="/admin/posts/new" class="flex items-center gap-2 bg-rose-600 hover:bg-rose-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition">
+      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg>
+      New Post
+    </a>
+  </div>
 
-  <!-- Sidebar -->
-  <aside class="w-60 bg-gray-900 border-r border-gray-800 flex flex-col fixed h-full z-10">
-    <div class="p-6 border-b border-gray-800">
-      <a href="/" class="text-xl font-black text-rose-500">Mershal</a>
-      <p class="text-xs text-gray-500 mt-0.5">Admin Panel</p>
-    </div>
-    <nav class="flex-1 p-4 space-y-1">
-      <a href="/admin/dashboard" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white text-sm font-medium transition">
-        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>
-        Dashboard
-      </a>
-      <a href="/admin/posts" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-gray-800 text-white text-sm font-medium">
-        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>
-        All Posts
-      </a>
-      <a href="/admin/posts/new" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white text-sm font-medium transition">
-        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg>
-        New Post
-      </a>
-      <a href="/admin/categories" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white text-sm font-medium transition">
-        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"/></svg>
-        Categories
-      </a>
-    </nav>
-    <div class="p-4 border-t border-gray-800">
-      <button id="logout-btn" class="flex items-center gap-2 px-3 py-2 text-gray-500 hover:text-red-400 text-xs transition w-full">
-        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"/></svg>
-        Logout
-      </button>
-    </div>
-  </aside>
+  <div class="flex flex-wrap gap-3 mb-5">
+    <input id="search" type="text" placeholder="Search posts..." class="bg-gray-900 border border-gray-700 text-white rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-rose-500 w-64 placeholder-gray-600" />
+    <select id="filter-status" class="bg-gray-900 border border-gray-700 text-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-rose-500">
+      <option value="">All Status</option>
+      <option value="published">Published</option>
+      <option value="draft">Draft</option>
+    </select>
+    <select id="filter-category" class="bg-gray-900 border border-gray-700 text-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-rose-500">
+      <option value="">All Categories</option>
+      <option value="technology">Technology</option>
+      <option value="programming">Programming</option>
+      <option value="tutorials">Tutorials</option>
+    </select>
+  </div>
 
-  <main class="ml-60 flex-1 p-8">
-    <div class="flex items-center justify-between mb-8">
-      <div>
-        <h1 class="text-2xl font-bold">All Posts</h1>
-        <p class="text-gray-400 text-sm mt-1" id="post-count">Loading...</p>
-      </div>
-      <a href="/admin/posts/new" class="flex items-center gap-2 bg-rose-600 hover:bg-rose-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition">
-        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg>
-        New Post
-      </a>
-    </div>
-
-    <!-- Filter bar -->
-    <div class="flex gap-3 mb-5">
-      <input id="search" type="text" placeholder="Search posts..." class="bg-gray-900 border border-gray-700 text-white rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-rose-500 w-64" />
-      <select id="filter-status" class="bg-gray-900 border border-gray-700 text-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-rose-500">
-        <option value="">All Status</option>
-        <option value="published">Published</option>
-        <option value="draft">Draft</option>
-      </select>
-      <select id="filter-category" class="bg-gray-900 border border-gray-700 text-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-rose-500">
-        <option value="">All Categories</option>
-        <option value="technology">Technology</option>
-        <option value="programming">Programming</option>
-        <option value="tutorials">Tutorials</option>
-      </select>
-    </div>
-
-    <div id="posts-table" class="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden">
-      <div class="p-6 text-gray-500 text-sm">Loading posts...</div>
-    </div>
-  </main>
+  <div id="posts-table" class="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden">
+    <div class="p-6 text-gray-500 text-sm">Loading posts...</div>
+  </div>
 
   <script>
     let allPosts: any[] = [];
@@ -96,16 +53,14 @@ if (session?.value !== 'authenticated') return Astro.redirect('/admin');
         return;
       }
       const rows = posts.map((p: any) => `
-        <tr class="border-t border-gray-800 hover:bg-gray-800/40 transition group">
+        <tr class="border-t border-gray-800 hover:bg-gray-800/40 transition">
           <td class="px-5 py-3.5">
             <p class="text-sm text-white font-medium">${p.title}</p>
-            <p class="text-xs text-gray-500 mt-0.5">/news/${p.slug}</p>
+            <p class="text-xs text-gray-500 mt-0.5 font-mono">/news/${p.slug}</p>
           </td>
           <td class="px-5 py-3.5 text-sm text-gray-400 capitalize">${p.category}</td>
           <td class="px-5 py-3.5">
-            <span class="px-2.5 py-0.5 rounded-full text-xs font-medium ${p.status === 'published' ? 'bg-green-900/50 text-green-400' : 'bg-yellow-900/50 text-yellow-400'}">
-              ${p.status}
-            </span>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-medium ${p.status === 'published' ? 'bg-green-900/50 text-green-400' : 'bg-yellow-900/50 text-yellow-400'}">${p.status}</span>
           </td>
           <td class="px-5 py-3.5 text-sm text-gray-500">${p.wordCount || 0} words</td>
           <td class="px-5 py-3.5 text-sm text-gray-500">${p.publishedAt ? new Date(p.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}</td>
@@ -119,28 +74,23 @@ if (session?.value !== 'authenticated') return Astro.redirect('/admin');
       document.getElementById('posts-table')!.innerHTML = `
         <table class="w-full">
           <thead><tr class="text-left text-xs text-gray-500 uppercase tracking-wider border-b border-gray-800">
-            <th class="px-5 py-3">Title</th>
-            <th class="px-5 py-3">Category</th>
-            <th class="px-5 py-3">Status</th>
-            <th class="px-5 py-3">Words</th>
-            <th class="px-5 py-3">Date</th>
-            <th class="px-5 py-3">Actions</th>
+            <th class="px-5 py-3">Title</th><th class="px-5 py-3">Category</th>
+            <th class="px-5 py-3">Status</th><th class="px-5 py-3">Words</th>
+            <th class="px-5 py-3">Date</th><th class="px-5 py-3">Actions</th>
           </tr></thead>
           <tbody>${rows}</tbody>
-        </table>
-      `;
+        </table>`;
     }
 
     function filterPosts() {
       const search = (document.getElementById('search') as HTMLInputElement).value.toLowerCase();
       const status = (document.getElementById('filter-status') as HTMLSelectElement).value;
       const category = (document.getElementById('filter-category') as HTMLSelectElement).value;
-      const filtered = allPosts.filter((p: any) => {
-        return (!search || p.title.toLowerCase().includes(search))
-          && (!status || p.status === status)
-          && (!category || p.category === category);
-      });
-      renderTable(filtered);
+      renderTable(allPosts.filter((p: any) =>
+        (!search || p.title.toLowerCase().includes(search)) &&
+        (!status || p.status === status) &&
+        (!category || p.category === category)
+      ));
     }
 
     async function deletePost(id: string, title: string) {
@@ -150,20 +100,12 @@ if (session?.value !== 'authenticated') return Astro.redirect('/admin');
         allPosts = allPosts.filter((p: any) => p.id !== id);
         renderTable(allPosts);
         document.getElementById('post-count')!.textContent = `${allPosts.length} posts total`;
-      } else {
-        alert('Failed to delete post');
-      }
+      } else alert('Failed to delete post');
     }
 
     document.getElementById('search')?.addEventListener('input', filterPosts);
     document.getElementById('filter-status')?.addEventListener('change', filterPosts);
     document.getElementById('filter-category')?.addEventListener('change', filterPosts);
-    document.getElementById('logout-btn')?.addEventListener('click', async () => {
-      await fetch('/api/admin/auth', { method: 'DELETE' });
-      window.location.href = '/admin';
-    });
-
     loadPosts();
   </script>
-</body>
-</html>
+</AdminLayout>
