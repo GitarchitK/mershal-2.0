@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { adminDb } from '../../../lib/firebase-admin';
 import admin from 'firebase-admin';
+import { google } from 'googleapis';
 
 function isAuthenticated(cookies: any) {
   return cookies.get('admin_session')?.value === 'authenticated';
@@ -12,6 +13,34 @@ function generateSlug(title: string) {
 
 function countWords(text: string) {
   return text.trim().split(/\s+/).length;
+}
+
+// Submit URL to Google Indexing API (fire-and-forget, won't block the response)
+async function notifyGoogle(slug: string) {
+  try {
+    const email = process.env.GOOGLE_INDEXING_EMAIL;
+    let key = process.env.GOOGLE_INDEXING_PRIVATE_KEY;
+    if (!email || !key) return;
+
+    if (key.includes('\\n')) key = key.replace(/\\n/g, '\n');
+
+    const auth = new google.auth.GoogleAuth({
+      credentials: { client_email: email, private_key: key },
+      scopes: ['https://www.googleapis.com/auth/indexing'],
+    });
+
+    const indexing = google.indexing({ version: 'v3', auth });
+    const url = `https://mershal.in/news/${slug}`;
+
+    await indexing.urlNotifications.publish({
+      requestBody: { url, type: 'URL_UPDATED' },
+    });
+
+    console.log('✓ Submitted to Google Indexing:', url);
+  } catch (err: any) {
+    // Non-fatal — log and continue
+    console.warn('Google Indexing skipped:', err.message);
+  }
 }
 
 // GET - list all posts or single post
@@ -94,6 +123,12 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     };
 
     const ref = await adminDb.collection('posts').add(post);
+
+    // Auto-submit to Google Indexing if published
+    if (post.status === 'published') {
+      notifyGoogle(slug); // fire-and-forget
+    }
+
     return new Response(JSON.stringify({ id: ref.id, slug }), {
       status: 201,
       headers: { 'Content-Type': 'application/json' },
@@ -126,6 +161,11 @@ export const PUT: APIRoute = async ({ request, cookies }) => {
       readingTime,
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     });
+
+    // Auto-submit to Google Indexing if publishing
+    if (fields.status === 'published' && fields.slug) {
+      notifyGoogle(fields.slug); // fire-and-forget
+    }
 
     return new Response(JSON.stringify({ success: true }), {
       headers: { 'Content-Type': 'application/json' },
