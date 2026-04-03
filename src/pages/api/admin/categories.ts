@@ -10,13 +10,41 @@ export const GET: APIRoute = async ({ cookies }) => {
   if (!isAuthenticated(cookies)) return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
   if (!adminDb) return new Response(JSON.stringify({ error: 'DB not configured' }), { status: 503 });
 
+  // Default categories always shown
+  const defaults = [
+    { id: 'technology', name: 'Technology', slug: 'technology', description: 'Tech news and updates', builtin: true },
+    { id: 'programming', name: 'Programming', slug: 'programming', description: 'Programming guides and tips', builtin: true },
+    { id: 'tutorials', name: 'Tutorials', slug: 'tutorials', description: 'Step-by-step tutorials', builtin: true },
+  ];
+
   try {
-    const snapshot = await adminDb.collection('categories').orderBy('name').get();
-    const categories = await Promise.all(snapshot.docs.map(async doc => {
-      const postsSnap = await adminDb!.collection('posts').where('category', '==', doc.data().slug).where('status', '==', 'published').get();
-      return { id: doc.id, ...doc.data(), postCount: postsSnap.size };
+    // Get post counts for each default category
+    const withCounts = await Promise.all(defaults.map(async (cat) => {
+      try {
+        const postsSnap = await adminDb!.collection('posts')
+          .where('category', '==', cat.slug)
+          .where('status', '==', 'published')
+          .get();
+        return { ...cat, postCount: postsSnap.size };
+      } catch {
+        return { ...cat, postCount: 0 };
+      }
     }));
-    return new Response(JSON.stringify(categories), { headers: { 'Content-Type': 'application/json' } });
+
+    // Also fetch any custom categories added via admin
+    let custom: any[] = [];
+    try {
+      const snapshot = await adminDb.collection('categories').orderBy('name').get();
+      custom = snapshot.docs
+        .map(doc => ({ id: doc.id, ...doc.data(), postCount: 0 }))
+        .filter((c: any) => !defaults.find(d => d.slug === c.slug)); // avoid duplicates
+    } catch {
+      // categories collection may not exist yet, that's fine
+    }
+
+    return new Response(JSON.stringify([...withCounts, ...custom]), {
+      headers: { 'Content-Type': 'application/json' },
+    });
   } catch (e: any) {
     return new Response(JSON.stringify({ error: e.message }), { status: 500 });
   }

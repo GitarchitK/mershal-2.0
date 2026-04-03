@@ -63,13 +63,16 @@ if (session?.value !== 'authenticated') return Astro.redirect('/admin');
       list.innerHTML = cats.map((c: any) => `
         <div class="bg-gray-900 rounded-xl border border-gray-800 p-4 flex items-center justify-between">
           <div>
-            <p class="text-sm font-semibold text-white">${c.name}</p>
+            <div class="flex items-center gap-2">
+              <p class="text-sm font-semibold text-white">${c.name}</p>
+              ${c.builtin ? '<span class="text-xs bg-gray-700 text-gray-400 px-1.5 py-0.5 rounded">built-in</span>' : ''}
+            </div>
             <p class="text-xs text-gray-500 font-mono mt-0.5">${c.slug}</p>
             <p class="text-xs text-gray-600 mt-1">${c.postCount || 0} posts</p>
           </div>
           <div class="flex gap-3">
             <a href="/category/${c.slug}" target="_blank" class="text-xs text-gray-500 hover:text-gray-300">View</a>
-            <button onclick="deleteCategory('${c.id}', '${c.name}')" class="text-xs text-gray-600 hover:text-red-400 transition">Delete</button>
+            ${!c.builtin ? `<button onclick="deleteCategory('${c.id}', '${c.name}')" class="text-xs text-gray-600 hover:text-red-400 transition">Delete</button>` : ''}
           </div>
         </div>
       `).join('');
