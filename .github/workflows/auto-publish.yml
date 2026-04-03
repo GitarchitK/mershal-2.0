@@ -1,10 +1,11 @@
 name: Auto Publish Articles
 
 on:
-  schedule:
-    # Run every 2 hours (12 times per day = ~2-3 articles per run)
-    - cron: '0 */2 * * *'
-  workflow_dispatch: # Allow manual trigger
+  workflow_dispatch: # Manual trigger only - automation paused
+
+# Scheduled automation is paused. Re-enable by adding back:
+# schedule:
+#   - cron: '0 */2 * * *'
 
 jobs:
   publish:
@@ -40,9 +41,6 @@ jobs:
           WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
           UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
         run: |
-          # Generate 2 articles per run
-          echo "🔍 Checking indexing configuration..."
-          node automation/test-indexing.js
           echo "📝 Publishing articles..."
           node automation/auto-publish.js 2
       
