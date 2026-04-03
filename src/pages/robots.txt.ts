@@ -3,31 +3,30 @@ export const prerender = true;
 import type { APIRoute } from 'astro';
 
 export const GET: APIRoute = () => {
-  const robotsTxt = `# https://www.robotstxt.org/robotstxt.html
-User-agent: *
+  const robotsTxt = `User-agent: *
 Allow: /
 
 # Sitemaps
 Sitemap: https://mershal.in/sitemap.xml
 Sitemap: https://mershal.in/news-sitemap.xml
 
-# AdSense crawlers
+# Block admin and API routes from indexing
+Disallow: /admin/
+Disallow: /api/
+
+# Allow Google AdSense crawlers
 User-agent: Mediapartners-Google
 Allow: /
 
 User-agent: AdsBot-Google
 Allow: /
 
-# Crawl-delay for respectful crawling
-Crawl-delay: 1
-
-# Disallow admin/private areas (if any)
-Disallow: /api/
+# Allow Google Image bot
+User-agent: Googlebot-Image
+Allow: /
 `;
 
   return new Response(robotsTxt, {
-    headers: {
-      'Content-Type': 'text/plain',
-    },
+    headers: { 'Content-Type': 'text/plain' },
   });
 };

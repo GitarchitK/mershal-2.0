@@ -5,10 +5,9 @@ import { adminDb } from '../lib/firebase-admin';
 
 export const GET: APIRoute = async () => {
   const baseUrl = 'https://mershal.in';
-  
+
   let posts: any[] = [];
-  
-  // Fetch all published posts
+
   if (adminDb) {
     try {
       const snapshot = await adminDb
@@ -16,91 +15,95 @@ export const GET: APIRoute = async () => {
         .where('status', '==', 'published')
         .orderBy('publishedAt', 'desc')
         .get();
-      
+
       posts = snapshot.docs.map(doc => ({
         slug: doc.data().slug,
         updatedAt: doc.data().updatedAt?.toDate?.() || new Date(),
+        category: doc.data().category,
       }));
     } catch (error) {
       console.error('Error fetching posts for sitemap:', error);
     }
   }
-  
-  // Categories
-  const categories = [
-    'sports',
-    'technology',
-    'business',
-    'politics',
-    'entertainment',
-    'world',
-  ];
-  
-  // Generate sitemap XML
+
+  const categories = ['technology', 'programming', 'tutorials'];
+  const now = new Date().toISOString();
+
   let sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+
+  <!-- Homepage -->
   <url>
     <loc>${baseUrl}/</loc>
-    <changefreq>hourly</changefreq>
-    <priority>1.0</priority>
-    <lastmod>${new Date().toISOString()}</lastmod>
-  </url>
-  <url>
-    <loc>${baseUrl}/ipl</loc>
     <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-    <lastmod>${new Date().toISOString()}</lastmod>
+    <priority>1.0</priority>
+    <lastmod>${now}</lastmod>
   </url>
+
+  <!-- About -->
   <url>
     <loc>${baseUrl}/about</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
+    <priority>0.7</priority>
+    <lastmod>${now}</lastmod>
   </url>
+
+  <!-- Contact -->
   <url>
     <loc>${baseUrl}/contact</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
+
+  <!-- Privacy Policy -->
   <url>
     <loc>${baseUrl}/privacy</loc>
-    <changefreq>monthly</changefreq>
+    <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
+
+  <!-- Terms -->
   <url>
     <loc>${baseUrl}/terms</loc>
-    <changefreq>monthly</changefreq>
+    <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
+
 `;
 
-  // Add category pages
+  // Category pages
   categories.forEach(category => {
-    sitemap += `  <url>
+    sitemap += `  <!-- Category: ${category} -->
+  <url>
     <loc>${baseUrl}/category/${category}</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
-    <lastmod>${new Date().toISOString()}</lastmod>
+    <lastmod>${now}</lastmod>
   </url>
+
 `;
   });
-  
-  // Add all posts
+
+  // Article pages
   posts.forEach(post => {
     sitemap += `  <url>
     <loc>${baseUrl}/news/${post.slug}</loc>
     <lastmod>${post.updatedAt.toISOString()}</lastmod>
-    <changefreq>weekly</changefreq>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 `;
   });
-  
+
   sitemap += `</urlset>`;
-  
+
   return new Response(sitemap, {
     headers: {
-      'Content-Type': 'application/xml',
-      'Cache-Control': 'public, max-age=3600', // Cache for 1 hour
+      'Content-Type': 'application/xml; charset=utf-8',
+      'Cache-Control': 'public, max-age=3600',
     },
   });
 };
