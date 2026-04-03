@@ -1,70 +1,207 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
-import BreakingNews from '../components/BreakingNews.astro';
 import Footer from '../components/Footer.astro';
 import BottomNav from '../components/BottomNav.astro';
 ---
 
-<Layout title="About Mershal - Tech Tutorials & Programming Blog" description="Learn programming, web development, and tech skills with Mershal - Your friendly tech blog by Archit Karmakar">
+<Layout title="About Archit Karmakar - Full Stack Developer & Tech Blogger" description="Hey, I'm Archit Karmakar — a full stack developer from India who writes about programming, web dev, and everything tech. This is my corner of the internet.">
   <Header />
-  <BreakingNews />
-  
-  <main class="container mx-auto px-4 py-8 pb-20 md:pb-8">
-    <div class="max-w-3xl mx-auto">
-      <h1 class="text-4xl font-bold mb-6">About Mershal</h1>
-      
-      <div class="prose prose-lg max-w-none">
-        <p class="text-xl text-gray-600 mb-8">
-          Welcome to <strong>Mershal</strong> - your go-to destination for programming tutorials, tech guides, and developer resources!
-        </p>
 
-        <h2 class="text-2xl font-bold mt-8 mb-4">Who Am I?</h2>
-        <p class="mb-4">
-          Hey! I'm <strong>Archit Karmakar</strong>, a full-stack developer and tech enthusiast from India. I started Mershal to share what I learn on my coding journey and help fellow developers level up their skills.
-        </p>
-        <p class="mb-4">
-          With experience in JavaScript, Python, React, Node.js, and more, I write about real-world projects, practical tutorials, and stuff I actually use in my own work.
-        </p>
+  <main class="bg-gray-50 pb-20 md:pb-8">
 
-        <h2 class="text-2xl font-bold mt-8 mb-4">What You'll Find Here</h2>
-        <ul class="list-disc pl-6 mb-6 space-y-2">
-          <li><strong>Programming Tutorials</strong> - Step-by-step guides for Python, JavaScript, React, and more</li>
-          <li><strong>Web Development</strong> - Build modern websites with HTML, CSS, React, and Next.js</li>
-          <li><strong>App Development</strong> - Create mobile apps with Flutter, React Native, and more</li>
-          <li><strong>DevOps & Tools</strong> - Docker, Git, VS Code tips, and developer workflows</li>
-          <li><strong>Career Advice</strong> - Job tips, interview prep, and freelance guidance</li>
-          <li><strong>Tech Reviews</strong> - Honest opinions on tools, gadgets, and software</li>
-        </ul>
+    <!-- Hero Section -->
+    <section class="bg-white border-b border-gray-100">
+      <div class="container mx-auto px-4 py-14 max-w-4xl">
+        <div class="flex flex-col md:flex-row items-center md:items-start gap-10">
 
-        <h2 class="text-2xl font-bold mt-8 mb-4">My Approach</h2>
-        <p class="mb-4">
-          I write the way I'd explain to a friend - casual, practical, and with real code examples. No fluff, just actionable content that actually helps you build things.
-        </p>
-        <p class="mb-4">
-          Everything here is based on my personal experience building projects. I share what worked, what didn't, and what I'd do differently.
-        </p>
-
-        <h2 class="text-2xl font-bold mt-8 mb-4">Let's Connect!</h2>
-        <p class="mb-4">
-          Got questions? Want to collaborate? Just want to say hi? Drop me a message on the <a href="/contact" class="text-red-600 hover:underline">contact page</a>!
-        </p>
-        <p class="mb-4">
-          I read and reply to every message. Thanks for being part of this journey! 🚀
-        </p>
-
-        <div class="bg-gray-100 p-6 rounded-lg mt-8">
-          <h3 class="text-xl font-bold mb-3">Tech Stack I Use</h3>
-          <div class="flex flex-wrap gap-2">
-            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">JavaScript</span>
-            <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">Python</span>
-            <span class="bg-cyan-100 text-cyan-800 px-3 py-1 rounded-full text-sm">React</span>
-            <span class="bg-gray-800 text-white px-3 py-1 rounded-full text-sm">Node.js</span>
-            <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">TypeScript</span>
-            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">MongoDB</span>
-            <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">Firebase</span>
-            <span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm">Docker</span>
+          <!-- Avatar -->
+          <div class="flex-shrink-0">
+            <div class="w-36 h-36 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center shadow-xl">
+              <span class="text-6xl font-black text-white select-none">AK</span>
+            </div>
+            <div class="flex items-center justify-center gap-1.5 mt-3">
+              <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+              <span class="text-xs text-gray-500 font-medium">Available for freelance</span>
+            </div>
           </div>
+
+          <!-- Intro -->
+          <div class="flex-1 text-center md:text-left">
+            <p class="text-sm font-semibold text-rose-600 uppercase tracking-widest mb-2">Hey there 👋</p>
+            <h1 class="text-4xl md:text-5xl font-black text-gray-900 mb-3 leading-tight">I'm Archit Karmakar</h1>
+            <p class="text-xl text-gray-600 mb-5 leading-relaxed">
+              Full Stack Developer · Tech Enthusiast · Blogger
+            </p>
+            <p class="text-gray-600 leading-relaxed mb-6 max-w-xl">
+              I build things for the web and write about what I learn along the way. Mershal is my personal space where I share tutorials, opinions, and the occasional rant about why CSS is both amazing and infuriating.
+            </p>
+            <div class="flex flex-wrap gap-3 justify-center md:justify-start">
+              <a href="/contact" class="inline-flex items-center gap-2 bg-rose-600 text-white px-5 py-2.5 rounded-lg font-semibold text-sm hover:bg-rose-700 transition">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>
+                Say Hello
+              </a>
+              <a href="/" class="inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-5 py-2.5 rounded-lg font-semibold text-sm hover:bg-gray-200 transition">
+                Read My Blog
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="container mx-auto px-4 py-12 max-w-4xl">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+        <!-- Main Content -->
+        <div class="md:col-span-2 space-y-10">
+
+          <!-- My Story -->
+          <section class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+            <h2 class="text-2xl font-bold text-gray-900 mb-5 flex items-center gap-2">
+              <span class="text-2xl">📖</span> My Story
+            </h2>
+            <div class="space-y-4 text-gray-600 leading-relaxed">
+              <p>
+                I got into programming the way most people do — by breaking things. I was 16, trying to make a simple website for a school project, and I spent three days debugging a CSS issue that turned out to be a missing semicolon. That frustration somehow turned into a passion.
+              </p>
+              <p>
+                Since then, I've built everything from small personal projects to full production apps. I've worked with startups, freelanced for clients across different industries, and spent way too many late nights reading documentation when I should've been sleeping.
+              </p>
+              <p>
+                I started Mershal because I kept finding myself explaining the same concepts to friends and colleagues. Instead of repeating myself, I figured I'd write it down properly — with real code, real examples, and honest opinions. No fluff, no filler.
+              </p>
+              <p>
+                Everything I write here is based on things I've actually built or problems I've actually solved. If I got something wrong, I want to know — drop me a message.
+              </p>
+            </div>
+          </section>
+
+          <!-- What I Write About -->
+          <section class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+              <span class="text-2xl">✍️</span> What I Write About
+            </h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="flex items-start gap-3 p-4 bg-rose-50 rounded-xl">
+                <span class="text-2xl">🧑‍💻</span>
+                <div>
+                  <h3 class="font-bold text-gray-900 text-sm mb-1">Programming Tutorials</h3>
+                  <p class="text-xs text-gray-600">Step-by-step guides for Python, JavaScript, TypeScript, and more — written the way I wish someone had explained them to me.</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3 p-4 bg-blue-50 rounded-xl">
+                <span class="text-2xl">🌐</span>
+                <div>
+                  <h3 class="font-bold text-gray-900 text-sm mb-1">Web Development</h3>
+                  <p class="text-xs text-gray-600">React, Next.js, Astro, Node.js — building modern web apps and the lessons learned along the way.</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3 p-4 bg-green-50 rounded-xl">
+                <span class="text-2xl">🛠️</span>
+                <div>
+                  <h3 class="font-bold text-gray-900 text-sm mb-1">Dev Tools & Workflow</h3>
+                  <p class="text-xs text-gray-600">Git, Docker, VS Code, terminal tricks — the tools that actually make development faster and less painful.</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3 p-4 bg-purple-50 rounded-xl">
+                <span class="text-2xl">🔍</span>
+                <div>
+                  <h3 class="font-bold text-gray-900 text-sm mb-1">Tech Deep Dives</h3>
+                  <p class="text-xs text-gray-600">How things actually work under the hood — databases, APIs, cloud services, and the tech powering modern software.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- My Approach -->
+          <section class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+            <h2 class="text-2xl font-bold text-gray-900 mb-5 flex items-center gap-2">
+              <span class="text-2xl">🎯</span> My Approach
+            </h2>
+            <div class="space-y-4 text-gray-600 leading-relaxed">
+              <p>
+                I write the way I'd explain something to a friend who's a developer — direct, practical, and without unnecessary jargon. If a concept needs a metaphor, I'll use one. If it needs code, I'll show the actual code (not pseudocode).
+              </p>
+              <p>
+                I also try to be honest about the tradeoffs. Every tool, framework, and approach has downsides. I'd rather tell you when something is annoying or limited than pretend everything is perfect.
+              </p>
+              <blockquote class="border-l-4 border-rose-500 pl-4 italic text-gray-700 my-4">
+                "The best tutorial is the one that actually helps you build something, not just understand a concept in theory."
+              </blockquote>
+            </div>
+          </section>
+
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-6">
+
+          <!-- Quick Facts -->
+          <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <h3 class="font-bold text-gray-900 mb-4 text-sm uppercase tracking-wider">Quick Facts</h3>
+            <ul class="space-y-3 text-sm text-gray-600">
+              <li class="flex items-center gap-2"><span>📍</span> India</li>
+              <li class="flex items-center gap-2"><span>💼</span> Full Stack Developer</li>
+              <li class="flex items-center gap-2"><span>🎓</span> Self-taught + CS fundamentals</li>
+              <li class="flex items-center gap-2"><span>☕</span> Powered by coffee</li>
+              <li class="flex items-center gap-2"><span>🌙</span> Night owl coder</li>
+              <li class="flex items-center gap-2"><span>🐛</span> Professional bug creator</li>
+            </ul>
+          </div>
+
+          <!-- Tech Stack -->
+          <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <h3 class="font-bold text-gray-900 mb-4 text-sm uppercase tracking-wider">Tech Stack</h3>
+            <div class="flex flex-wrap gap-2">
+              <span class="bg-yellow-100 text-yellow-800 px-2.5 py-1 rounded-lg text-xs font-semibold">JavaScript</span>
+              <span class="bg-blue-100 text-blue-800 px-2.5 py-1 rounded-lg text-xs font-semibold">TypeScript</span>
+              <span class="bg-cyan-100 text-cyan-800 px-2.5 py-1 rounded-lg text-xs font-semibold">React</span>
+              <span class="bg-gray-800 text-white px-2.5 py-1 rounded-lg text-xs font-semibold">Next.js</span>
+              <span class="bg-orange-100 text-orange-800 px-2.5 py-1 rounded-lg text-xs font-semibold">Astro</span>
+              <span class="bg-green-100 text-green-800 px-2.5 py-1 rounded-lg text-xs font-semibold">Node.js</span>
+              <span class="bg-yellow-100 text-yellow-800 px-2.5 py-1 rounded-lg text-xs font-semibold">Python</span>
+              <span class="bg-red-100 text-red-800 px-2.5 py-1 rounded-lg text-xs font-semibold">Firebase</span>
+              <span class="bg-blue-100 text-blue-800 px-2.5 py-1 rounded-lg text-xs font-semibold">PostgreSQL</span>
+              <span class="bg-green-100 text-green-800 px-2.5 py-1 rounded-lg text-xs font-semibold">MongoDB</span>
+              <span class="bg-sky-100 text-sky-800 px-2.5 py-1 rounded-lg text-xs font-semibold">Tailwind CSS</span>
+              <span class="bg-gray-100 text-gray-800 px-2.5 py-1 rounded-lg text-xs font-semibold">Docker</span>
+              <span class="bg-orange-100 text-orange-800 px-2.5 py-1 rounded-lg text-xs font-semibold">Git</span>
+            </div>
+          </div>
+
+          <!-- Currently -->
+          <div class="bg-gradient-to-br from-rose-50 to-pink-50 rounded-2xl p-6 border border-rose-100">
+            <h3 class="font-bold text-gray-900 mb-4 text-sm uppercase tracking-wider">Currently</h3>
+            <ul class="space-y-3 text-sm text-gray-700">
+              <li class="flex items-start gap-2">
+                <span class="text-rose-500 mt-0.5">▶</span>
+                <span>Building Mershal as a personal tech blog</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-rose-500 mt-0.5">▶</span>
+                <span>Learning Rust (it's hard, but worth it)</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-rose-500 mt-0.5">▶</span>
+                <span>Exploring AI/ML integrations in web apps</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-rose-500 mt-0.5">▶</span>
+                <span>Open to freelance projects</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Contact CTA -->
+          <div class="bg-gray-900 rounded-2xl p-6 text-white">
+            <h3 class="font-bold mb-2">Let's Talk</h3>
+            <p class="text-gray-400 text-sm mb-4">Have a project, question, or just want to connect? I'm always happy to chat.</p>
+            <a href="/contact" class="block text-center bg-rose-600 hover:bg-rose-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition">
+              Get in Touch
+            </a>
+          </div>
+
         </div>
       </div>
     </div>
