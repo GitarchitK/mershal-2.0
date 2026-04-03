@@ -1,0 +1,201 @@
+---
+export const prerender = false;
+const session = Astro.cookies.get('admin_session');
+if (session?.value !== 'authenticated') return Astro.redirect('/admin');
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>New Post — Mershal Admin</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-950 text-white min-h-screen flex">
+
+  <aside class="w-60 bg-gray-900 border-r border-gray-800 flex flex-col fixed h-full z-10">
+    <div class="p-6 border-b border-gray-800">
+      <a href="/" class="text-xl font-black text-rose-500">Mershal</a>
+      <p class="text-xs text-gray-500 mt-0.5">Admin Panel</p>
+    </div>
+    <nav class="flex-1 p-4 space-y-1">
+      <a href="/admin/dashboard" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white text-sm font-medium transition">Dashboard</a>
+      <a href="/admin/posts" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white text-sm font-medium transition">All Posts</a>
+      <a href="/admin/posts/new" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-gray-800 text-white text-sm font-medium">New Post</a>
+      <a href="/admin/categories" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white text-sm font-medium transition">Categories</a>
+    </nav>
+    <div class="p-4 border-t border-gray-800">
+      <button id="logout-btn" class="flex items-center gap-2 px-3 py-2 text-gray-500 hover:text-red-400 text-xs transition w-full">Logout</button>
+    </div>
+  </aside>
+
+  <main class="ml-60 flex-1 p-8 max-w-5xl">
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-2xl font-bold">New Post</h1>
+        <p class="text-gray-400 text-sm mt-1">Write and publish a new article</p>
+      </div>
+      <div class="flex gap-3">
+        <button id="save-draft" class="bg-gray-800 hover:bg-gray-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition">Save Draft</button>
+        <button id="publish-btn" class="bg-rose-600 hover:bg-rose-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition">Publish</button>
+      </div>
+    </div>
+
+    <div id="alert" class="hidden mb-5 p-4 rounded-lg text-sm font-medium"></div>
+
+    <div class="grid grid-cols-3 gap-6">
+      <!-- Editor -->
+      <div class="col-span-2 space-y-5">
+        <div>
+          <input id="title" type="text" placeholder="Post title..." class="w-full bg-gray-900 border border-gray-700 text-white text-xl font-bold rounded-xl px-5 py-4 focus:outline-none focus:border-rose-500 placeholder-gray-600" />
+        </div>
+        <div>
+          <input id="slug" type="text" placeholder="url-slug (auto-generated)" class="w-full bg-gray-900 border border-gray-700 text-gray-400 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-rose-500 font-mono" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Excerpt</label>
+          <textarea id="excerpt" rows="2" placeholder="Brief description of the post..." class="w-full bg-gray-900 border border-gray-700 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-rose-500 resize-none placeholder-gray-600"></textarea>
+        </div>
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Content (HTML)</label>
+            <span id="word-count" class="text-xs text-gray-500">0 words</span>
+          </div>
+          <textarea id="content" rows="24" placeholder="Write your post content here in HTML...&#10;&#10;Example:&#10;&lt;h2&gt;Introduction&lt;/h2&gt;&#10;&lt;p&gt;Your content here...&lt;/p&gt;&#10;&lt;pre&gt;&lt;code&gt;// code example&lt;/code&gt;&lt;/pre&gt;" class="w-full bg-gray-900 border border-gray-700 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-rose-500 font-mono resize-y placeholder-gray-600"></textarea>
+        </div>
+      </div>
+
+      <!-- Sidebar Settings -->
+      <div class="space-y-5">
+        <div class="bg-gray-900 rounded-xl border border-gray-800 p-5">
+          <h3 class="text-sm font-semibold text-gray-300 mb-4">Post Settings</h3>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-xs text-gray-400 mb-1.5">Category</label>
+              <select id="category" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-rose-500">
+                <option value="technology">Technology</option>
+                <option value="programming">Programming</option>
+                <option value="tutorials">Tutorials</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs text-gray-400 mb-1.5">Author</label>
+              <input id="author" type="text" value="Archit Karmakar" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-rose-500" />
+            </div>
+            <div>
+              <label class="block text-xs text-gray-400 mb-1.5">Tags (comma separated)</label>
+              <input id="tags" type="text" placeholder="javascript, react, tutorial" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-rose-500" />
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-gray-900 rounded-xl border border-gray-800 p-5">
+          <h3 class="text-sm font-semibold text-gray-300 mb-4">Featured Image</h3>
+          <input id="featured-image" type="url" placeholder="https://images.unsplash.com/..." class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-rose-500 placeholder-gray-600" />
+          <div id="image-preview" class="mt-3 hidden">
+            <img id="preview-img" src="" alt="Preview" class="w-full h-32 object-cover rounded-lg" />
+          </div>
+        </div>
+
+        <div class="bg-gray-900 rounded-xl border border-gray-800 p-5">
+          <h3 class="text-sm font-semibold text-gray-300 mb-4">SEO</h3>
+          <div class="space-y-3">
+            <div>
+              <label class="block text-xs text-gray-400 mb-1.5">SEO Title</label>
+              <input id="seo-title" type="text" placeholder="Leave blank to use post title" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-rose-500 placeholder-gray-600" />
+            </div>
+            <div>
+              <label class="block text-xs text-gray-400 mb-1.5">Meta Description</label>
+              <textarea id="seo-desc" rows="3" placeholder="Leave blank to use excerpt" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-rose-500 resize-none placeholder-gray-600"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Auto-generate slug from title
+    document.getElementById('title')?.addEventListener('input', (e) => {
+      const title = (e.target as HTMLInputElement).value;
+      const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+      (document.getElementById('slug') as HTMLInputElement).value = slug;
+    });
+
+    // Word count
+    document.getElementById('content')?.addEventListener('input', (e) => {
+      const text = (e.target as HTMLTextAreaElement).value.replace(/<[^>]*>/g, '');
+      const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+      document.getElementById('word-count')!.textContent = `${words} words`;
+    });
+
+    // Image preview
+    document.getElementById('featured-image')?.addEventListener('input', (e) => {
+      const url = (e.target as HTMLInputElement).value;
+      const preview = document.getElementById('image-preview')!;
+      const img = document.getElementById('preview-img') as HTMLImageElement;
+      if (url) { img.src = url; preview.classList.remove('hidden'); }
+      else { preview.classList.add('hidden'); }
+    });
+
+    function showAlert(msg: string, type: 'success' | 'error') {
+      const el = document.getElementById('alert')!;
+      el.textContent = msg;
+      el.className = `mb-5 p-4 rounded-lg text-sm font-medium ${type === 'success' ? 'bg-green-900/50 text-green-300 border border-green-700' : 'bg-red-900/50 text-red-300 border border-red-700'}`;
+      el.classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    async function savePost(status: string) {
+      const title = (document.getElementById('title') as HTMLInputElement).value.trim();
+      if (!title) { showAlert('Title is required', 'error'); return; }
+
+      const tagsRaw = (document.getElementById('tags') as HTMLInputElement).value;
+      const tags = tagsRaw.split(',').map(t => t.trim()).filter(Boolean);
+
+      const payload = {
+        title,
+        slug: (document.getElementById('slug') as HTMLInputElement).value || undefined,
+        excerpt: (document.getElementById('excerpt') as HTMLTextAreaElement).value,
+        content: (document.getElementById('content') as HTMLTextAreaElement).value,
+        category: (document.getElementById('category') as HTMLSelectElement).value,
+        author: (document.getElementById('author') as HTMLInputElement).value,
+        tags,
+        featuredImage: (document.getElementById('featured-image') as HTMLInputElement).value,
+        seoTitle: (document.getElementById('seo-title') as HTMLInputElement).value,
+        seoDescription: (document.getElementById('seo-desc') as HTMLTextAreaElement).value,
+        status,
+      };
+
+      const btn = status === 'published' ? document.getElementById('publish-btn') : document.getElementById('save-draft');
+      (btn as HTMLButtonElement).disabled = true;
+      (btn as HTMLButtonElement).textContent = 'Saving...';
+
+      const res = await fetch('/api/admin/posts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        showAlert(`Post ${status === 'published' ? 'published' : 'saved as draft'} successfully!`, 'success');
+        setTimeout(() => window.location.href = '/admin/posts', 1500);
+      } else {
+        showAlert(data.error || 'Failed to save post', 'error');
+        (btn as HTMLButtonElement).disabled = false;
+        (btn as HTMLButtonElement).textContent = status === 'published' ? 'Publish' : 'Save Draft';
+      }
+    }
+
+    document.getElementById('publish-btn')?.addEventListener('click', () => savePost('published'));
+    document.getElementById('save-draft')?.addEventListener('click', () => savePost('draft'));
+    document.getElementById('logout-btn')?.addEventListener('click', async () => {
+      await fetch('/api/admin/auth', { method: 'DELETE' });
+      window.location.href = '/admin';
+    });
+  </script>
+</body>
+</html>

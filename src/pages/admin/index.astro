@@ -1,0 +1,88 @@
+---
+export const prerender = false;
+
+// Redirect to dashboard if already logged in
+const session = Astro.cookies.get('admin_session');
+if (session?.value === 'authenticated') {
+  return Astro.redirect('/admin/dashboard');
+}
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login — Mershal</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gray-950 flex items-center justify-center p-4">
+  <div class="w-full max-w-sm">
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-black text-white">Mershal</h1>
+      <p class="text-gray-400 text-sm mt-1">Admin Panel</p>
+    </div>
+
+    <div class="bg-gray-900 rounded-2xl p-8 border border-gray-800 shadow-2xl">
+      <h2 class="text-lg font-bold text-white mb-6">Sign In</h2>
+
+      <div id="error" class="hidden mb-4 p-3 bg-red-900/50 border border-red-700 text-red-300 rounded-lg text-sm"></div>
+
+      <form id="login-form" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-400 mb-1.5">Password</label>
+          <input
+            type="password"
+            id="password"
+            placeholder="Enter admin password"
+            class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500 transition"
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          id="submit-btn"
+          class="w-full bg-rose-600 hover:bg-rose-700 text-white font-semibold py-3 rounded-lg text-sm transition"
+        >
+          Sign In
+        </button>
+      </form>
+    </div>
+
+    <p class="text-center text-gray-600 text-xs mt-6">
+      <a href="/" class="hover:text-gray-400 transition">← Back to site</a>
+    </p>
+  </div>
+
+  <script>
+    document.getElementById('login-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submit-btn') as HTMLButtonElement;
+      const errorEl = document.getElementById('error') as HTMLElement;
+      const password = (document.getElementById('password') as HTMLInputElement).value;
+
+      btn.textContent = 'Signing in...';
+      btn.disabled = true;
+      errorEl.classList.add('hidden');
+
+      const res = await fetch('/api/admin/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      });
+
+      if (res.ok) {
+        window.location.href = '/admin/dashboard';
+      } else {
+        const data = await res.json();
+        errorEl.textContent = data.error || 'Invalid password';
+        errorEl.classList.remove('hidden');
+        btn.textContent = 'Sign In';
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
