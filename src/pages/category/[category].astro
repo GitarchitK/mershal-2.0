@@ -3,9 +3,28 @@ export const prerender = false;
 
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
+import BreakingNews from '../../components/BreakingNews.astro';
 import Footer from '../../components/Footer.astro';
 import BottomNav from '../../components/BottomNav.astro';
 import { adminDb } from '../../lib/firebase-admin';
+
+const { category } = Astro.params;
+
+const validCategories = ['technology', 'programming', 'tutorials'];
+
+if (!category || !validCategories.includes(category.toLowerCase())) {
+  return Astro.redirect('/404');
+}
+
+const categoryName = category.charAt(0).toUpperCase() + category.slice(1);
+
+const categoryMeta: Record<string, { desc: string; icon: string }> = {
+  technology: { desc: 'Latest tech news, product launches, and industry insights.', icon: '💻' },
+  programming: { desc: 'Programming guides, code tips, and developer resources.', icon: '🧑‍💻' },
+  tutorials: { desc: 'Step-by-step tutorials to help you build and learn faster.', icon: '📖' },
+};
+
+const meta = categoryMeta[category.toLowerCase()] || { desc: `Articles about ${categoryName}`, icon: '📄' };
 
 interface Article {
   id: string;
@@ -14,142 +33,190 @@ interface Article {
   excerpt: string;
   featuredImage: string;
   category: string;
-  status: string;
+  author: string;
   publishedAt: any;
   readingTime: number;
+  wordCount: number;
 }
-
-const { category } = Astro.params;
-
-const validCategories = ['india', 'politics', 'sports', 'entertainment', 'business', 'technology', 'ipl', 'world'];
-
-if (!category || !validCategories.includes(category.toLowerCase())) {
-  return Astro.redirect('/404');
-}
-
-const categoryName = category.charAt(0).toUpperCase() + category.slice(1);
 
 let articles: Article[] = [];
 
 if (adminDb) {
   try {
-    console.log(`Fetching articles for category: "${category}"`);
-    
-    // First try with just category and status filters (no orderBy to avoid index requirement)
     const snapshot = await adminDb.collection('posts')
       .where('category', '==', category.toLowerCase())
       .where('status', '==', 'published')
-      .limit(30)
+      .limit(50)
       .get();
-    
-    console.log(`Found ${snapshot.size} articles for category: ${category}`);
-    
-    // Get articles and sort them manually by publishedAt
-    const articlesData: Article[] = snapshot.docs.map(doc => {
-      const data = doc.data();
+
+    articles = snapshot.docs.map(doc => {
+      const d = doc.data();
       return {
         id: doc.id,
-        title: data.title || '',
-        slug: data.slug || '',
-        excerpt: data.excerpt || '',
-        featuredImage: data.featuredImage || '',
-        category: data.category || '',
-        status: data.status || '',
-        publishedAt: data.publishedAt,
-        readingTime: data.readingTime || 0
+        title: d.title || '',
+        slug: d.slug || '',
+        excerpt: d.excerpt || '',
+        featuredImage: d.featuredImage || '',
+        category: d.category || '',
+        author: d.author || 'Archit Karmakar',
+        publishedAt: d.publishedAt,
+        readingTime: d.readingTime || 0,
+        wordCount: d.wordCount || 0,
       };
+    }).sort((a, b) => {
+      const aT = a.publishedAt?.toDate?.() || new Date(0);
+      const bT = b.publishedAt?.toDate?.() || new Date(0);
+      return bT.getTime() - aT.getTime();
     });
-    
-    // Sort by publishedAt descending (most recent first)
-    articlesData.sort((a, b) => {
-      const aTime = a.publishedAt?.toDate?.() || new Date(0);
-      const bTime = b.publishedAt?.toDate?.() || new Date(0);
-      return bTime.getTime() - aTime.getTime();
-    });
-    
-    articles = articlesData;
-  } catch (error) {
-    console.error('Error fetching articles:', error);
-    
-    // Fallback: try without status filter if the above fails
-    try {
-      console.log('Trying fallback query without status filter...');
-      const fallbackSnapshot = await adminDb.collection('posts')
-        .where('category', '==', category.toLowerCase())
-        .limit(30)
-        .get();
-      
-      const mappedArticles: Article[] = fallbackSnapshot.docs.map(doc => {
-        const data = doc.data();
-        return {
-          id: doc.id,
-          title: data.title || '',
-          slug: data.slug || '',
-          excerpt: data.excerpt || '',
-          featuredImage: data.featuredImage || '',
-          category: data.category || '',
-          status: data.status || '',
-          publishedAt: data.publishedAt,
-          readingTime: data.readingTime || 0
-        };
-      });
-      
-      // Filter and sort
-      articles = mappedArticles
-        .filter(article => article.status === 'published')
-        .sort((a, b) => {
-          const aTime = a.publishedAt?.toDate?.() || new Date(0);
-          const bTime = b.publishedAt?.toDate?.() || new Date(0);
-          return bTime.getTime() - aTime.getTime();
-        });
-        
-      console.log(`Fallback found ${articles.length} articles`);
-    } catch (fallbackError) {
-      console.error('Fallback query also failed:', fallbackError);
-    }
+  } catch (e) {
+    console.error('Category fetch error:', e);
   }
 }
+
+const featured = articles[0] || null;
+const rest = articles.slice(1);
 ---
 
-<Layout title={`${categoryName} News`} description={`Latest ${categoryName} news and updates`}>
+<Layout
+  title={`${categoryName} — Mershal`}
+  description={meta.desc}
+>
   <Header />
-  
-  <main class="container mx-auto px-4 py-6 pb-20 md:pb-6">
-    <div class="mb-6">
-      <h1 class="text-3xl font-bold text-gray-900 flex items-center">
-        <span class="w-1.5 h-10 bg-red-600 mr-4"></span>
-        {categoryName} News
-      </h1>
-    </div>
-    
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {articles.map(article => (
-        <a href={`/news/${article.slug}`} class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all">
-          <img src={article.featuredImage} alt={article.title} class="w-full h-48 object-cover" />
-          <div class="p-4">
-            <span class="text-xs font-bold text-red-600 uppercase">{article.category}</span>
-            <h2 class="font-bold text-gray-900 mt-2 mb-2 line-clamp-2 hover:text-red-600 transition">
-              {article.title}
-            </h2>
-            <p class="text-sm text-gray-600 line-clamp-2">{article.excerpt}</p>
-            <div class="mt-3 text-xs text-gray-500">
-              {article.readingTime} min read
-            </div>
+  <BreakingNews />
+
+  <main class="bg-gray-50 min-h-screen pb-20 md:pb-8">
+
+    <!-- Category Hero -->
+    <div class="bg-white border-b border-gray-100">
+      <div class="container mx-auto px-4 py-10 max-w-6xl">
+        <div class="flex items-center gap-3 mb-2">
+          <!-- Breadcrumb -->
+          <nav class="text-sm text-gray-500 flex items-center gap-1.5">
+            <a href="/" class="hover:text-rose-600 transition">Home</a>
+            <span>›</span>
+            <span class="text-gray-800 font-medium capitalize">{category}</span>
+          </nav>
+        </div>
+        <div class="flex items-center gap-4 mt-4">
+          <span class="text-4xl">{meta.icon}</span>
+          <div>
+            <h1 class="text-3xl md:text-4xl font-black text-gray-900">{categoryName}</h1>
+            <p class="text-gray-500 mt-1">{meta.desc}</p>
           </div>
-        </a>
-      ))}
-    </div>
-    
-    {articles.length === 0 && (
-      <div class="text-center py-16 bg-gray-50 rounded-lg">
-        <p class="text-gray-600 text-lg">No articles found in this category.</p>
-        <a href="/" class="text-red-600 hover:text-red-700 font-semibold mt-4 inline-block">
-          ← Back to Home
-        </a>
+        </div>
+        <!-- Category nav pills -->
+        <div class="flex gap-2 mt-6 flex-wrap">
+          {validCategories.map(cat => (
+            <a
+              href={`/category/${cat}`}
+              class={`px-4 py-1.5 rounded-full text-sm font-semibold transition ${
+                cat === category
+                  ? 'bg-rose-600 text-white'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              {cat.charAt(0).toUpperCase() + cat.slice(1)}
+            </a>
+          ))}
+        </div>
       </div>
-    )}
+    </div>
+
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+
+      {articles.length === 0 ? (
+        <div class="text-center py-20 bg-white rounded-2xl border border-gray-100">
+          <span class="text-5xl mb-4 block">{meta.icon}</span>
+          <h2 class="text-xl font-bold text-gray-900 mb-2">No posts yet in {categoryName}</h2>
+          <p class="text-gray-500 mb-6">Be the first to write about {categoryName.toLowerCase()}.</p>
+          <a href="/" class="text-rose-600 font-semibold hover:underline">← Back to Home</a>
+        </div>
+      ) : (
+        <>
+          {/* Featured post */}
+          {featured && (
+            <div class="mb-10">
+              <a href={`/news/${featured.slug}`} class="group block bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300 md:flex">
+                <div class="md:w-1/2 overflow-hidden">
+                  <img
+                    src={featured.featuredImage || 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&h=450&fit=crop'}
+                    alt={featured.title}
+                    class="w-full h-64 md:h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+                <div class="md:w-1/2 p-8 flex flex-col justify-center">
+                  <div class="flex items-center gap-2 mb-3">
+                    <span class="bg-rose-600 text-white px-3 py-1 text-xs font-bold uppercase rounded-full">{featured.category}</span>
+                    <span class="text-xs text-gray-400">{featured.readingTime} min read</span>
+                  </div>
+                  <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-3 leading-tight group-hover:text-rose-600 transition">
+                    {featured.title}
+                  </h2>
+                  <p class="text-gray-600 line-clamp-3 mb-5">{featured.excerpt}</p>
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center text-white text-xs font-black">AK</div>
+                    <div>
+                      <p class="text-sm font-semibold text-gray-900">{featured.author}</p>
+                      <p class="text-xs text-gray-400">
+                        {featured.publishedAt?.toDate?.()?.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) || ''}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </div>
+          )}
+
+          {/* Rest of posts grid */}
+          {rest.length > 0 && (
+            <div>
+              <h2 class="text-lg font-bold text-gray-900 mb-5 flex items-center gap-2">
+                <span class="w-1 h-5 bg-rose-600 rounded-full inline-block"></span>
+                More in {categoryName}
+              </h2>
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {rest.map(article => (
+                  <a href={`/news/${article.slug}`} class="group bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 flex flex-col">
+                    <div class="overflow-hidden">
+                      <img
+                        src={article.featuredImage || 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=340&fit=crop'}
+                        alt={article.title}
+                        class="w-full h-44 object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                    <div class="p-5 flex flex-col flex-1">
+                      <div class="flex items-center gap-2 mb-2">
+                        <a
+                          href={`/category/${article.category}`}
+                          class="text-xs font-bold text-rose-600 uppercase hover:text-rose-700 transition"
+                          onclick="event.stopPropagation()"
+                        >
+                          {article.category}
+                        </a>
+                        <span class="text-gray-300">·</span>
+                        <span class="text-xs text-gray-400">{article.readingTime} min read</span>
+                      </div>
+                      <h3 class="font-bold text-gray-900 line-clamp-2 group-hover:text-rose-600 transition mb-2 flex-1">
+                        {article.title}
+                      </h3>
+                      <p class="text-sm text-gray-500 line-clamp-2 mb-4">{article.excerpt}</p>
+                      <div class="flex items-center justify-between mt-auto pt-3 border-t border-gray-50">
+                        <span class="text-xs text-gray-400">
+                          {article.publishedAt?.toDate?.()?.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) || ''}
+                        </span>
+                        <span class="text-xs font-semibold text-rose-600 group-hover:underline">Read →</span>
+                      </div>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </>
+      )}
+    </div>
   </main>
-  
+
   <Footer />
   <BottomNav />
 </Layout>
