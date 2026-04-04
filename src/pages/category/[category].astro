@@ -49,7 +49,18 @@ if (adminDb) {
       .limit(50)
       .get();
 
-    articles = snapshot.docs.map(doc => {
+    // Also try exact match in case stored differently
+    let docs = snapshot.docs;
+    if (docs.length === 0) {
+      const fallback = await adminDb.collection('posts')
+        .where('category', '==', category)
+        .where('status', '==', 'published')
+        .limit(50)
+        .get();
+      docs = fallback.docs;
+    }
+
+    articles = docs.map(doc => {
       const d = doc.data();
       return {
         id: doc.id,

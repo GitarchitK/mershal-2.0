@@ -39,10 +39,10 @@ if (adminDb) {
 
 const categories = ['technology', 'programming', 'tutorials'];
 
-// Group articles by category
+// Group articles by category (case-insensitive)
 const byCategory: Record<string, any[]> = {};
 categories.forEach(cat => {
-  byCategory[cat] = articles.filter(a => a.category === cat);
+  byCategory[cat] = articles.filter(a => a.category?.toLowerCase() === cat.toLowerCase());
 });
 
 const featured = articles[0] || null;
