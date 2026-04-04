@@ -106,6 +106,24 @@ const fullTitle = title.includes('Mershal') ? title : `${title} | Mershal`;
     }
     </script>
 
+    <!-- SiteLinks SearchBox Schema -->
+    <script type="application/ld+json" is:inline>
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Mershal",
+      "url": "https://mershal.in",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://mershal.in/?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+
     <!-- Breadcrumb / Page slot for extra head tags -->
     <slot name="head" />
   </head>

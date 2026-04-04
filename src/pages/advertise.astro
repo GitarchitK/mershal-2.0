@@ -1,379 +1,245 @@
 ---
-export const prerender = false;
-
+export const prerender = true;
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import BottomNav from '../components/BottomNav.astro';
 ---
 
-<Layout title="Advertise with Mershal" description="Partner with Mershal to reach thousands of engaged readers across India. Premium advertising opportunities available.">
+<Layout
+  title="Advertise on Mershal — Reach Tech Developers & Programmers"
+  description="Promote your product, get a backlink, or sponsor content on Mershal — a tech blog read by developers and programmers. Plans starting at ₹299."
+>
   <Header />
-  
-  <main class="bg-gray-50">
-    <!-- Hero Section -->
-    <section class="bg-gradient-to-br from-red-600 to-red-700 text-white py-20">
-      <div class="container mx-auto px-4 text-center">
-        <h1 class="text-4xl md:text-6xl font-bold mb-6">Advertise with Mershal</h1>
-        <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto opacity-90">
-          Reach thousands of engaged readers across India with premium advertising opportunities
+
+  <main class="bg-gray-50 pb-20 md:pb-8">
+
+    <!-- Hero -->
+    <section class="bg-white border-b border-gray-100 py-14">
+      <div class="container mx-auto px-4 max-w-4xl text-center">
+        <span class="inline-block bg-rose-100 text-rose-700 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4">Advertise with Us</span>
+        <h1 class="text-4xl md:text-5xl font-black text-gray-900 mb-4 leading-tight">Reach Developers &<br/>Tech Enthusiasts</h1>
+        <p class="text-lg text-gray-500 max-w-2xl mx-auto mb-8">
+          Mershal is a personal tech blog by Archit Karmakar covering programming, tutorials, and web development. Get your product, tool, or website in front of a focused developer audience.
         </p>
-        <div class="flex flex-col md:flex-row gap-4 justify-center">
-          <a href="#contact" class="bg-white text-red-600 px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition">
-            Get Started Today
-          </a>
-          <a href="#packages" class="border-2 border-white text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-white hover:text-red-600 transition">
-            View Packages
-          </a>
+        <div class="flex flex-wrap gap-3 justify-center">
+          <a href="#plans" class="bg-rose-600 hover:bg-rose-700 text-white px-6 py-3 rounded-lg font-semibold text-sm transition">View Plans</a>
+          <a href="#backlinks" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold text-sm transition">Get a Backlink</a>
+          <a href="mailto:advertise@mershal.in" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold text-sm transition">Contact Us</a>
         </div>
       </div>
     </section>
 
-    <!-- Stats Section -->
-    <section class="py-16 bg-white">
-      <div class="container mx-auto px-4">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-          <div>
-            <div class="text-4xl font-bold text-red-600 mb-2">50K+</div>
-            <div class="text-gray-600">Monthly Readers</div>
+    <!-- Why advertise -->
+    <section class="py-12 bg-white border-b border-gray-100">
+      <div class="container mx-auto px-4 max-w-5xl">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+          <div class="p-4">
+            <p class="text-3xl font-black text-rose-600 mb-1">Dev</p>
+            <p class="text-sm text-gray-500">Focused Audience</p>
           </div>
-          <div>
-            <div class="text-4xl font-bold text-red-600 mb-2">25K+</div>
-            <div class="text-gray-600">Social Followers</div>
+          <div class="p-4">
+            <p class="text-3xl font-black text-rose-600 mb-1">SEO</p>
+            <p class="text-sm text-gray-500">Optimised Site</p>
           </div>
-          <div>
-            <div class="text-4xl font-bold text-red-600 mb-2">100+</div>
-            <div class="text-gray-600">Articles/Month</div>
+          <div class="p-4">
+            <p class="text-3xl font-black text-rose-600 mb-1">DoFollow</p>
+            <p class="text-sm text-gray-500">Backlinks Available</p>
           </div>
-          <div>
-            <div class="text-4xl font-bold text-red-600 mb-2">85%</div>
-            <div class="text-gray-600">Return Visitors</div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- Why Advertise Section -->
-    <section class="py-16">
-      <div class="container mx-auto px-4">
-        <div class="text-center mb-12">
-          <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Why Choose Mershal?</h2>
-          <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-            Connect with India's most engaged news audience across multiple categories
-          </p>
-        </div>
-        
-        <div class="grid md:grid-cols-3 gap-8">
-          <div class="bg-white p-8 rounded-xl shadow-lg text-center">
-            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg class="w-8 h-8 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-              </svg>
-            </div>
-            <h3 class="text-xl font-bold mb-4">Targeted Audience</h3>
-            <p class="text-gray-600">Reach specific demographics interested in India, Politics, Sports, Entertainment, Business, and Technology</p>
-          </div>
-          
-          <div class="bg-white p-8 rounded-xl shadow-lg text-center">
-            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg class="w-8 h-8 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
-              </svg>
-            </div>
-            <h3 class="text-xl font-bold mb-4">High Engagement</h3>
-            <p class="text-gray-600">Our readers spend an average of 3+ minutes per article with high social sharing rates</p>
-          </div>
-          
-          <div class="bg-white p-8 rounded-xl shadow-lg text-center">
-            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg class="w-8 h-8 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
-              </svg>
-            </div>
-            <h3 class="text-xl font-bold mb-4">Multiple Formats</h3>
-            <p class="text-gray-600">Banner ads, sponsored content, newsletter placements, and custom advertising solutions</p>
+          <div class="p-4">
+            <p class="text-3xl font-black text-rose-600 mb-1">24h</p>
+            <p class="text-sm text-gray-500">Response Time</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Advertising Packages -->
-    <section id="packages" class="py-16 bg-white">
-      <div class="container mx-auto px-4">
-        <div class="text-center mb-12">
-          <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Advertising Packages</h2>
-          <p class="text-xl text-gray-600">Choose the perfect package for your marketing goals</p>
+    <!-- Pricing Plans -->
+    <section id="plans" class="py-14">
+      <div class="container mx-auto px-4 max-w-5xl">
+        <div class="text-center mb-10">
+          <h2 class="text-3xl font-black text-gray-900 mb-2">Advertising Plans</h2>
+          <p class="text-gray-500">Simple, transparent pricing. No hidden fees.</p>
         </div>
-        
-        <div class="grid md:grid-cols-3 gap-8">
-          <!-- Starter Package -->
-          <div class="bg-gray-50 p-8 rounded-xl border-2 border-gray-200">
-            <div class="text-center mb-6">
-              <h3 class="text-2xl font-bold text-gray-900 mb-2">Starter</h3>
-              <div class="text-4xl font-bold text-red-600 mb-2">₹15,000</div>
-              <div class="text-gray-600">per month</div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+          <!-- Plan 1 -->
+          <div class="bg-white rounded-2xl border border-gray-200 p-7 flex flex-col">
+            <div class="mb-6">
+              <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Starter</p>
+              <div class="flex items-end gap-1 mb-1">
+                <span class="text-4xl font-black text-gray-900">₹299</span>
+                <span class="text-gray-400 text-sm mb-1">/month</span>
+              </div>
+              <p class="text-sm text-gray-500">Best for small tools, indie projects, and personal brands.</p>
             </div>
-            <ul class="space-y-4 mb-8">
-              <li class="flex items-center">
-                <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                </svg>
-                Banner ads on homepage
-              </li>
-              <li class="flex items-center">
-                <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                </svg>
-                Category page placement
-              </li>
-              <li class="flex items-center">
-                <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                </svg>
-                Monthly analytics report
-              </li>
-              <li class="flex items-center">
-                <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                </svg>
-                50K+ monthly impressions
-              </li>
+            <ul class="space-y-3 mb-8 flex-1">
+              {[
+                'Banner ad on sidebar (all pages)',
+                '1 DoFollow backlink in footer',
+                'Listed on our Partners page',
+                'Link stays live for 30 days',
+                'Email support',
+              ].map(f => (
+                <li class="flex items-start gap-2 text-sm text-gray-600">
+                  <svg class="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                  {f}
+                </li>
+              ))}
             </ul>
-            <a href="#contact" class="block w-full bg-gray-900 text-white text-center py-3 rounded-lg font-semibold hover:bg-gray-800 transition">
+            <a href="mailto:advertise@mershal.in?subject=Starter Plan - ₹299" class="block text-center bg-gray-900 hover:bg-gray-800 text-white py-3 rounded-xl text-sm font-semibold transition">
               Get Started
             </a>
           </div>
 
-          <!-- Professional Package -->
-          <div class="bg-red-50 p-8 rounded-xl border-2 border-red-500 relative">
-            <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
-              <span class="bg-red-500 text-white px-4 py-1 rounded-full text-sm font-bold">POPULAR</span>
+          <!-- Plan 2 - Popular -->
+          <div class="bg-rose-600 rounded-2xl p-7 flex flex-col relative shadow-xl">
+            <div class="absolute -top-3 left-1/2 -translate-x-1/2">
+              <span class="bg-yellow-400 text-yellow-900 text-xs font-black px-3 py-1 rounded-full uppercase tracking-wide">Most Popular</span>
             </div>
-            <div class="text-center mb-6">
-              <h3 class="text-2xl font-bold text-gray-900 mb-2">Professional</h3>
-              <div class="text-4xl font-bold text-red-600 mb-2">₹35,000</div>
-              <div class="text-gray-600">per month</div>
+            <div class="mb-6">
+              <p class="text-xs font-bold text-rose-200 uppercase tracking-widest mb-2">Growth</p>
+              <div class="flex items-end gap-1 mb-1">
+                <span class="text-4xl font-black text-white">₹399</span>
+                <span class="text-rose-200 text-sm mb-1">/month</span>
+              </div>
+              <p class="text-sm text-rose-100">Best for SaaS tools, courses, and developer products.</p>
             </div>
-            <ul class="space-y-4 mb-8">
-              <li class="flex items-center">
-                <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                </svg>
-                Everything in Starter
-              </li>
-              <li class="flex items-center">
-                <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                </svg>
-                Sponsored article (1/month)
-              </li>
-              <li class="flex items-center">
-                <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                </svg>
-                Social media promotion
-              </li>
-              <li class="flex items-center">
-                <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                </svg>
-                Newsletter inclusion
-              </li>
-              <li class="flex items-center">
-                <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                </svg>
-                100K+ monthly impressions
-              </li>
+            <ul class="space-y-3 mb-8 flex-1">
+              {[
+                'Everything in Starter',
+                '1 Sponsored mention in a blog post',
+                '2 DoFollow backlinks (post + footer)',
+                'Social media shoutout (1x)',
+                'Priority email support',
+                'Link stays live for 30 days',
+              ].map(f => (
+                <li class="flex items-start gap-2 text-sm text-white">
+                  <svg class="w-4 h-4 text-yellow-300 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                  {f}
+                </li>
+              ))}
             </ul>
-            <a href="#contact" class="block w-full bg-red-600 text-white text-center py-3 rounded-lg font-semibold hover:bg-red-700 transition">
-              Choose Professional
+            <a href="mailto:advertise@mershal.in?subject=Growth Plan - ₹399" class="block text-center bg-white hover:bg-gray-100 text-rose-600 py-3 rounded-xl text-sm font-bold transition">
+              Choose Growth
             </a>
           </div>
 
-          <!-- Enterprise Package -->
-          <div class="bg-gray-50 p-8 rounded-xl border-2 border-gray-200">
-            <div class="text-center mb-6">
-              <h3 class="text-2xl font-bold text-gray-900 mb-2">Enterprise</h3>
-              <div class="text-4xl font-bold text-red-600 mb-2">₹75,000</div>
-              <div class="text-gray-600">per month</div>
+          <!-- Plan 3 -->
+          <div class="bg-white rounded-2xl border border-gray-200 p-7 flex flex-col">
+            <div class="mb-6">
+              <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Pro</p>
+              <div class="flex items-end gap-1 mb-1">
+                <span class="text-4xl font-black text-gray-900">₹499</span>
+                <span class="text-gray-400 text-sm mb-1">/month</span>
+              </div>
+              <p class="text-sm text-gray-500">Best for agencies, startups, and established products.</p>
             </div>
-            <ul class="space-y-4 mb-8">
-              <li class="flex items-center">
-                <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                </svg>
-                Everything in Professional
-              </li>
-              <li class="flex items-center">
-                <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                </svg>
-                Sponsored articles (4/month)
-              </li>
-              <li class="flex items-center">
-                <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                </svg>
-                Dedicated account manager
-              </li>
-              <li class="flex items-center">
-                <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                </svg>
-                Custom ad placements
-              </li>
-              <li class="flex items-center">
-                <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                </svg>
-                200K+ monthly impressions
-              </li>
+            <ul class="space-y-3 mb-8 flex-1">
+              {[
+                'Everything in Growth',
+                '1 Dedicated sponsored article',
+                '3 DoFollow backlinks',
+                'Homepage featured placement',
+                'Social media promotion (2x)',
+                'Monthly performance report',
+                'Link stays live for 30 days',
+              ].map(f => (
+                <li class="flex items-start gap-2 text-sm text-gray-600">
+                  <svg class="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                  {f}
+                </li>
+              ))}
             </ul>
-            <a href="#contact" class="block w-full bg-gray-900 text-white text-center py-3 rounded-lg font-semibold hover:bg-gray-800 transition">
-              Contact Sales
+            <a href="mailto:advertise@mershal.in?subject=Pro Plan - ₹499" class="block text-center bg-gray-900 hover:bg-gray-800 text-white py-3 rounded-xl text-sm font-semibold transition">
+              Go Pro
             </a>
           </div>
+
         </div>
+
+        <p class="text-center text-xs text-gray-400 mt-6">All prices in Indian Rupees (INR). Payment via UPI / bank transfer. Links go live within 24 hours of payment.</p>
       </div>
     </section>
-    <!-- Contact Form Section -->
-    <section id="contact" class="py-16 bg-gray-50">
-      <div class="container mx-auto px-4">
-        <div class="max-w-4xl mx-auto">
-          <div class="text-center mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Ready to Get Started?</h2>
-            <p class="text-xl text-gray-600">Contact our advertising team to discuss your marketing goals</p>
+
+    <!-- Backlinks Section -->
+    <section id="backlinks" class="py-14 bg-white border-t border-gray-100">
+      <div class="container mx-auto px-4 max-w-4xl">
+        <div class="text-center mb-10">
+          <h2 class="text-3xl font-black text-gray-900 mb-2">Get a Backlink from Mershal</h2>
+          <p class="text-gray-500 max-w-xl mx-auto">A backlink from a relevant, indexed tech blog helps your site rank higher on Google. Here's how it works.</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8 mb-10">
+          <div class="bg-gray-50 rounded-2xl p-7 border border-gray-100">
+            <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <span class="w-7 h-7 bg-rose-600 text-white rounded-lg flex items-center justify-center text-xs font-black">1</span>
+              Footer Backlink
+            </h3>
+            <p class="text-sm text-gray-600 mb-4">Your website link added to the footer of Mershal with your anchor text. DoFollow link, visible on every page.</p>
+            <div class="flex items-center justify-between">
+              <span class="text-2xl font-black text-gray-900">₹299<span class="text-sm font-normal text-gray-400">/mo</span></span>
+              <a href="mailto:advertise@mershal.in?subject=Footer Backlink Request" class="bg-rose-600 text-white px-4 py-2 rounded-lg text-xs font-semibold hover:bg-rose-700 transition">Request</a>
+            </div>
           </div>
-          
-          <div class="grid md:grid-cols-2 gap-12">
-            <!-- Contact Form -->
-            <div class="bg-white p-8 rounded-xl shadow-lg">
-              <h3 class="text-2xl font-bold mb-6">Send us a Message</h3>
-              <form class="space-y-6">
-                <div class="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Company Name</label>
-                    <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="Your Company">
-                  </div>
-                  <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Contact Person</label>
-                    <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="Your Name">
-                  </div>
-                </div>
-                
-                <div class="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
-                    <input type="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="your@email.com">
-                  </div>
-                  <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label>
-                    <input type="tel" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="+91 98765 43210">
-                  </div>
-                </div>
-                
-                <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">Advertising Package</label>
-                  <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent">
-                    <option>Select a package</option>
-                    <option>Starter - ₹15,000/month</option>
-                    <option>Professional - ₹35,000/month</option>
-                    <option>Enterprise - ₹75,000/month</option>
-                    <option>Custom Package</option>
-                  </select>
-                </div>
-                
-                <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">Message</label>
-                  <textarea rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="Tell us about your advertising goals and requirements..."></textarea>
-                </div>
-                
-                <button type="submit" class="w-full bg-red-600 text-white py-4 rounded-lg font-bold text-lg hover:bg-red-700 transition">
-                  Send Message
-                </button>
-              </form>
+
+          <div class="bg-gray-50 rounded-2xl p-7 border border-gray-100">
+            <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <span class="w-7 h-7 bg-rose-600 text-white rounded-lg flex items-center justify-center text-xs font-black">2</span>
+              In-Content Backlink
+            </h3>
+            <p class="text-sm text-gray-600 mb-4">Your link naturally placed inside a relevant blog post with contextual anchor text. Most powerful for SEO.</p>
+            <div class="flex items-center justify-between">
+              <span class="text-2xl font-black text-gray-900">₹399<span class="text-sm font-normal text-gray-400">/mo</span></span>
+              <a href="mailto:advertise@mershal.in?subject=In-Content Backlink Request" class="bg-rose-600 text-white px-4 py-2 rounded-lg text-xs font-semibold hover:bg-rose-700 transition">Request</a>
             </div>
-            
-            <!-- Contact Information -->
-            <div>
-              <div class="bg-white p-8 rounded-xl shadow-lg mb-8">
-                <h3 class="text-2xl font-bold mb-6">Contact Information</h3>
-                <div class="space-y-6">
-                  <div class="flex items-start">
-                    <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
-                      <svg class="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
-                        <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
-                      </svg>
-                    </div>
-                    <div>
-                      <h4 class="font-semibold text-gray-900">Email</h4>
-                      <p class="text-gray-600">advertise@mershal.in</p>
-                    </div>
-                  </div>
-                  
-                  <div class="flex items-start">
-                    <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
-                      <svg class="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
-                      </svg>
-                    </div>
-                    <div>
-                      <h4 class="font-semibold text-gray-900">Phone</h4>
-                      <p class="text-gray-600">+91 98765 43210</p>
-                    </div>
-                  </div>
-                  
-                  <div class="flex items-start">
-                    <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
-                      <svg class="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
-                      </svg>
-                    </div>
-                    <div>
-                      <h4 class="font-semibold text-gray-900">Response Time</h4>
-                      <p class="text-gray-600">Within 24 hours</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <div class="bg-gradient-to-br from-red-600 to-red-700 p-8 rounded-xl text-white">
-                <h3 class="text-xl font-bold mb-4">Why Partner with Us?</h3>
-                <ul class="space-y-3">
-                  <li class="flex items-center">
-                    <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                    </svg>
-                    Trusted by leading brands
-                  </li>
-                  <li class="flex items-center">
-                    <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                    </svg>
-                    Transparent reporting
-                  </li>
-                  <li class="flex items-center">
-                    <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                    </svg>
-                    Flexible payment terms
-                  </li>
-                  <li class="flex items-center">
-                    <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                    </svg>
-                    Dedicated support team
-                  </li>
-                </ul>
-              </div>
+          </div>
+
+          <div class="bg-gray-50 rounded-2xl p-7 border border-gray-100">
+            <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <span class="w-7 h-7 bg-rose-600 text-white rounded-lg flex items-center justify-center text-xs font-black">3</span>
+              Sponsored Article + Backlink
+            </h3>
+            <p class="text-sm text-gray-600 mb-4">A full article written about your product/tool with 2-3 DoFollow backlinks. Stays indexed on Google permanently.</p>
+            <div class="flex items-center justify-between">
+              <span class="text-2xl font-black text-gray-900">₹499<span class="text-sm font-normal text-gray-400">/mo</span></span>
+              <a href="mailto:advertise@mershal.in?subject=Sponsored Article Request" class="bg-rose-600 text-white px-4 py-2 rounded-lg text-xs font-semibold hover:bg-rose-700 transition">Request</a>
             </div>
+          </div>
+
+          <div class="bg-rose-50 rounded-2xl p-7 border border-rose-100">
+            <h3 class="font-bold text-gray-900 mb-3">Why backlinks from Mershal?</h3>
+            <ul class="space-y-2 text-sm text-gray-600">
+              <li class="flex items-start gap-2"><span class="text-rose-500 mt-0.5">✓</span> Tech-relevant niche — Google values topical relevance</li>
+              <li class="flex items-start gap-2"><span class="text-rose-500 mt-0.5">✓</span> Indexed and crawled regularly by Googlebot</li>
+              <li class="flex items-start gap-2"><span class="text-rose-500 mt-0.5">✓</span> DoFollow links pass link equity to your site</li>
+              <li class="flex items-start gap-2"><span class="text-rose-500 mt-0.5">✓</span> Real content, not a link farm</li>
+              <li class="flex items-start gap-2"><span class="text-rose-500 mt-0.5">✓</span> Hosted on Vercel with fast load times</li>
+            </ul>
           </div>
         </div>
       </div>
     </section>
+
+    <!-- Contact CTA -->
+    <section class="py-14 bg-gray-900">
+      <div class="container mx-auto px-4 max-w-2xl text-center">
+        <h2 class="text-3xl font-black text-white mb-3">Ready to get started?</h2>
+        <p class="text-gray-400 mb-8">Email us with your website URL, preferred plan, and anchor text. We'll get back within 24 hours.</p>
+        <a
+          href="mailto:advertise@mershal.in"
+          class="inline-flex items-center gap-2 bg-rose-600 hover:bg-rose-700 text-white px-8 py-4 rounded-xl font-bold text-base transition"
+        >
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>
+          advertise@mershal.in
+        </a>
+        <p class="text-gray-600 text-xs mt-4">UPI / Bank Transfer accepted. Links live within 24h of payment.</p>
+      </div>
+    </section>
+
   </main>
-  
+
   <Footer />
   <BottomNav />
 </Layout>
