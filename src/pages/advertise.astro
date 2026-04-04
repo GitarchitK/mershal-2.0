@@ -8,7 +8,7 @@ import BottomNav from '../components/BottomNav.astro';
 
 <Layout
   title="Advertise on Mershal — Reach Tech Developers & Programmers"
-  description="Promote your product, get a backlink, or sponsor content on Mershal — a tech blog read by developers and programmers. Plans starting at ₹299."
+  description="Promote your product or service on Mershal — a tech blog read by developers and programmers. Plans starting at ₹299/month."
 >
   <Header />
 
@@ -20,7 +20,7 @@ import BottomNav from '../components/BottomNav.astro';
         <span class="inline-block bg-rose-100 text-rose-700 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4">Advertise with Us</span>
         <h1 class="text-4xl md:text-5xl font-black text-gray-900 mb-4 leading-tight">Reach Developers &<br/>Tech Enthusiasts</h1>
         <p class="text-lg text-gray-500 max-w-2xl mx-auto mb-8">
-          Mershal is a personal tech blog by Archit Karmakar covering programming, tutorials, and web development. Get your product, tool, or website in front of a focused developer audience.
+          Mershal is a personal tech blog by Archit Karmakar covering programming, tutorials, and web development. Get your product or service in front of a focused developer audience.
         </p>
         <div class="flex flex-wrap gap-3 justify-center">
           <a href="#plans" class="bg-rose-600 hover:bg-rose-700 text-white px-6 py-3 rounded-lg font-semibold text-sm transition">View Plans</a>
@@ -29,24 +29,24 @@ import BottomNav from '../components/BottomNav.astro';
       </div>
     </section>
 
-    <!-- Why advertise -->
-    <section class="py-12 bg-white border-b border-gray-100">
-      <div class="container mx-auto px-4 max-w-5xl">
+    <!-- Stats bar -->
+    <section class="py-10 bg-white border-b border-gray-100">
+      <div class="container mx-auto px-4 max-w-4xl">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
           <div class="p-4">
-            <p class="text-3xl font-black text-rose-600 mb-1">Dev</p>
+            <p class="text-2xl font-black text-rose-600 mb-1">Dev</p>
             <p class="text-sm text-gray-500">Focused Audience</p>
           </div>
           <div class="p-4">
-            <p class="text-3xl font-black text-rose-600 mb-1">SEO</p>
+            <p class="text-2xl font-black text-rose-600 mb-1">Tech</p>
+            <p class="text-sm text-gray-500">Niche Content</p>
+          </div>
+          <div class="p-4">
+            <p class="text-2xl font-black text-rose-600 mb-1">Fast</p>
             <p class="text-sm text-gray-500">Optimised Site</p>
           </div>
           <div class="p-4">
-            <p class="text-3xl font-black text-rose-600 mb-1">DoFollow</p>
-            <p class="text-sm text-gray-500">Backlinks Available</p>
-          </div>
-          <div class="p-4">
-            <p class="text-3xl font-black text-rose-600 mb-1">24h</p>
+            <p class="text-2xl font-black text-rose-600 mb-1">24h</p>
             <p class="text-sm text-gray-500">Response Time</p>
           </div>
         </div>
@@ -63,7 +63,7 @@ import BottomNav from '../components/BottomNav.astro';
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-          <!-- Plan 1 -->
+          <!-- Plan 1 - Starter -->
           <div class="bg-white rounded-2xl border border-gray-200 p-7 flex flex-col">
             <div class="mb-6">
               <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Starter</p>
@@ -76,9 +76,8 @@ import BottomNav from '../components/BottomNav.astro';
             <ul class="space-y-3 mb-8 flex-1">
               {[
                 'Banner ad on sidebar (all pages)',
-                '1 DoFollow backlink in footer',
                 'Listed on our Partners page',
-                'Link stays live for 30 days',
+                'Ad stays live for 30 days',
                 'Email support',
               ].map(f => (
                 <li class="flex items-start gap-2 text-sm text-gray-600">
@@ -92,7 +91,7 @@ import BottomNav from '../components/BottomNav.astro';
             </a>
           </div>
 
-          <!-- Plan 2 - Popular -->
+          <!-- Plan 2 - Growth (Popular) -->
           <div class="bg-rose-600 rounded-2xl p-7 flex flex-col relative shadow-xl">
             <div class="absolute -top-3 left-1/2 -translate-x-1/2">
               <span class="bg-yellow-400 text-yellow-900 text-xs font-black px-3 py-1 rounded-full uppercase tracking-wide">Most Popular</span>
@@ -109,10 +108,9 @@ import BottomNav from '../components/BottomNav.astro';
               {[
                 'Everything in Starter',
                 '1 Sponsored mention in a blog post',
-                '2 DoFollow backlinks (post + footer)',
                 'Social media shoutout (1x)',
                 'Priority email support',
-                'Link stays live for 30 days',
+                'Ad stays live for 30 days',
               ].map(f => (
                 <li class="flex items-start gap-2 text-sm text-white">
                   <svg class="w-4 h-4 text-yellow-300 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
@@ -125,7 +123,7 @@ import BottomNav from '../components/BottomNav.astro';
             </a>
           </div>
 
-          <!-- Plan 3 -->
+          <!-- Plan 3 - Pro -->
           <div class="bg-white rounded-2xl border border-gray-200 p-7 flex flex-col">
             <div class="mb-6">
               <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Pro</p>
@@ -139,11 +137,10 @@ import BottomNav from '../components/BottomNav.astro';
               {[
                 'Everything in Growth',
                 '1 Dedicated sponsored article',
-                '3 DoFollow backlinks',
                 'Homepage featured placement',
                 'Social media promotion (2x)',
                 'Monthly performance report',
-                'Link stays live for 30 days',
+                'Ad stays live for 30 days',
               ].map(f => (
                 <li class="flex items-start gap-2 text-sm text-gray-600">
                   <svg class="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
@@ -158,17 +155,15 @@ import BottomNav from '../components/BottomNav.astro';
 
         </div>
 
-        <p class="text-center text-xs text-gray-400 mt-6">All prices in Indian Rupees (INR). Payment via UPI / bank transfer. Links go live within 24 hours of payment.</p>
+        <p class="text-center text-xs text-gray-400 mt-6">All prices in Indian Rupees (INR). Payment via UPI / bank transfer.</p>
       </div>
     </section>
-
-    <!-- Backlinks Section removed -->
 
     <!-- Contact CTA -->
     <section class="py-14 bg-gray-900">
       <div class="container mx-auto px-4 max-w-2xl text-center">
         <h2 class="text-3xl font-black text-white mb-3">Ready to get started?</h2>
-        <p class="text-gray-400 mb-8">Email us with your website URL, preferred plan, and anchor text. We'll get back within 24 hours.</p>
+        <p class="text-gray-400 mb-8">Email us with your website, preferred plan, and what you'd like to promote. We'll get back within 24 hours.</p>
         <a
           href="mailto:advertise@mershal.in"
           class="inline-flex items-center gap-2 bg-rose-600 hover:bg-rose-700 text-white px-8 py-4 rounded-xl font-bold text-base transition"
@@ -176,7 +171,7 @@ import BottomNav from '../components/BottomNav.astro';
           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>
           advertise@mershal.in
         </a>
-        <p class="text-gray-600 text-xs mt-4">UPI / Bank Transfer accepted. Links live within 24h of payment.</p>
+        <p class="text-gray-600 text-xs mt-4">UPI / Bank Transfer accepted.</p>
       </div>
     </section>
 
