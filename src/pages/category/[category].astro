@@ -150,8 +150,11 @@ const rest = articles.slice(1);
               <a href={`/news/${featured.slug}`} class="group block bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300 md:flex">
                 <div class="md:w-1/2 overflow-hidden">
                   <img
-                    src={featured.featuredImage || 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&h=450&fit=crop'}
+                    src={featured.featuredImage ? `${featured.featuredImage.split('?')[0]}?w=800&h=500&fit=crop&auto=format&q=75` : 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&h=500&fit=crop&auto=format&q=75'}
                     alt={featured.title}
+                    width="800"
+                    height="500"
+                    fetchpriority="high"
                     class="w-full h-64 md:h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                 </div>
@@ -190,8 +193,11 @@ const rest = articles.slice(1);
                   <a href={`/news/${article.slug}`} class="group bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 flex flex-col">
                     <div class="overflow-hidden">
                       <img
-                        src={article.featuredImage || 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=340&fit=crop'}
+                        src={article.featuredImage ? `${article.featuredImage.split('?')[0]}?w=600&h=340&fit=crop&auto=format&q=70` : 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=340&fit=crop&auto=format&q=70'}
                         alt={article.title}
+                        width="600"
+                        height="340"
+                        loading="lazy"
                         class="w-full h-44 object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     </div>
