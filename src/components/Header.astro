@@ -93,37 +93,39 @@ const year = today.getFullYear();
     </div>
   </div>
 
-  <div class="container mx-auto px-4">
+  <div class="container mx-auto px-4 relative">
     <!-- Main Header -->
     <div class="flex items-center justify-between py-3 border-b border-gray-200">
-      <!-- Mobile Menu Button (3 dots) -->
-      <button 
-        id="mobile-menu-btn"
-        class="lg:hidden text-gray-700 hover:text-red-600 p-2"
-        aria-label="Open menu"
-      >
-        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/>
-        </svg>
-      </button>
-
-      <!-- Desktop Links -->
-      <div class="hidden lg:flex items-center gap-4 text-sm">
-        <a href="/about" class="text-gray-600 hover:text-red-600 transition font-medium">About</a>
-        <span class="text-gray-300">|</span>
-        <a href="/contact" class="text-gray-600 hover:text-red-600 transition font-medium">Contact</a>
-        <span class="text-gray-300">|</span>
-        <a href="/privacy" class="text-gray-600 hover:text-red-600 transition font-medium">Privacy</a>
-        <span class="text-gray-300">|</span>
-        <a href="/terms" class="text-gray-600 hover:text-red-600 transition font-medium">Terms</a>
+      <!-- Left: Mobile menu btn (mobile) | Desktop links (desktop) -->
+      <div class="flex items-center">
+        <button 
+          id="mobile-menu-btn"
+          class="lg:hidden text-gray-700 hover:text-red-600 p-2"
+          aria-label="Open menu"
+        >
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/>
+          </svg>
+        </button>
+        <div class="hidden lg:flex items-center gap-4 text-sm">
+          <a href="/about" class="text-gray-600 hover:text-red-600 transition font-medium">About</a>
+          <span class="text-gray-300">|</span>
+          <a href="/contact" class="text-gray-600 hover:text-red-600 transition font-medium">Contact</a>
+          <span class="text-gray-300">|</span>
+          <a href="/privacy" class="text-gray-600 hover:text-red-600 transition font-medium">Privacy</a>
+          <span class="text-gray-300">|</span>
+          <a href="/terms" class="text-gray-600 hover:text-red-600 transition font-medium">Terms</a>
+        </div>
       </div>
-      
-      <a href="/" class="flex flex-col items-center">
+
+      <!-- Center on desktop, right on mobile -->
+      <a href="/" class="flex flex-col items-center lg:absolute lg:left-1/2 lg:-translate-x-1/2">
         <span class="text-3xl font-bold text-red-600 logo-font tracking-tighter">Mershal</span>
         <span class="text-xs text-gray-500 -mt-1">by Archit Karmakar</span>
       </a>
-      
-      <div class="w-10 lg:w-auto"></div>
+
+      <!-- Right spacer (desktop only, keeps logo centered) -->
+      <div class="hidden lg:block w-48"></div>
     </div>
     
     <!-- Navigation -->
