@@ -86,3 +86,72 @@ a:focus, button:focus {
     -webkit-overflow-scrolling: touch;
   }
 }
+
+/* ── Custom Article Content Classes ── */
+/* Use these directly in your post HTML in the admin panel */
+
+.info-box {
+  background: #eff6ff;
+  border-left: 4px solid #3b82f6;
+  padding: 1rem 1.25rem;
+  border-radius: 0 0.5rem 0.5rem 0;
+  margin: 1.5rem 0;
+}
+.info-box p { margin: 0; color: #1e40af; font-size: 0.9375rem; }
+
+.tip-box {
+  background: #f0fdf4;
+  border-left: 4px solid #22c55e;
+  padding: 1rem 1.25rem;
+  border-radius: 0 0.5rem 0.5rem 0;
+  margin: 1.5rem 0;
+}
+.tip-box p { margin: 0; color: #166534; font-size: 0.9375rem; }
+
+.warning-box {
+  background: #fffbeb;
+  border-left: 4px solid #f59e0b;
+  padding: 1rem 1.25rem;
+  border-radius: 0 0.5rem 0.5rem 0;
+  margin: 1.5rem 0;
+}
+.warning-box p { margin: 0; color: #92400e; font-size: 0.9375rem; }
+
+.note-box {
+  background: #f8fafc;
+  border-left: 4px solid #94a3b8;
+  padding: 1rem 1.25rem;
+  border-radius: 0 0.5rem 0.5rem 0;
+  margin: 1.5rem 0;
+}
+.note-box p { margin: 0; color: #475569; font-size: 0.9375rem; }
+
+.highlight {
+  background: #fef9c3;
+  padding: 0.1em 0.3em;
+  border-radius: 0.25rem;
+}
+
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem;
+  margin: 1rem 0;
+}
+.step-number {
+  background: #dc2626;
+  color: white;
+  font-weight: 800;
+  font-size: 0.875rem;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
