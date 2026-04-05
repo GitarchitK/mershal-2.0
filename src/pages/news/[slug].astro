@@ -70,7 +70,7 @@ const formattedDate = publishedDate.toLocaleDateString('en-US', { year: 'numeric
 
     <!-- Article Header -->
     <div class="bg-white border-b border-gray-100">
-      <div class="container mx-auto px-4 py-8 max-w-5xl">
+      <div class="container mx-auto px-4 py-8 max-w-6xl">
         <!-- Breadcrumb -->
         <nav class="text-xs text-gray-400 flex items-center gap-1.5 mb-5">
           <a href="/" class="hover:text-rose-600 transition">Home</a>
@@ -125,7 +125,7 @@ const formattedDate = publishedDate.toLocaleDateString('en-US', { year: 'numeric
 
     <!-- Featured Image -->
     {article.featuredImage && (
-      <div class="container mx-auto px-4 max-w-5xl">
+      <div class="container mx-auto px-4 max-w-6xl">
         <figure class="mt-6 mb-0 overflow-hidden rounded-2xl shadow-lg">
           <img
             src={`${article.featuredImage.split('?')[0]}?w=1200&h=600&fit=crop&auto=format&q=80`}
@@ -139,8 +139,8 @@ const formattedDate = publishedDate.toLocaleDateString('en-US', { year: 'numeric
     )}
 
     <!-- Content + Sidebar -->
-    <div class="container mx-auto px-4 max-w-5xl py-8">
-      <div class="lg:grid lg:grid-cols-[1fr_280px] lg:gap-10">
+    <div class="container mx-auto px-4 max-w-6xl py-8">
+      <div class="lg:grid lg:grid-cols-[1fr_260px] lg:gap-8">
 
         <!-- Article Body -->
         <article>
