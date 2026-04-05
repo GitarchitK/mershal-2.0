@@ -23,7 +23,7 @@ if (!postId) return Astro.redirect('/admin/posts');
   <div id="alert" class="hidden mb-5 p-4 rounded-lg text-sm font-medium"></div>
   <div id="loading" class="text-gray-400 text-sm py-10 text-center">Loading post...</div>
 
-  <div id="editor-wrapper" class="hidden grid-cols-3 gap-6">
+  <div id="editor-wrapper" class="hidden grid-cols-3 gap-6" data-post-id={postId}>
     <div class="col-span-2 space-y-4">
       <input id="title" type="text" placeholder="Post title..."
         class="w-full bg-gray-900 border border-gray-700 text-white text-2xl font-bold rounded-xl px-5 py-4 focus:outline-none focus:border-rose-500 placeholder-gray-600" />
@@ -146,7 +146,7 @@ if (!postId) return Astro.redirect('/admin/posts');
   .prose-editor .is-editor-empty:first-child::before { content: attr(data-placeholder); color: #475569; pointer-events: none; float: left; height: 0; }
 </style>
 
-<script type="module" define:vars={{ postId }}>
+<script type="module">
   import { Editor } from 'https://esm.sh/@tiptap/core@2.11.5';
   import StarterKit from 'https://esm.sh/@tiptap/starter-kit@2.11.5';
   import Underline from 'https://esm.sh/@tiptap/extension-underline@2.11.5';
@@ -157,6 +157,7 @@ if (!postId) return Astro.redirect('/admin/posts');
   import Placeholder from 'https://esm.sh/@tiptap/extension-placeholder@2.11.5';
 
   let editor;
+  const postId = document.getElementById('editor-wrapper').dataset.postId;
 
   async function loadPost() {
     const res = await fetch(`/api/admin/posts?id=${postId}`);
