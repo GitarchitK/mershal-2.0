@@ -1,18 +1,18 @@
 ---
 export const prerender = false;
 import AdminLayout from '../../../layouts/AdminLayout.astro';
+
 const session = Astro.cookies.get('admin_session');
 if (session?.value !== 'authenticated') return Astro.redirect('/admin');
 ---
 
 <AdminLayout title="New Post" activeNav="new-post">
-  <div class="flex items-center justify-between mb-6">
+  <div class="flex items-center justify-between mb-8">
     <div>
       <h1 class="text-2xl font-bold text-white">New Post</h1>
-      <p class="text-gray-400 text-sm mt-0.5">Click anywhere to start writing · Press <kbd class="bg-gray-700 text-gray-300 px-1.5 py-0.5 rounded text-xs">/</kbd> to add blocks</p>
+      <p class="text-gray-400 text-sm mt-1">Write and publish a new article</p>
     </div>
     <div class="flex gap-3">
-      <span id="word-count" class="text-xs text-gray-500 self-center">0 words</span>
       <button id="save-draft" class="bg-gray-800 hover:bg-gray-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition">Save Draft</button>
       <button id="publish-btn" class="bg-rose-600 hover:bg-rose-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition">Publish</button>
     </div>
@@ -21,22 +21,22 @@ if (session?.value !== 'authenticated') return Astro.redirect('/admin');
   <div id="alert" class="hidden mb-5 p-4 rounded-lg text-sm font-medium"></div>
 
   <div class="grid grid-cols-3 gap-6">
-    <!-- Editor -->
-    <div class="col-span-2 space-y-4">
-      <input id="title" type="text" placeholder="Post title..."
-        class="w-full bg-transparent border-none text-white text-3xl font-black focus:outline-none placeholder-gray-700" />
-      <input id="slug" type="text" placeholder="url-slug"
-        class="w-full bg-gray-900 border border-gray-700 text-gray-400 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-rose-500 font-mono placeholder-gray-600" />
-      <textarea id="excerpt" rows="2" placeholder="Brief excerpt / description..."
-        class="w-full bg-gray-900 border border-gray-700 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-rose-500 resize-none placeholder-gray-600"></textarea>
-
-      <!-- Editor.js container -->
-      <div class="bg-gray-900 rounded-2xl border border-gray-700 min-h-[600px] relative">
-        <div id="editorjs" class="px-12 py-8"></div>
+    <div class="col-span-2 space-y-5">
+      <input id="title" type="text" placeholder="Post title..." class="w-full bg-gray-900 border border-gray-700 text-white text-xl font-bold rounded-xl px-5 py-4 focus:outline-none focus:border-rose-500 placeholder-gray-600" />
+      <input id="slug" type="text" placeholder="url-slug (auto-generated)" class="w-full bg-gray-900 border border-gray-700 text-gray-400 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-rose-500 font-mono placeholder-gray-600" />
+      <div>
+        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Excerpt</label>
+        <textarea id="excerpt" rows="2" placeholder="Brief description..." class="w-full bg-gray-900 border border-gray-700 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-rose-500 resize-none placeholder-gray-600"></textarea>
+      </div>
+      <div>
+        <div class="flex items-center justify-between mb-2">
+          <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Content (HTML)</label>
+          <span id="word-count" class="text-xs text-gray-500">0 words</span>
+        </div>
+        <textarea id="content" rows="28" placeholder="Write your post content in HTML...&#10;&#10;<h2>Introduction</h2>&#10;<p>Your content here...</p>&#10;<pre><code>// code example</code></pre>" class="w-full bg-gray-900 border border-gray-700 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-rose-500 font-mono resize-y placeholder-gray-600"></textarea>
       </div>
     </div>
 
-    <!-- Sidebar -->
     <div class="space-y-5">
       <div class="bg-gray-900 rounded-xl border border-gray-800 p-5">
         <h3 class="text-sm font-semibold text-gray-300 mb-4">Post Settings</h3>
@@ -62,9 +62,9 @@ if (session?.value !== 'authenticated') return Astro.redirect('/admin');
 
       <div class="bg-gray-900 rounded-xl border border-gray-800 p-5">
         <h3 class="text-sm font-semibold text-gray-300 mb-3">Featured Image</h3>
-        <input id="featured-image" type="url" placeholder="https://images.unsplash.com/..." class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-rose-500 placeholder-gray-600 mb-2" />
-        <div id="image-preview" class="hidden">
-          <img id="preview-img" src="" alt="Preview" class="w-full h-28 object-cover rounded-lg" />
+        <input id="featured-image" type="url" placeholder="https://images.unsplash.com/..." class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-rose-500 placeholder-gray-600" />
+        <div id="image-preview" class="mt-3 hidden">
+          <img id="preview-img" src="" alt="Preview" class="w-full h-32 object-cover rounded-lg" />
         </div>
       </div>
 
@@ -83,213 +83,70 @@ if (session?.value !== 'authenticated') return Astro.redirect('/admin');
       </div>
     </div>
   </div>
-</AdminLayout>
 
-<style is:global>
-  /* Editor.js dark theme */
-  #editorjs { color: #e2e8f0; }
-  .ce-block__content, .ce-toolbar__content { max-width: 100% !important; }
-  .ce-paragraph { color: #e2e8f0; font-size: 1rem; line-height: 1.8; }
-  .ce-paragraph[data-placeholder]:empty::before { color: #475569; }
-  .ce-header { color: #ffffff; }
-  .ce-toolbar__plus, .ce-toolbar__settings-btn { color: #94a3b8 !important; background: #1e293b !important; border: 1px solid #334155 !important; }
-  .ce-toolbar__plus:hover, .ce-toolbar__settings-btn:hover { background: #334155 !important; color: #e2e8f0 !important; }
-  .ce-popover { background: #1e293b !important; border: 1px solid #334155 !important; box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important; }
-  .ce-popover__item { color: #e2e8f0 !important; }
-  .ce-popover__item:hover { background: #334155 !important; }
-  .ce-popover__item-icon { background: #334155 !important; }
-  .ce-popover__search { background: #0f172a !important; border: 1px solid #334155 !important; color: #e2e8f0 !important; }
-  .ce-inline-toolbar { background: #1e293b !important; border: 1px solid #334155 !important; box-shadow: 0 4px 16px rgba(0,0,0,0.5) !important; }
-  .ce-inline-tool { color: #94a3b8 !important; }
-  .ce-inline-tool:hover, .ce-inline-tool--active { color: #f43f5e !important; }
-  .ce-conversion-toolbar { background: #1e293b !important; border: 1px solid #334155 !important; }
-  .ce-conversion-tool { color: #e2e8f0 !important; }
-  .ce-conversion-tool:hover { background: #334155 !important; }
-  .cdx-block { color: #e2e8f0; }
-  .cdx-quote__text, .cdx-quote__caption { color: #94a3b8; }
-  .cdx-quote { border-left: 4px solid #f43f5e; padding-left: 1rem; }
-  .ce-code__textarea { background: #0d1117 !important; color: #e6edf3 !important; border: 1px solid #30363d !important; border-radius: 0.5rem !important; font-family: 'SF Mono','Consolas',monospace !important; font-size: 0.875rem !important; }
-  .cdx-list__item { color: #e2e8f0; }
-  .cdx-delimiter::before { color: #475569; }
-  .image-tool__image { border-radius: 0.5rem; }
-  .image-tool__caption { color: #94a3b8 !important; background: transparent !important; }
-  .tc-table { border-color: #334155 !important; }
-  .tc-cell { border-color: #334155 !important; color: #e2e8f0 !important; background: #1e293b !important; }
-  .tc-add-column, .tc-add-row { color: #94a3b8 !important; }
-  .ce-block--selected .ce-block__content { background: #1e293b !important; }
-  .cdx-warning { background: #1e293b; border-left: 4px solid #f59e0b; padding: 1rem; border-radius: 0 0.5rem 0.5rem 0; }
-  .cdx-warning__title { color: #fbbf24; font-weight: 700; }
-  .cdx-warning__message { color: #e2e8f0; }
-</style>
+  <script>
+    document.getElementById('title')?.addEventListener('input', (e) => {
+      const slug = (e.target as HTMLInputElement).value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+      (document.getElementById('slug') as HTMLInputElement).value = slug;
+    });
 
-<script type="module">
-  // Load Editor.js from CDN
-  const EditorJS = (await import('https://esm.sh/@editorjs/editorjs@2.30.7')).default;
-  const Header = (await import('https://esm.sh/@editorjs/header@2.8.8')).default;
-  const List = (await import('https://esm.sh/@editorjs/list@2.0.2')).default;
-  const Quote = (await import('https://esm.sh/@editorjs/quote@2.7.6')).default;
-  const Code = (await import('https://esm.sh/@editorjs/code@2.9.3')).default;
-  const Delimiter = (await import('https://esm.sh/@editorjs/delimiter@1.4.2')).default;
-  const InlineCode = (await import('https://esm.sh/@editorjs/inline-code@1.5.1')).default;
-  const Underline = (await import('https://esm.sh/@editorjs/underline@1.1.0')).default;
-  const ImageTool = (await import('https://esm.sh/@editorjs/image@2.10.1')).default;
-  const Table = (await import('https://esm.sh/@editorjs/table@2.4.3')).default;
-  const Warning = (await import('https://esm.sh/@editorjs/warning@1.4.0')).default;
-  const Checklist = (await import('https://esm.sh/@editorjs/checklist@1.6.0')).default;
+    document.getElementById('content')?.addEventListener('input', (e) => {
+      const text = (e.target as HTMLTextAreaElement).value.replace(/<[^>]*>/g, '');
+      document.getElementById('word-count')!.textContent = `${text.trim() ? text.trim().split(/\s+/).length : 0} words`;
+    });
 
-  const editor = new EditorJS({
-    holder: 'editorjs',
-    placeholder: 'Click here to start writing. Press / to see all available blocks.',
-    tools: {
-      header: {
-        class: Header,
-        config: { levels: [2, 3, 4], defaultLevel: 2 },
-        inlineToolbar: true,
-      },
-      list: {
-        class: List,
-        inlineToolbar: true,
-        config: { defaultStyle: 'unordered' },
-      },
-      checklist: { class: Checklist, inlineToolbar: true },
-      quote: { class: Quote, inlineToolbar: true },
-      code: Code,
-      delimiter: Delimiter,
-      inlineCode: { class: InlineCode, shortcut: 'CMD+SHIFT+M' },
-      underline: Underline,
-      image: {
-        class: ImageTool,
-        config: {
-          uploader: {
-            uploadByUrl(url) {
-              return Promise.resolve({ success: 1, file: { url } });
-            },
-            uploadByFile(file) {
-              return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onload = (e) => resolve({ success: 1, file: { url: e.target.result } });
-                reader.readAsDataURL(file);
-              });
-            },
-          },
-        },
-      },
-      table: { class: Table, inlineToolbar: true },
-      warning: { class: Warning, inlineToolbar: true },
-    },
-    onChange: async () => {
-      const data = await editor.save();
-      const text = data.blocks.map(b => {
-        if (b.data.text) return b.data.text.replace(/<[^>]*>/g, '');
-        if (b.data.items) return b.data.items.join(' ');
-        if (b.data.code) return b.data.code;
-        return '';
-      }).join(' ');
-      const words = text.trim() ? text.trim().split(/\s+/).length : 0;
-      document.getElementById('word-count').textContent = `${words} words`;
-    },
-  });
+    document.getElementById('featured-image')?.addEventListener('input', (e) => {
+      const url = (e.target as HTMLInputElement).value;
+      const preview = document.getElementById('image-preview')!;
+      if (url) { (document.getElementById('preview-img') as HTMLImageElement).src = url; preview.classList.remove('hidden'); }
+      else preview.classList.add('hidden');
+    });
 
-  // Convert Editor.js JSON to HTML
-  function editorDataToHtml(data) {
-    return data.blocks.map(block => {
-      const d = block.data;
-      switch (block.type) {
-        case 'header':
-          return `<h${d.level}>${d.text}</h${d.level}>`;
-        case 'paragraph':
-          return `<p>${d.text}</p>`;
-        case 'list':
-          const tag = d.style === 'ordered' ? 'ol' : 'ul';
-          const items = d.items.map(i => `<li>${typeof i === 'object' ? i.content : i}</li>`).join('');
-          return `<${tag}>${items}</${tag}>`;
-        case 'checklist':
-          const checks = d.items.map(i => `<li class="checklist-item ${i.checked ? 'checked' : ''}"><span class="check">${i.checked ? '✓' : '○'}</span> ${i.text}</li>`).join('');
-          return `<ul class="checklist">${checks}</ul>`;
-        case 'quote':
-          return `<blockquote><p>${d.text}</p>${d.caption ? `<cite>${d.caption}</cite>` : ''}</blockquote>`;
-        case 'code':
-          return `<pre><code>${d.code.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</code></pre>`;
-        case 'delimiter':
-          return '<hr />';
-        case 'image':
-          const caption = d.caption ? `<figcaption>${d.caption}</figcaption>` : '';
-          return `<figure><img src="${d.file.url}" alt="${d.caption || ''}" loading="lazy" />${caption}</figure>`;
-        case 'table':
-          const rows = d.content.map((row, i) => {
-            const cells = row.map(cell => i === 0 ? `<th>${cell}</th>` : `<td>${cell}</td>`).join('');
-            return `<tr>${cells}</tr>`;
-          }).join('');
-          return `<table><tbody>${rows}</tbody></table>`;
-        case 'warning':
-          return `<div class="callout warning"><strong>${d.title}</strong><p>${d.message}</p></div>`;
-        default:
-          return d.text ? `<p>${d.text}</p>` : '';
-      }
-    }).filter(Boolean).join('\n');
-  }
-
-  // Auto-slug
-  document.getElementById('title').addEventListener('input', (e) => {
-    document.getElementById('slug').value = e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-  });
-
-  // Image preview
-  document.getElementById('featured-image').addEventListener('input', (e) => {
-    const url = e.target.value;
-    if (url) { document.getElementById('preview-img').src = url; document.getElementById('image-preview').classList.remove('hidden'); }
-    else document.getElementById('image-preview').classList.add('hidden');
-  });
-
-  function showAlert(msg, type) {
-    const el = document.getElementById('alert');
-    el.textContent = msg;
-    el.className = `mb-5 p-4 rounded-lg text-sm font-medium ${type === 'success' ? 'bg-green-900/50 text-green-300 border border-green-700' : 'bg-red-900/50 text-red-300 border border-red-700'}`;
-    el.classList.remove('hidden');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  async function savePost(status) {
-    const title = document.getElementById('title').value.trim();
-    if (!title) { showAlert('Title is required', 'error'); return; }
-
-    const editorData = await editor.save();
-    if (!editorData.blocks.length) { showAlert('Content cannot be empty', 'error'); return; }
-
-    const content = editorDataToHtml(editorData);
-    const tags = document.getElementById('tags').value.split(',').map(t => t.trim()).filter(Boolean);
-
-    const payload = {
-      title,
-      slug: document.getElementById('slug').value || undefined,
-      excerpt: document.getElementById('excerpt').value,
-      content,
-      category: document.getElementById('category').value,
-      author: document.getElementById('author').value,
-      tags,
-      featuredImage: document.getElementById('featured-image').value,
-      seoTitle: document.getElementById('seo-title').value,
-      seoDescription: document.getElementById('seo-desc').value,
-      status,
-    };
-
-    const btnId = status === 'published' ? 'publish-btn' : 'save-draft';
-    const btn = document.getElementById(btnId);
-    btn.disabled = true; btn.textContent = 'Saving...';
-
-    const res = await fetch('/api/admin/posts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-    const data = await res.json();
-
-    if (res.ok) {
-      showAlert(`Post ${status === 'published' ? 'published' : 'saved as draft'}!`, 'success');
-      setTimeout(() => window.location.href = '/admin/posts', 1500);
-    } else {
-      showAlert(data.error || 'Failed to save', 'error');
-      btn.disabled = false;
-      btn.textContent = status === 'published' ? 'Publish' : 'Save Draft';
+    function showAlert(msg: string, type: 'success' | 'error') {
+      const el = document.getElementById('alert')!;
+      el.textContent = msg;
+      el.className = `mb-5 p-4 rounded-lg text-sm font-medium ${type === 'success' ? 'bg-green-900/50 text-green-300 border border-green-700' : 'bg-red-900/50 text-red-300 border border-red-700'}`;
+      el.classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  }
 
-  document.getElementById('publish-btn').addEventListener('click', () => savePost('published'));
-  document.getElementById('save-draft').addEventListener('click', () => savePost('draft'));
-</script>
+    async function savePost(status: string) {
+      const title = (document.getElementById('title') as HTMLInputElement).value.trim();
+      if (!title) { showAlert('Title is required', 'error'); return; }
+
+      const tags = (document.getElementById('tags') as HTMLInputElement).value.split(',').map((t: string) => t.trim()).filter(Boolean);
+      const payload = {
+        title,
+        slug: (document.getElementById('slug') as HTMLInputElement).value || undefined,
+        excerpt: (document.getElementById('excerpt') as HTMLTextAreaElement).value,
+        content: (document.getElementById('content') as HTMLTextAreaElement).value,
+        category: (document.getElementById('category') as HTMLSelectElement).value,
+        author: (document.getElementById('author') as HTMLInputElement).value,
+        tags,
+        featuredImage: (document.getElementById('featured-image') as HTMLInputElement).value,
+        seoTitle: (document.getElementById('seo-title') as HTMLInputElement).value,
+        seoDescription: (document.getElementById('seo-desc') as HTMLTextAreaElement).value,
+        status,
+      };
+
+      const btnId = status === 'published' ? 'publish-btn' : 'save-draft';
+      const btn = document.getElementById(btnId) as HTMLButtonElement;
+      btn.disabled = true; btn.textContent = 'Saving...';
+
+      const res = await fetch('/api/admin/posts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      const data = await res.json();
+
+      if (res.ok) {
+        showAlert(`Post ${status === 'published' ? 'published' : 'saved as draft'}!`, 'success');
+        setTimeout(() => window.location.href = '/admin/posts', 1500);
+      } else {
+        showAlert(data.error || 'Failed to save', 'error');
+        btn.disabled = false;
+        btn.textContent = status === 'published' ? 'Publish' : 'Save Draft';
+      }
+    }
+
+    document.getElementById('publish-btn')?.addEventListener('click', () => savePost('published'));
+    document.getElementById('save-draft')?.addEventListener('click', () => savePost('draft'));
+  </script>
+</AdminLayout>
