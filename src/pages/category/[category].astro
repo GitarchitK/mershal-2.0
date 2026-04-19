@@ -10,18 +10,21 @@ import { adminDb } from '../../lib/firebase-admin';
 
 const { category } = Astro.params;
 
-const validCategories = ['technology', 'programming', 'tutorials'];
+const validCategories = ['vibe-coding', 'web-development', 'tutorials', 'tools', 'technology', 'programming'];
 
 if (!category || !validCategories.includes(category.toLowerCase())) {
   return Astro.redirect('/404');
 }
 
-const categoryName = category.charAt(0).toUpperCase() + category.slice(1);
+const categoryName = category.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
 const categoryMeta: Record<string, { desc: string; icon: string }> = {
-  technology: { desc: 'Latest tech news, product launches, and industry insights.', icon: '💻' },
-  programming: { desc: 'Programming guides, code tips, and developer resources.', icon: '🧑‍💻' },
+  'vibe-coding': { desc: 'Code for the vibe. AI tools, creative coding, and building things just because you can.', icon: '🎧' },
+  'web-development': { desc: 'Frontend, backend, full-stack — everything you need to build for the web.', icon: '🌐' },
   tutorials: { desc: 'Step-by-step tutorials to help you build and learn faster.', icon: '📖' },
+  tools: { desc: 'The best tools, extensions, and resources for modern developers.', icon: '🛠️' },
+  technology: { desc: 'Latest tech news and industry insights.', icon: '💻' },
+  programming: { desc: 'Programming guides, code tips, and developer resources.', icon: '🧑‍💻' },
 };
 
 const meta = categoryMeta[category.toLowerCase()] || { desc: `Articles about ${categoryName}`, icon: '📄' };
@@ -117,7 +120,7 @@ const rest = articles.slice(1);
         </div>
         <!-- Category nav pills -->
         <div class="flex gap-2 mt-6 flex-wrap">
-          {validCategories.map(cat => (
+          {['vibe-coding', 'web-development', 'tutorials', 'tools'].map(cat => (
             <a
               href={`/category/${cat}`}
               class={`px-4 py-1.5 rounded-full text-sm font-semibold transition ${
@@ -126,7 +129,7 @@ const rest = articles.slice(1);
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
-              {cat.charAt(0).toUpperCase() + cat.slice(1)}
+              {cat.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
             </a>
           ))}
         </div>

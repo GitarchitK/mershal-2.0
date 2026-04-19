@@ -54,11 +54,12 @@ export const config = {
     schedulerInterval: 30, // minutes
   },
 
-  // Categories - Tech & Programming focused
+  // Categories - Vibe Coding & Web Development focused
   categories: [
-    'technology',
-    'programming',
+    'vibe-coding',
+    'web-development',
     'tutorials',
+    'tools',
   ],
 
   // Site Configuration

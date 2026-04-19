@@ -3,9 +3,10 @@ import { getCurrentWeather, getWeatherEmoji } from '../lib/weather';
 
 const categories = [
   { name: 'Home', slug: '/' },
+  { name: 'Vibe Coding', slug: '/category/vibe-coding' },
+  { name: 'Web Dev', slug: '/category/web-development' },
   { name: 'Tutorials', slug: '/category/tutorials' },
-  { name: 'Programming', slug: '/category/programming' },
-  { name: 'Tech News', slug: '/category/technology' },
+  { name: 'Tools', slug: '/category/tools' },
 ];
 
 // Fetch weather data
@@ -153,7 +154,7 @@ const year = today.getFullYear();
         <div class="flex items-center justify-between mb-2">
           <div>
             <h2 class="text-2xl font-bold logo-font tracking-tight">Mershal</h2>
-            <p class="text-sm text-rose-100 font-medium">Personal Tech Blog</p>
+            <p class="text-sm text-rose-100 font-medium">Vibe Coding & Web Development</p>
           </div>
           <button 
             id="close-sidebar"
@@ -181,6 +182,22 @@ const year = today.getFullYear();
               </div>
               <span class="font-semibold text-sm">Home</span>
             </a>
+            <a href="/category/vibe-coding" class="flex items-center gap-3 text-gray-700 hover:text-rose-600 hover:bg-rose-50 px-4 py-3 rounded-xl transition-all group">
+              <div class="w-10 h-10 bg-rose-50 rounded-lg flex items-center justify-center group-hover:bg-rose-100 transition-all">
+                <svg class="w-5 h-5 text-rose-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                </svg>
+              </div>
+              <span class="font-semibold text-sm">Vibe Coding</span>
+            </a>
+            <a href="/category/web-development" class="flex items-center gap-3 text-gray-700 hover:text-rose-600 hover:bg-rose-50 px-4 py-3 rounded-xl transition-all group">
+              <div class="w-10 h-10 bg-rose-50 rounded-lg flex items-center justify-center group-hover:bg-rose-100 transition-all">
+                <svg class="w-5 h-5 text-rose-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M3 5a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2h-2.22l.123.489.804.804A1 1 0 0113 18H7a1 1 0 01-.707-1.707l.804-.804L7.22 15H5a2 2 0 01-2-2V5zm5.771 7H5V5h10v7H8.771z" clip-rule="evenodd"/>
+                </svg>
+              </div>
+              <span class="font-semibold text-sm">Web Dev</span>
+            </a>
             <a href="/category/tutorials" class="flex items-center gap-3 text-gray-700 hover:text-rose-600 hover:bg-rose-50 px-4 py-3 rounded-xl transition-all group">
               <div class="w-10 h-10 bg-rose-50 rounded-lg flex items-center justify-center group-hover:bg-rose-100 transition-all">
                 <svg class="w-5 h-5 text-rose-600" fill="currentColor" viewBox="0 0 20 20">
@@ -189,21 +206,13 @@ const year = today.getFullYear();
               </div>
               <span class="font-semibold text-sm">Tutorials</span>
             </a>
-            <a href="/category/programming" class="flex items-center gap-3 text-gray-700 hover:text-rose-600 hover:bg-rose-50 px-4 py-3 rounded-xl transition-all group">
+            <a href="/category/tools" class="flex items-center gap-3 text-gray-700 hover:text-rose-600 hover:bg-rose-50 px-4 py-3 rounded-xl transition-all group">
               <div class="w-10 h-10 bg-rose-50 rounded-lg flex items-center justify-center group-hover:bg-rose-100 transition-all">
                 <svg class="w-5 h-5 text-rose-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                  <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
                 </svg>
               </div>
-              <span class="font-semibold text-sm">Programming</span>
-            </a>
-            <a href="/category/technology" class="flex items-center gap-3 text-gray-700 hover:text-rose-600 hover:bg-rose-50 px-4 py-3 rounded-xl transition-all group">
-              <div class="w-10 h-10 bg-rose-50 rounded-lg flex items-center justify-center group-hover:bg-rose-100 transition-all">
-                <svg class="w-5 h-5 text-rose-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M3 5a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2h-2.22l.123.489.804.804A1 1 0 0113 18H7a1 1 0 01-.707-1.707l.804-.804L7.22 15H5a2 2 0 01-2-2V5zm5.771 7H5V5h10v7H8.771z" clip-rule="evenodd"/>
-                </svg>
-              </div>
-              <span class="font-semibold text-sm">Tech News</span>
+              <span class="font-semibold text-sm">Tools</span>
             </a>
           </nav>
         </div>
@@ -269,7 +278,7 @@ const year = today.getFullYear();
         <!-- Footer in Sidebar -->
         <div class="px-5 py-6 bg-gradient-to-br from-gray-50 to-rose-50 border-t border-gray-100">
           <p class="text-xs text-gray-500 text-center mb-2">© 2026 Mershal</p>
-          <p class="text-xs text-gray-400 text-center">Developed by <span class="text-rose-600 font-medium">Navroll Studio</span></p>
+          <p class="text-xs text-gray-400 text-center">Vibe Coding & Web Development</p>
         </div>
       </div>
     </div>

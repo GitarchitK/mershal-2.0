@@ -26,7 +26,7 @@ export const GET: APIRoute = async () => {
     }
   }
 
-  const categories = ['technology', 'programming', 'tutorials'];
+  const categories = ['vibe-coding', 'web-development', 'tutorials', 'tools'];
   const now = new Date().toISOString();
 
   let sitemap = `<?xml version="1.0" encoding="UTF-8"?>

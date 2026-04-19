@@ -16,11 +16,11 @@ interface Props {
 
 const {
   title,
-  description = 'Mershal — a personal tech blog by Archit Karmakar. Tutorials, programming guides, and deep dives into web development.',
+  description = 'Mershal — vibe coding tutorials, web development guides, and developer tools. Your go-to resource for building on the web.',
   canonicalUrl,
   image = 'https://mershal.in/og-default.png',
   type = 'website',
-  author = 'Archit Karmakar',
+  author = 'Mershal Editorial Team',
   publishedAt,
   modifiedAt,
   noindex = false,
@@ -86,33 +86,20 @@ const fullTitle = title.includes('Mershal') ? title : `${title} | Mershal`;
     <script type="application/ld+json" is:inline>
     {
       "@context": "https://schema.org",
-      "@type": "Blog",
-      "name": "Mershal",
-      "url": "https://mershal.in",
-      "description": "A personal tech blog by Archit Karmakar covering programming tutorials, web development, and software engineering.",
-      "inLanguage": "en-US",
-      "author": {
-        "@type": "Person",
-        "name": "Archit Karmakar",
-        "url": "https://mershal.in/about",
-        "jobTitle": "Full Stack Developer",
-        "knowsAbout": ["JavaScript", "TypeScript", "React", "Node.js", "Python", "Web Development"]
-      },
-      "publisher": {
-        "@type": "Person",
-        "name": "Archit Karmakar",
-        "url": "https://mershal.in/about"
-      }
-    }
-    </script>
-
-    <!-- SiteLinks SearchBox Schema -->
-    <script type="application/ld+json" is:inline>
-    {
-      "@context": "https://schema.org",
       "@type": "WebSite",
       "name": "Mershal",
       "url": "https://mershal.in",
+      "description": "Mershal — your go-to resource for vibe coding, web development tutorials, and developer tools.",
+      "inLanguage": "en-US",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Mershal",
+        "url": "https://mershal.in",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://mershal.in/favicon.svg"
+        }
+      },
       "potentialAction": {
         "@type": "SearchAction",
         "target": {
