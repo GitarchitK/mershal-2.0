@@ -15,7 +15,7 @@ if (adminDb) {
     const snapshot = await adminDb.collection('posts')
       .where('status', '==', 'published')
       .orderBy('publishedAt', 'desc')
-      .limit(50)
+      .limit(100)
       .get();
     articles = snapshot.docs.map(doc => {
       const d = doc.data();
@@ -37,11 +37,11 @@ categories.forEach(cat => {
 
 // Hero: first article is big, next 3 are stacked right
 const hero = articles[0] || null;
-const heroStack = articles.slice(1, 4);
-// Latest ticker: next 6
-const latestTicker = articles.slice(4, 10);
-// Sidebar: latest 8 for right sidebar
-const sidebarArticles = articles.slice(0, 8);
+const heroStack = articles.slice(1, 5);
+// Latest ticker: next 8
+const latestTicker = articles.slice(5, 13);
+// Sidebar: latest 12 for right sidebar
+const sidebarArticles = articles.slice(0, 12);
 
 function imgUrl(url: string, w: number, h: number) {
   if (!url) return `https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=${w}&h=${h}&fit=crop&auto=format&q=70`;
@@ -121,7 +121,7 @@ function timeAgo(date: Date | null) {
                 <div class="bg-white border-t-4 border-red-600 p-3 flex-1">
                   <p class="text-xs font-black text-red-600 uppercase tracking-widest mb-2">Latest</p>
                   <ul class="space-y-2">
-                    {latestTicker.slice(0, 4).map(a => (
+                    {latestTicker.slice(0, 6).map(a => (
                       <li>
                         <a href={`/news/${a.slug}`} class="text-xs text-gray-800 hover:text-red-600 transition font-medium line-clamp-2 leading-snug block">
                           › {a.title}
@@ -192,10 +192,10 @@ function timeAgo(date: Date | null) {
                     </div>
                   )}
 
-                  {/* Bottom row: 3 cards */}
+                  {/* Bottom row: up to 6 cards */}
                   {byCategory[cat].length > 3 && (
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                      {byCategory[cat].slice(3, 6).map((a: any) => (
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                      {byCategory[cat].slice(3, 9).map((a: any) => (
                         <a href={`/news/${a.slug}`} class="group bg-white hover:shadow-md transition overflow-hidden">
                           <img
                             src={imgUrl(a.featuredImage, 400, 240)}
