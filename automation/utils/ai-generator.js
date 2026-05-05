@@ -61,9 +61,18 @@ export async function generateArticle(topic, category, trendContext = {}) {
 
   const today = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
-  // Build context from related headlines if available
-  const contextBlock = trendContext.relatedHeadlines?.length
-    ? `\n\nRELATED HEADLINES FROM GOOGLE TRENDS (use as factual context, do NOT copy):\n${trendContext.relatedHeadlines.map(h => `- ${h.headline}: ${h.snippet}`).join('\n')}`
+  // Build real facts block from fetched news
+  const hasFacts = trendContext.realFacts?.length > 0;
+  const factsBlock = hasFacts
+    ? `\n\nREAL NEWS FACTS (verified from Google News — use these as your factual foundation):\n${
+        trendContext.realFacts.map((f, i) =>
+          `[${i+1}] "${f.headline}" — ${f.source}${f.snippet ? `\n    Context: ${f.snippet}` : ''}`
+        ).join('\n')
+      }\n\nYou MUST base your article on these real facts. Do NOT invent statistics, quotes, or events not supported by the above.`
+    : `\n\nNOTE: No real-time news data available for this topic. Write only what you know to be factually accurate. Do NOT fabricate quotes, statistics, or specific events. Use general, verifiable background information only.`;
+
+  const relatedBlock = trendContext.relatedHeadlines?.length
+    ? `\nRELATED HEADLINES FROM GOOGLE TRENDS:\n${trendContext.relatedHeadlines.map(h => `- ${h.headline}`).join('\n')}`
     : '';
 
   const systemPrompt = `You are the Editor in Chief of Mershal (mershal.in), a professional world news publication. 
@@ -88,44 +97,47 @@ You always respond with valid JSON only.`;
 TOPIC: "${topic}"
 CATEGORY: ${category}
 DATE: ${today}
-TRENDING TRAFFIC: ${trendContext.traffic || 'High'}${contextBlock}
+TRENDING TRAFFIC: ${trendContext.traffic || 'High'}${factsBlock}${relatedBlock}
 
 ARTICLE REQUIREMENTS:
 
-1. LENGTH: 800-1200 words (news article, not a blog post)
+1. LENGTH: 900-1300 words
 
-2. STRUCTURE (use these HTML tags):
-<h2>Subheading</h2> — 3-4 subheadings throughout
-<p>Paragraph text</p>
-<blockquote>Key quote or important statement</blockquote>
-<ul><li>List item</li></ul> — for key points when appropriate
-<strong>Important term</strong> — sparingly for emphasis
+2. FACTUAL ACCURACY — THIS IS CRITICAL:
+   - ONLY use facts from the REAL NEWS FACTS section above
+   - If a fact is not in the provided sources, do NOT include it
+   - Do NOT invent quotes — only use quotes if they appear in the source material
+   - Do NOT fabricate statistics, dates, or names
+   - If you are uncertain about a detail, write around it or omit it
+   - You may add verified background context (e.g. historical facts about a country, general knowledge about a company) but clearly distinguish analysis from reported facts
 
-3. NEWS ARTICLE FORMAT:
-- Opening paragraph: The most important fact first (inverted pyramid)
+3. STRUCTURE:
+<h2>Subheading</h2> — 3-4 subheadings
+<p>Paragraph</p>
+<blockquote>Direct quote from source material only</blockquote>
+<ul><li>List item</li></ul> — for key points
+<strong>Term</strong> — sparingly
+
+4. NEWS WRITING FORMAT:
+- Lead paragraph: Most important verified fact first
 - Second paragraph: Context and background
-- Middle sections: Details, analysis, different perspectives
-- Closing: Implications, what happens next
+- Middle: Details from sources, analysis, implications
+- Close: What happens next / why it matters
 
-4. HUMAN WRITING TECHNIQUES:
-- Start with a specific, concrete detail or surprising fact
-- Include at least one attributed quote (can be from a named official, expert, or spokesperson — make it plausible)
-- Use specific numbers and statistics where relevant
-- Reference real places, organizations, and context
-- Show cause and effect relationships
-- Include one moment of editorial analysis ("This marks a significant shift..." / "The decision raises questions about...")
+5. ENGAGING WRITING:
+- Vary sentence length — mix short punchy sentences with longer analytical ones
+- Use specific details from the source material (names, places, numbers)
+- Explain WHY this story matters to the reader
+- Add editorial analysis: "This marks a shift...", "The decision raises questions..."
+- Use active voice
+- Write with genuine curiosity and engagement
 
-5. WHAT TO AVOID:
+6. WHAT TO AVOID:
 - Do NOT start with "In today's world" or "In recent years"
-- Do NOT use bullet points for the main narrative
-- Do NOT write like a listicle
-- Do NOT use passive voice excessively
+- Do NOT use "It is worth noting", "Delve into", "Comprehensive", "Multifaceted"
+- Do NOT fabricate ANY quotes, statistics, or events
 - Do NOT repeat the topic keyword more than 4 times
-
-6. SEO:
-- Title: 55-65 characters, specific and compelling
-- Excerpt: 150-160 characters, summarizes the key news
-- Tags: 5-7 relevant keywords
+- Do NOT write like a listicle
 
 Respond ONLY with this JSON (no markdown, no code blocks):
 {
