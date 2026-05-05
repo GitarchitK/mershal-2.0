@@ -158,32 +158,40 @@ function timeAgo(date: Date | null) {
               <div class="flex items-center justify-between mb-3">
                 <div>
                   <p class="text-xs text-gray-500 font-medium">West Bengal Assembly Elections 2026</p>
-                  <p class="text-xs text-gray-400">Total Seats: 294 · Majority: 148</p>
+                  <p class="text-xs text-gray-400">Total Seats: 294 · Majority: 148 · Counted: 293</p>
                 </div>
-                <span class="text-xs bg-green-100 text-green-700 font-bold px-2 py-1 rounded">Counting Live</span>
+                <span class="text-xs bg-orange-100 text-orange-700 font-bold px-2 py-1 rounded">Results Declared</span>
               </div>
               <div class="space-y-2.5">
                 {[
-                  { party: 'AITC', name: 'All India Trinamool Congress', color: '#1a56db', seats: 162, leading: 18, total: 180 },
-                  { party: 'BJP', name: 'Bharatiya Janata Party', color: '#f97316', seats: 68, leading: 12, total: 80 },
-                  { party: 'INC', name: 'Indian National Congress', color: '#16a34a', seats: 14, leading: 3, total: 17 },
-                  { party: 'Others', name: 'Others', color: '#6b7280', seats: 12, leading: 5, total: 17 },
+                  { party: 'BJP', name: 'Bharatiya Janata Party', color: '#f97316', won: 207, leading: 0, total: 207 },
+                  { party: 'AITC', name: 'All India Trinamool Congress', color: '#1a56db', won: 80, leading: 0, total: 80 },
+                  { party: 'INC', name: 'Indian National Congress', color: '#16a34a', won: 2, leading: 0, total: 2 },
+                  { party: 'AJUP', name: 'Aam Janata Unnayan Party', color: '#7c3aed', won: 2, leading: 0, total: 2 },
+                  { party: 'CPI(M)', name: 'Communist Party of India (Marxist)', color: '#dc2626', won: 1, leading: 0, total: 1 },
+                  { party: 'AISF', name: 'All India Secular Front', color: '#0891b2', won: 1, leading: 0, total: 1 },
                 ].map(p => (
                   <div class="flex items-center gap-3">
-                    <div class="w-12 text-xs font-black text-center py-1 text-white rounded-sm flex-shrink-0" style={`background:${p.color}`}>{p.party}</div>
+                    <div class="w-14 text-xs font-black text-center py-1 text-white rounded-sm flex-shrink-0 truncate px-1" style={`background:${p.color}`}>{p.party}</div>
                     <div class="flex-1">
                       <div class="flex items-center justify-between mb-0.5">
-                        <span class="text-xs text-gray-600 font-medium truncate max-w-[140px]">{p.name}</span>
-                        <span class="text-xs font-black text-gray-900 ml-2">{p.total} <span class="text-gray-400 font-normal">(W:{p.seats} L:{p.leading})</span></span>
+                        <span class="text-xs text-gray-600 font-medium truncate max-w-[160px]">{p.name}</span>
+                        <span class="text-xs font-black text-gray-900 ml-2 flex-shrink-0">
+                          <span class="text-green-700">{p.won}</span>
+                          {p.leading > 0 && <span class="text-yellow-600"> +{p.leading}</span>}
+                        </span>
                       </div>
                       <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
-                        <div class="h-full rounded-full" style={`width:${Math.round((p.total/294)*100)}%; background:${p.color}`}></div>
+                        <div class="h-full rounded-full" style={`width:${Math.max(Math.round((p.total/294)*100), p.total > 0 ? 1 : 0)}%; background:${p.color}`}></div>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
-              <p class="text-xs text-gray-400 mt-3">* Indicative data. Updated manually. W = Won, L = Leading</p>
+              <div class="mt-3 pt-2 border-t border-gray-100 flex items-center justify-between">
+                <p class="text-xs text-gray-400">BJP wins majority · 293/294 seats counted</p>
+                <span class="text-xs font-bold text-orange-600">BJP WINS 🏆</span>
+              </div>
             </div>
 
             <!-- Tamil Nadu Results -->
