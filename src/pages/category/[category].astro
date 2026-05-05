@@ -10,21 +10,21 @@ import { adminDb } from '../../lib/firebase-admin';
 
 const { category } = Astro.params;
 
-const validCategories = ['vibe-coding', 'web-development', 'tutorials', 'tools', 'technology', 'programming'];
+const validCategories = ['world', 'politics', 'business', 'technology', 'sports', 'entertainment'];
 
 if (!category || !validCategories.includes(category.toLowerCase())) {
   return Astro.redirect('/404');
 }
 
-const categoryName = category.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+const categoryName = category.charAt(0).toUpperCase() + category.slice(1);
 
 const categoryMeta: Record<string, { desc: string; icon: string }> = {
-  'vibe-coding': { desc: 'Code for the vibe. AI tools, creative coding, and building things just because you can.', icon: '🎧' },
-  'web-development': { desc: 'Frontend, backend, full-stack — everything you need to build for the web.', icon: '🌐' },
-  tutorials: { desc: 'Step-by-step tutorials to help you build and learn faster.', icon: '📖' },
-  tools: { desc: 'The best tools, extensions, and resources for modern developers.', icon: '🛠️' },
-  technology: { desc: 'Latest tech news and industry insights.', icon: '💻' },
-  programming: { desc: 'Programming guides, code tips, and developer resources.', icon: '🧑‍💻' },
+  world: { desc: 'Breaking news and in-depth coverage of global events and international affairs.', icon: '🌍' },
+  politics: { desc: 'Political news, elections, government policy, and analysis from around the world.', icon: '🏛️' },
+  business: { desc: 'Markets, economy, finance, startups, and business news from across the globe.', icon: '💼' },
+  technology: { desc: 'Tech news, product launches, AI, and the latest from the world of technology.', icon: '💻' },
+  sports: { desc: 'Sports news, scores, analysis, and coverage of major events worldwide.', icon: '⚽' },
+  entertainment: { desc: 'Movies, music, celebrity news, and entertainment from around the world.', icon: '🎬' },
 };
 
 const meta = categoryMeta[category.toLowerCase()] || { desc: `Articles about ${categoryName}`, icon: '📄' };
@@ -120,7 +120,7 @@ const rest = articles.slice(1);
         </div>
         <!-- Category nav pills -->
         <div class="flex gap-2 mt-6 flex-wrap">
-          {['vibe-coding', 'web-development', 'tutorials', 'tools'].map(cat => (
+          {['world', 'politics', 'business', 'technology', 'sports', 'entertainment'].map(cat => (
             <a
               href={`/category/${cat}`}
               class={`px-4 py-1.5 rounded-full text-sm font-semibold transition ${
@@ -129,7 +129,7 @@ const rest = articles.slice(1);
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
-              {cat.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
+              {cat.charAt(0).toUpperCase() + cat.slice(1)}
             </a>
           ))}
         </div>

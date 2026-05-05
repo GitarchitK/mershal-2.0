@@ -37,7 +37,7 @@ if (adminDb) {
   }
 }
 
-const categories = ['vibe-coding', 'web-development', 'tutorials', 'tools'];
+const categories = ['world', 'politics', 'business', 'technology', 'sports', 'entertainment'];
 
 // Group articles by category (case-insensitive)
 const byCategory: Record<string, any[]> = {};
@@ -49,7 +49,7 @@ const featured = articles[0] || null;
 const latest = articles.slice(0, 6);
 ---
 
-<Layout title="Mershal — Vibe Coding & Web Development" description="Vibe coding tutorials, web development guides, and tools for developers who build for the love of it. By Archit Karmakar.">
+<Layout title="Mershal — Breaking World News" description="Breaking news and comprehensive coverage of world events. Politics, business, technology, sports, and entertainment.">
   <Header />
   <BreakingNews />
 

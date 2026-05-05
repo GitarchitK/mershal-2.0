@@ -16,7 +16,7 @@ interface Props {
 
 const {
   title,
-  description = 'Mershal — vibe coding tutorials, web development guides, and developer tools. Your go-to resource for building on the web.',
+  description = 'Mershal — breaking news and in-depth coverage of world events. Politics, business, technology, sports, and entertainment.',
   canonicalUrl,
   image = 'https://mershal.in/og-default.png',
   type = 'website',
@@ -86,10 +86,10 @@ const fullTitle = title.includes('Mershal') ? title : `${title} | Mershal`;
     <script type="application/ld+json" is:inline>
     {
       "@context": "https://schema.org",
-      "@type": "WebSite",
+      "@type": "NewsMediaOrganization",
       "name": "Mershal",
       "url": "https://mershal.in",
-      "description": "Mershal — your go-to resource for vibe coding, web development tutorials, and developer tools.",
+      "description": "Mershal delivers breaking news and comprehensive coverage of world events.",
       "inLanguage": "en-US",
       "publisher": {
         "@type": "Organization",

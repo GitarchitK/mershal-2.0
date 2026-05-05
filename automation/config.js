@@ -54,13 +54,8 @@ export const config = {
     schedulerInterval: 30, // minutes
   },
 
-  // Categories - Vibe Coding & Web Development focused
-  categories: [
-    'vibe-coding',
-    'web-development',
-    'tutorials',
-    'tools',
-  ],
+  // Categories - World News focused
+  categories: ['world', 'politics', 'business', 'technology', 'sports', 'entertainment'],
 
   // Site Configuration
   site: {

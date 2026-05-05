@@ -6,106 +6,220 @@ const session = Astro.cookies.get('admin_session');
 if (session?.value !== 'authenticated') return Astro.redirect('/admin');
 ---
 
-<AdminLayout title="All Posts" activeNav="posts">
-  <div class="flex items-center justify-between mb-8">
+<AdminLayout title="Posts Management" activeNav="posts">
+  <!-- Header Section -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
     <div>
-      <h1 class="text-2xl font-bold text-white">All Posts</h1>
-      <p class="text-gray-400 text-sm mt-1" id="post-count">Loading...</p>
+      <h1 class="text-3xl font-bold text-white tracking-tight">Posts</h1>
+      <p class="text-gray-400 text-sm mt-1 flex items-center gap-2">
+        <span id="post-count" class="font-medium text-gray-300">Loading...</span>
+        <span class="text-gray-600">•</span>
+        <span>Manage and publish your content</span>
+      </p>
     </div>
-    <a href="/admin/posts/new" class="flex items-center gap-2 bg-rose-600 hover:bg-rose-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition">
-      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg>
-      New Post
+    <a href="/admin/posts/new" class="inline-flex items-center gap-2 bg-rose-600 hover:bg-rose-500 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-lg shadow-rose-600/20 active:scale-95">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      Create Post
     </a>
   </div>
 
-  <div class="flex flex-wrap gap-3 mb-5">
-    <input id="search" type="text" placeholder="Search posts..." class="bg-gray-900 border border-gray-700 text-white rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-rose-500 w-64 placeholder-gray-600" />
-    <select id="filter-status" class="bg-gray-900 border border-gray-700 text-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-rose-500">
-      <option value="">All Status</option>
-      <option value="published">Published</option>
-      <option value="draft">Draft</option>
-    </select>
-    <select id="filter-category" class="bg-gray-900 border border-gray-700 text-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-rose-500">
-      <option value="">All Categories</option>
-      <option value="technology">Technology</option>
-      <option value="programming">Programming</option>
-      <option value="tutorials">Tutorials</option>
-    </select>
+  <!-- Filters Section -->
+  <div class="bg-gray-900/50 border border-gray-800/60 rounded-2xl p-4 mb-6 backdrop-blur-sm">
+    <div class="flex flex-col sm:flex-row gap-4">
+      <div class="relative flex-1">
+        <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input id="search" type="text" placeholder="Search by title or slug..." class="w-full bg-gray-950/50 border border-gray-700/50 text-white rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/50 focus:border-rose-500 transition-all placeholder-gray-500" />
+      </div>
+      <div class="flex gap-3">
+        <select id="filter-status" class="bg-gray-950/50 border border-gray-700/50 text-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/50 focus:border-rose-500 transition-all min-w-[140px] appearance-none cursor-pointer">
+          <option value="">All Statuses</option>
+          <option value="published">Published</option>
+          <option value="draft">Draft</option>
+        </select>
+        <select id="filter-category" class="bg-gray-950/50 border border-gray-700/50 text-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/50 focus:border-rose-500 transition-all min-w-[140px] appearance-none cursor-pointer">
+          <option value="">All Categories</option>
+          <option value="technology">Technology</option>
+          <option value="programming">Programming</option>
+          <option value="tutorials">Tutorials</option>
+        </select>
+      </div>
+    </div>
   </div>
 
-  <div id="posts-table" class="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden">
-    <div class="p-6 text-gray-500 text-sm">Loading posts...</div>
+  <!-- Table Section -->
+  <div class="bg-gray-900/40 border border-gray-800/60 rounded-2xl overflow-hidden shadow-xl backdrop-blur-sm">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-gray-900/80 border-b border-gray-800/60">
+            <th class="px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider w-1/3">Post Details</th>
+            <th class="px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Category</th>
+            <th class="px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Status</th>
+            <th class="px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Stats</th>
+            <th class="px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Published</th>
+            <th class="px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="posts-table-body" class="divide-y divide-gray-800/50">
+          <tr>
+            <td colspan="6" class="px-6 py-12 text-center">
+              <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-800/50 mb-4">
+                <svg class="w-6 h-6 text-gray-400 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+              </div>
+              <p class="text-gray-400 text-sm">Loading posts...</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <script>
     let allPosts: any[] = [];
+    let isDeleting = false;
 
     async function loadPosts() {
-      const res = await fetch('/api/admin/posts');
-      allPosts = await res.json();
-      document.getElementById('post-count')!.textContent = `${allPosts.length} posts total`;
-      renderTable(allPosts);
+      try {
+        const res = await fetch('/api/admin/posts');
+        allPosts = await res.json();
+        updateCount();
+        renderTable(allPosts);
+      } catch (error) {
+        console.error('Failed to load posts:', error);
+        document.getElementById('posts-table-body')!.innerHTML = `
+          <tr>
+            <td colspan="6" class="px-6 py-12 text-center text-red-400">
+              Failed to load posts. Please try refreshing the page.
+            </td>
+          </tr>
+        `;
+      }
+    }
+
+    function updateCount() {
+      const countEl = document.getElementById('post-count');
+      if (countEl) {
+        countEl.textContent = `${allPosts.length} post${allPosts.length === 1 ? '' : 's'}`;
+      }
     }
 
     function renderTable(posts: any[]) {
+      const tbody = document.getElementById('posts-table-body');
+      if (!tbody) return;
+
       if (!posts.length) {
-        document.getElementById('posts-table')!.innerHTML = '<div class="p-6 text-gray-500 text-sm">No posts found.</div>';
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="px-6 py-16 text-center">
+              <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-800/30 mb-4">
+                <svg class="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5L18.5 7M4 13h16M4 18h16"/></svg>
+              </div>
+              <h3 class="text-white text-lg font-medium mb-1">No posts found</h3>
+              <p class="text-gray-500 text-sm">Try adjusting your filters or create a new post.</p>
+            </td>
+          </tr>
+        `;
         return;
       }
-      const rows = posts.map((p: any) => `
-        <tr class="border-t border-gray-800 hover:bg-gray-800/40 transition">
-          <td class="px-5 py-3.5">
-            <p class="text-sm text-white font-medium">${p.title}</p>
-            <p class="text-xs text-gray-500 mt-0.5 font-mono">/news/${p.slug}</p>
-          </td>
-          <td class="px-5 py-3.5 text-sm text-gray-400 capitalize">${p.category}</td>
-          <td class="px-5 py-3.5">
-            <span class="px-2.5 py-0.5 rounded-full text-xs font-medium ${p.status === 'published' ? 'bg-green-900/50 text-green-400' : 'bg-yellow-900/50 text-yellow-400'}">${p.status}</span>
-          </td>
-          <td class="px-5 py-3.5 text-sm text-gray-500">${p.wordCount || 0} words</td>
-          <td class="px-5 py-3.5 text-sm text-gray-500">${p.publishedAt ? new Date(p.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}</td>
-          <td class="px-5 py-3.5 text-sm flex items-center gap-3">
-            <a href="/admin/posts/edit?id=${p.id}" class="text-rose-400 hover:text-rose-300 font-medium">Edit</a>
-            <a href="/news/${p.slug}" target="_blank" class="text-gray-500 hover:text-gray-300">View</a>
-            <button onclick="deletePost('${p.id}', '${p.title.replace(/'/g, "\\'")}')" class="text-gray-600 hover:text-red-400 transition">Delete</button>
-          </td>
-        </tr>
-      `).join('');
-      document.getElementById('posts-table')!.innerHTML = `
-        <table class="w-full">
-          <thead><tr class="text-left text-xs text-gray-500 uppercase tracking-wider border-b border-gray-800">
-            <th class="px-5 py-3">Title</th><th class="px-5 py-3">Category</th>
-            <th class="px-5 py-3">Status</th><th class="px-5 py-3">Words</th>
-            <th class="px-5 py-3">Date</th><th class="px-5 py-3">Actions</th>
-          </tr></thead>
-          <tbody>${rows}</tbody>
-        </table>`;
+
+      tbody.innerHTML = posts.map((p: any) => {
+        const isPublished = p.status === 'published';
+        const statusBadge = isPublished
+          ? `<span class="inline-flex items-center gap-1.5 py-1 px-2.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Published</span>`
+          : `<span class="inline-flex items-center gap-1.5 py-1 px-2.5 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Draft</span>`;
+
+        const dateFormatted = p.publishedAt 
+          ? new Date(p.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) 
+          : '<span class="text-gray-600">—</span>';
+
+        return `
+          <tr class="group hover:bg-gray-800/40 transition-colors">
+            <td class="px-6 py-4">
+              <div class="flex flex-col gap-1">
+                <a href="/admin/posts/edit?id=${p.id}" class="text-sm font-medium text-gray-200 group-hover:text-rose-400 transition-colors line-clamp-1">${p.title}</a>
+                <div class="flex items-center gap-2 text-xs text-gray-500 font-mono">
+                  <span class="truncate max-w-[200px]">/news/${p.slug}</span>
+                  <a href="/news/${p.slug}" target="_blank" class="text-gray-600 hover:text-gray-400 transition-colors" title="Open in new tab">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                  </a>
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4">
+              <span class="inline-flex items-center px-2 py-1 rounded-md bg-gray-800 text-xs font-medium text-gray-300 capitalize border border-gray-700">
+                ${p.category || 'Uncategorized'}
+              </span>
+            </td>
+            <td class="px-6 py-4">
+              ${statusBadge}
+            </td>
+            <td class="px-6 py-4 text-sm text-gray-400">
+              <div class="flex items-center gap-1.5">
+                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                ${p.wordCount || 0}
+              </div>
+            </td>
+            <td class="px-6 py-4 text-sm text-gray-400 whitespace-nowrap">
+              ${dateFormatted}
+            </td>
+            <td class="px-6 py-4 text-right whitespace-nowrap">
+              <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <a href="/admin/posts/edit?id=${p.id}" class="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors" title="Edit Post">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                </a>
+                <button onclick="window.deletePost('${p.id}', '${p.title.replace(/'/g, "\\'")}')" class="p-2 text-gray-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors" title="Delete Post">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.8627m5 4v6m4-6v6m1-10V4a1 11v3M4 7h16"/></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
     }
 
     function filterPosts() {
       const search = (document.getElementById('search') as HTMLInputElement).value.toLowerCase();
       const status = (document.getElementById('filter-status') as HTMLSelectElement).value;
       const category = (document.getElementById('filter-category') as HTMLSelectElement).value;
-      renderTable(allPosts.filter((p: any) =>
-        (!search || p.title.toLowerCase().includes(search)) &&
-        (!status || p.status === status) &&
-        (!category || p.category === category)
-      ));
+      
+      const filtered = allPosts.filter((p: any) => {
+        const matchesSearch = !search || 
+          p.title.toLowerCase().includes(search) || 
+          (p.slug && p.slug.toLowerCase().includes(search));
+        const matchesStatus = !status || p.status === status;
+        const matchesCategory = !category || p.category === category;
+        return matchesSearch && matchesStatus && matchesCategory;
+      });
+      
+      renderTable(filtered);
     }
 
-    async function deletePost(id: string, title: string) {
-      if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
-      const res = await fetch(`/api/admin/posts?id=${id}`, { method: 'DELETE' });
-      if (res.ok) {
-        allPosts = allPosts.filter((p: any) => p.id !== id);
-        renderTable(allPosts);
-        document.getElementById('post-count')!.textContent = `${allPosts.length} posts total`;
-      } else alert('Failed to delete post');
-    }
+    (window as any).deletePost = async function(id: string, title: string) {
+      if (isDeleting) return;
+      if (!confirm(`Are you sure you want to delete "${title}"?\nThis action cannot be undone.`)) return;
+      
+      isDeleting = true;
+      try {
+        const res = await fetch(`/api/admin/posts?id=${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          allPosts = allPosts.filter((p: any) => p.id !== id);
+          updateCount();
+          filterPosts(); 
+        } else {
+          alert('Failed to delete post. Please try again.');
+        }
+      } catch (error) {
+        console.error('Delete error:', error);
+        alert('An error occurred while deleting the post.');
+      } finally {
+        isDeleting = false;
+      }
+    };
 
     document.getElementById('search')?.addEventListener('input', filterPosts);
     document.getElementById('filter-status')?.addEventListener('change', filterPosts);
     document.getElementById('filter-category')?.addEventListener('change', filterPosts);
+    
     loadPosts();
   </script>
 </AdminLayout>

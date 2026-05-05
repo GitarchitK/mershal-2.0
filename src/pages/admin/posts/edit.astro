@@ -48,9 +48,12 @@ if (!postId) return Astro.redirect('/admin/posts');
           <div>
             <label class="block text-xs text-gray-400 mb-1.5">Category</label>
             <select id="category" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-rose-500">
+              <option value="world">World</option>
+              <option value="politics">Politics</option>
+              <option value="business">Business</option>
               <option value="technology">Technology</option>
-              <option value="programming">Programming</option>
-              <option value="tutorials">Tutorials</option>
+              <option value="sports">Sports</option>
+              <option value="entertainment">Entertainment</option>
             </select>
           </div>
           <div>
@@ -108,7 +111,7 @@ if (!postId) return Astro.redirect('/admin/posts');
       document.getElementById('featured-image').value = post.featuredImage || '';
       document.getElementById('seo-title').value = post.seoTitle || '';
       document.getElementById('seo-desc').value = post.seoDescription || '';
-      document.getElementById('category').value = post.category || 'technology';
+      document.getElementById('category').value = post.category || 'world';
       document.getElementById('post-slug-display').textContent = `/news/${post.slug}`;
       document.getElementById('view-post-link').href = `/news/${post.slug}`;
 
