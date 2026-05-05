@@ -11,356 +11,180 @@ const categories = [
   { name: 'Entertainment', slug: '/category/entertainment' },
 ];
 
-// Fetch weather data
 const weatherData = await getCurrentWeather('Kolkata');
 const currentTemp = weatherData?.current.temp_c || 25;
 const weatherEmoji = weatherData ? getWeatherEmoji(weatherData.current.condition.text) : '🌤️';
-const humidity = weatherData?.current.humidity || 65;
-const windSpeed = weatherData?.current.wind_kph || 12;
 const condition = weatherData?.current.condition.text || 'Partly Cloudy';
 
-// Get current day name
 const today = new Date();
 const dayName = today.toLocaleDateString('en-US', { weekday: 'long' });
-const shortDate = today.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-const year = today.getFullYear();
+const shortDate = today.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 ---
 
-<header class="bg-white shadow-md sticky top-0 z-50">
-  <!-- Top Info Bar -->
-  <div class="bg-red-600 border-b border-red-700">
-    <div class="container mx-auto px-4 py-2 md:py-2.5">
-      <div class="flex items-center justify-between">
-        <!-- Left: Date & Time -->
-        <div class="flex items-center gap-3 md:gap-5">
-          <!-- Day & Date -->
-          <div class="flex items-center gap-1.5 md:gap-2">
-            <svg class="w-4 h-4 md:w-5 md:h-5 text-red-200" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
-            </svg>
-            <div class="text-xs md:text-sm">
-              <span id="live-day" class="font-semibold text-white hidden sm:inline">{dayName}</span>
-              <span class="text-red-100">{shortDate}, {year}</span>
-            </div>
-          </div>
-          
-          <span class="text-red-400 hidden md:inline">|</span>
-          
-          <!-- Time -->
-          <div class="flex items-center gap-1.5 md:gap-2">
-            <svg class="w-4 h-4 md:w-5 md:h-5 text-red-200" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
-            </svg>
-            <span id="live-time" class="font-mono font-medium text-white text-xs md:text-sm">--:--:--</span>
-          </div>
+<header class="sticky top-0 z-50 shadow-md">
+
+  <!-- ── Row 1: Red top bar (date / weather / social) ── -->
+  <div class="bg-red-600 text-white">
+    <div class="container mx-auto px-4 max-w-7xl">
+      <div class="flex items-center justify-between py-1.5 text-xs">
+
+        <!-- Left: date + time + weather -->
+        <div class="flex items-center gap-4">
+          <span class="font-semibold hidden sm:inline">{dayName},</span>
+          <span class="text-red-100">{shortDate}</span>
+          <span class="text-red-300 hidden md:inline">|</span>
+          <span id="live-time" class="font-mono hidden md:inline">--:--</span>
+          <span class="text-red-300 hidden lg:inline">|</span>
+          <span class="hidden lg:flex items-center gap-1">
+            <span>{weatherEmoji}</span>
+            <span class="font-semibold">{currentTemp}°C</span>
+            <span class="text-red-200">{condition}</span>
+          </span>
         </div>
-        
-        <!-- Right: Weather -->
-        <div class="flex items-center gap-3 md:gap-5">
-          <!-- Weather Icon & Temp -->
-          <div class="flex items-center gap-1.5 md:gap-2">
-            <span class="text-xl md:text-2xl">{weatherEmoji}</span>
-            <div class="text-xs md:text-sm">
-              <span id="temperature" class="font-bold text-white">{currentTemp}°C</span>
-              <span class="text-red-100 hidden sm:inline">{condition}</span>
-            </div>
-          </div>
-          
-          <span class="text-red-400 hidden lg:inline">|</span>
-          
-          <!-- Humidity & Wind -->
-          <div class="hidden lg:flex items-center gap-4 text-xs text-red-100">
-            <div class="flex items-center gap-1">
-              <svg class="w-4 h-4 text-red-200" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M14.243 5.757a6 6 0 10-.986 9.284 1 1 0 111.087 1.678A8 8 0 1118 10a3 3 0 01-4.8 2.401A4 4 0 1114 10a1 1 0 102 0c0-1.537-.586-3.07-1.757-4.243zM12 17a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
-              </svg>
-              <span>{humidity}%</span>
-            </div>
-            <div class="flex items-center gap-1">
-              <svg class="w-4 h-4 text-red-200" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M5.5 16a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 16h-8z" clip-rule="evenodd"/>
-              </svg>
-              <span>{windSpeed} km/h</span>
-            </div>
-          </div>
-          
-          <!-- Location -->
-          <div class="hidden md:flex items-center gap-1 text-xs text-red-100">
-            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
-            </svg>
-            <span>Kolkata</span>
-          </div>
+
+        <!-- Right: social icons -->
+        <div class="flex items-center gap-3">
+          <a href="#" aria-label="Facebook" class="hover:text-red-200 transition">
+            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </a>
+          <a href="#" aria-label="Twitter/X" class="hover:text-red-200 transition">
+            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+          <a href="#" aria-label="YouTube" class="hover:text-red-200 transition">
+            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          </a>
+          <a href="#" aria-label="Instagram" class="hover:text-red-200 transition">
+            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+          </a>
+          <span class="text-red-300 hidden sm:inline">|</span>
+          <a href="/admin" class="hidden sm:inline text-red-100 hover:text-white transition text-xs font-medium">Admin</a>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="container mx-auto px-4 relative">
-    <!-- Main Header -->
-    <div class="flex items-center justify-between py-3 border-b border-gray-200">
-      <!-- Left: Mobile menu btn (mobile) | Desktop links (desktop) -->
-      <div class="flex items-center">
-        <button 
-          id="mobile-menu-btn"
-          class="lg:hidden text-gray-700 hover:text-red-600 p-2"
-          aria-label="Open menu"
-        >
-          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/>
+  <!-- ── Row 2: White logo bar ── -->
+  <div class="bg-white border-b border-gray-200">
+    <div class="container mx-auto px-4 max-w-7xl">
+      <div class="flex items-center justify-between py-3">
+
+        <!-- Mobile hamburger -->
+        <button id="mobile-menu-btn" class="lg:hidden text-gray-700 hover:text-red-600 p-1" aria-label="Menu">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
           </svg>
         </button>
-        <div class="hidden lg:flex items-center gap-4 text-sm">
-          <a href="/about" class="text-gray-600 hover:text-red-600 transition font-medium">About</a>
-          <span class="text-gray-300">|</span>
-          <a href="/contact" class="text-gray-600 hover:text-red-600 transition font-medium">Contact</a>
-          <span class="text-gray-300">|</span>
-          <a href="/privacy" class="text-gray-600 hover:text-red-600 transition font-medium">Privacy</a>
-          <span class="text-gray-300">|</span>
-          <a href="/terms" class="text-gray-600 hover:text-red-600 transition font-medium">Terms</a>
-        </div>
-      </div>
 
-      <a href="/" class="flex items-center lg:absolute lg:left-1/2 lg:-translate-x-1/2">
-        <span class="text-3xl font-bold text-red-600 logo-font tracking-tighter">Mershal</span>
-      </a>
-
-      <!-- Right spacer (desktop only, keeps logo centered) -->
-      <div class="hidden lg:block w-48"></div>
-    </div>
-    
-    <!-- Navigation -->
-    <nav class="flex items-center gap-6 py-3 overflow-x-auto scrollbar-hide">
-      {categories.map(cat => (
-        <a 
-          href={cat.slug} 
-          class="text-gray-700 hover:text-red-600 whitespace-nowrap font-semibold text-sm uppercase tracking-wide transition-colors"
-        >
-          {cat.name}
-        </a>
-      ))}
-    </nav>
-  </div>
-
-  <!-- Mobile Sidebar Menu -->
-  <div 
-    id="mobile-sidebar"
-    class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden backdrop-blur-sm"
-  >
-    <div 
-      id="sidebar-content"
-      class="fixed left-0 top-0 bottom-0 w-80 bg-gradient-to-b from-white to-gray-50 shadow-2xl transform -translate-x-full transition-transform duration-300 ease-out"
-    >
-      <!-- Sidebar Header -->
-      <div class="bg-gradient-to-r from-rose-600 via-pink-600 to-rose-700 text-white p-6 shadow-lg">
-        <div class="flex items-center justify-between mb-2">
-          <div>
-            <h2 class="text-2xl font-bold logo-font tracking-tight">Mershal</h2>
-            <p class="text-sm text-rose-100 font-medium">Your World News Source</p>
+        <!-- Logo — centered on desktop -->
+        <a href="/" class="flex-1 flex justify-center lg:justify-center">
+          <div class="flex flex-col items-center">
+            <span class="text-4xl md:text-5xl font-black text-red-600 logo-font tracking-tighter leading-none">Mershal</span>
+            <span class="text-xs text-gray-400 tracking-widest uppercase font-medium mt-0.5">World News</span>
           </div>
-          <button 
-            id="close-sidebar"
-            class="text-white hover:bg-white hover:bg-opacity-20 p-2 rounded-lg transition-all"
-            aria-label="Close menu"
-          >
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </a>
+
+        <!-- Right: search icon placeholder -->
+        <div class="flex items-center gap-3">
+          <button class="text-gray-500 hover:text-red-600 transition" aria-label="Search">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
             </svg>
           </button>
         </div>
       </div>
+    </div>
+  </div>
 
-      <!-- Sidebar Content -->
-      <div class="overflow-y-auto h-full pb-24 bg-white">
-        <!-- Categories -->
-        <div class="px-5 py-6 border-b border-gray-100">
-          <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 px-2">Browse</h3>
-          <nav class="space-y-1">
-            <a href="/" class="flex items-center gap-3 text-gray-700 hover:text-rose-600 hover:bg-rose-50 px-4 py-3 rounded-xl transition-all group">
-              <div class="w-10 h-10 bg-rose-50 rounded-lg flex items-center justify-center group-hover:bg-rose-100 transition-all">
-                <svg class="w-5 h-5 text-rose-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
-                </svg>
-              </div>
-              <span class="font-semibold text-sm">Home</span>
-            </a>
-            <a href="/category/world" class="flex items-center gap-3 text-gray-700 hover:text-rose-600 hover:bg-rose-50 px-4 py-3 rounded-xl transition-all group">
-              <div class="w-10 h-10 bg-rose-50 rounded-lg flex items-center justify-center group-hover:bg-rose-100 transition-all">
-                <span class="text-lg">🌍</span>
-              </div>
-              <span class="font-semibold text-sm">World</span>
-            </a>
-            <a href="/category/politics" class="flex items-center gap-3 text-gray-700 hover:text-rose-600 hover:bg-rose-50 px-4 py-3 rounded-xl transition-all group">
-              <div class="w-10 h-10 bg-rose-50 rounded-lg flex items-center justify-center group-hover:bg-rose-100 transition-all">
-                <span class="text-lg">🏛️</span>
-              </div>
-              <span class="font-semibold text-sm">Politics</span>
-            </a>
-            <a href="/category/business" class="flex items-center gap-3 text-gray-700 hover:text-rose-600 hover:bg-rose-50 px-4 py-3 rounded-xl transition-all group">
-              <div class="w-10 h-10 bg-rose-50 rounded-lg flex items-center justify-center group-hover:bg-rose-100 transition-all">
-                <span class="text-lg">💼</span>
-              </div>
-              <span class="font-semibold text-sm">Business</span>
-            </a>
-            <a href="/category/technology" class="flex items-center gap-3 text-gray-700 hover:text-rose-600 hover:bg-rose-50 px-4 py-3 rounded-xl transition-all group">
-              <div class="w-10 h-10 bg-rose-50 rounded-lg flex items-center justify-center group-hover:bg-rose-100 transition-all">
-                <span class="text-lg">💻</span>
-              </div>
-              <span class="font-semibold text-sm">Technology</span>
-            </a>
-            <a href="/category/sports" class="flex items-center gap-3 text-gray-700 hover:text-rose-600 hover:bg-rose-50 px-4 py-3 rounded-xl transition-all group">
-              <div class="w-10 h-10 bg-rose-50 rounded-lg flex items-center justify-center group-hover:bg-rose-100 transition-all">
-                <span class="text-lg">⚽</span>
-              </div>
-              <span class="font-semibold text-sm">Sports</span>
-            </a>
-            <a href="/category/entertainment" class="flex items-center gap-3 text-gray-700 hover:text-rose-600 hover:bg-rose-50 px-4 py-3 rounded-xl transition-all group">
-              <div class="w-10 h-10 bg-rose-50 rounded-lg flex items-center justify-center group-hover:bg-rose-100 transition-all">
-                <span class="text-lg">🎬</span>
-              </div>
-              <span class="font-semibold text-sm">Entertainment</span>
-            </a>
-          </nav>
-        </div>
+  <!-- ── Row 3: Dark red nav bar ── -->
+  <nav class="bg-red-700 text-white">
+    <div class="container mx-auto px-4 max-w-7xl">
+      <div class="hidden lg:flex items-center overflow-x-auto scrollbar-hide">
+        {categories.map(cat => (
+          <a
+            href={cat.slug}
+            class="px-4 py-2.5 text-sm font-bold uppercase tracking-wide whitespace-nowrap hover:bg-red-800 hover:text-white transition border-r border-red-600 last:border-r-0"
+          >
+            {cat.name}
+          </a>
+        ))}
+      </div>
+      <!-- Mobile nav (shown when hamburger open) -->
+      <div id="mobile-nav" class="lg:hidden hidden py-2">
+        {categories.map(cat => (
+          <a href={cat.slug} class="block px-4 py-2 text-sm font-bold uppercase tracking-wide hover:bg-red-800 transition">
+            {cat.name}
+          </a>
+        ))}
+      </div>
+    </div>
+  </nav>
 
-        <!-- Pages -->
-        <div class="px-5 py-6 border-b border-gray-100">
-          <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 px-2">Explore</h3>
-          <nav class="space-y-1">
-            <a href="/about" class="flex items-center gap-3 text-gray-700 hover:text-rose-600 hover:bg-rose-50 px-4 py-3 rounded-xl transition-all group">
-              <div class="w-10 h-10 bg-rose-50 rounded-lg flex items-center justify-center group-hover:bg-rose-100 transition-all">
-                <svg class="w-5 h-5 text-rose-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-                </svg>
-              </div>
-              <span class="font-semibold text-sm">About Archit</span>
-            </a>
-            <a href="/contact" class="flex items-center gap-3 text-gray-700 hover:text-rose-600 hover:bg-rose-50 px-4 py-3 rounded-xl transition-all group">
-              <div class="w-10 h-10 bg-rose-50 rounded-lg flex items-center justify-center group-hover:bg-rose-100 transition-all">
-                <svg class="w-5 h-5 text-rose-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
-                  <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
-                </svg>
-              </div>
-              <span class="font-semibold text-sm">Contact</span>
-            </a>
-            <a href="/advertise" class="flex items-center gap-3 text-gray-700 hover:text-rose-600 hover:bg-rose-50 px-4 py-3 rounded-xl transition-all group">
-              <div class="w-10 h-10 bg-rose-50 rounded-lg flex items-center justify-center group-hover:bg-rose-100 transition-all">
-                <svg class="w-5 h-5 text-rose-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M4 2a2 2 0 00-2 2v11a3 3 0 106 0V4a2 2 0 00-2-2H4zm1 14a1 1 0 100-2 1 1 0 000 2zm5-1.757l4.9-4.9a2 2 0 000-2.828L13.485 5.1a2 2 0 00-2.828 0L10 5.757v8.486zM16 18H9.071l6-6H16a2 2 0 012 2v2a2 2 0 01-2 2z" clip-rule="evenodd"/>
-                </svg>
-              </div>
-              <span class="font-semibold text-sm">Advertise</span>
-            </a>
-          </nav>
-        </div>
-
-        <!-- Legal -->
-        <div class="px-5 py-6">
-          <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 px-2">Legal</h3>
-          <nav class="space-y-1">
-            <a href="/privacy" class="flex items-center gap-3 text-gray-600 hover:text-rose-600 hover:bg-gradient-to-r hover:from-rose-50 hover:to-pink-50 px-4 py-2.5 rounded-xl transition-all text-sm">
-              <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
-              </svg>
-              <span class="font-medium">Privacy Policy</span>
-            </a>
-            <a href="/terms" class="flex items-center gap-3 text-gray-600 hover:text-rose-600 hover:bg-gradient-to-r hover:from-rose-50 hover:to-pink-50 px-4 py-2.5 rounded-xl transition-all text-sm">
-              <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/>
-              </svg>
-              <span class="font-medium">Terms of Service</span>
-            </a>
-            <a href="/cookies" class="flex items-center gap-3 text-gray-600 hover:text-rose-600 hover:bg-gradient-to-r hover:from-rose-50 hover:to-pink-50 px-4 py-2.5 rounded-xl transition-all text-sm">
-              <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
-                <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/>
-              </svg>
-              <span class="font-medium">Cookie Policy</span>
-            </a>
-          </nav>
-        </div>
-
-        <!-- Footer in Sidebar -->
-        <div class="px-5 py-6 bg-gradient-to-br from-gray-50 to-rose-50 border-t border-gray-100">
-          <p class="text-xs text-gray-500 text-center mb-2">© 2026 Mershal</p>
-          <p class="text-xs text-gray-400 text-center">Breaking News · World Coverage</p>
+  <!-- ── Mobile Sidebar ── -->
+  <div id="mobile-sidebar" class="fixed inset-0 bg-black/60 z-50 hidden backdrop-blur-sm">
+    <div id="sidebar-content" class="fixed left-0 top-0 bottom-0 w-72 bg-white shadow-2xl transform -translate-x-full transition-transform duration-300">
+      <div class="bg-red-700 text-white p-4 flex items-center justify-between">
+        <span class="text-xl font-black logo-font">Mershal</span>
+        <button id="close-sidebar" class="hover:bg-red-800 p-1.5 rounded transition" aria-label="Close">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <nav class="divide-y divide-gray-100">
+        {categories.map(cat => (
+          <a href={cat.slug} class="flex items-center justify-between px-5 py-3 text-sm font-bold text-gray-800 hover:text-red-600 hover:bg-red-50 transition uppercase tracking-wide">
+            {cat.name}
+            <svg class="w-3.5 h-3.5 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+          </a>
+        ))}
+      </nav>
+      <div class="p-4 border-t border-gray-100 mt-2">
+        <div class="flex gap-4 justify-center">
+          <a href="/about" class="text-xs text-gray-500 hover:text-red-600 transition">About</a>
+          <a href="/contact" class="text-xs text-gray-500 hover:text-red-600 transition">Contact</a>
+          <a href="/advertise" class="text-xs text-gray-500 hover:text-red-600 transition">Advertise</a>
         </div>
       </div>
     </div>
   </div>
+
 </header>
 
 <script>
-  function updateDateTime() {
-    const now = new Date();
-    
-    // Format time
-    const timeOptions: Intl.DateTimeFormatOptions = { 
-      hour: '2-digit', 
-      minute: '2-digit', 
-      second: '2-digit',
-      hour12: true 
-    };
-    const timeStr = now.toLocaleTimeString('en-US', timeOptions);
-    
-    // Update DOM
-    const timeElement = document.getElementById('live-time');
-    if (timeElement) timeElement.textContent = timeStr;
+  // Live time
+  function updateTime() {
+    const el = document.getElementById('live-time');
+    if (el) el.textContent = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
   }
-  
-  // Update immediately
-  updateDateTime();
-  
-  // Update every second
-  setInterval(updateDateTime, 1000);
+  updateTime();
+  setInterval(updateTime, 1000);
 
-  // Mobile sidebar functionality
-  const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-  const mobileSidebar = document.getElementById('mobile-sidebar');
-  const sidebarContent = document.getElementById('sidebar-content');
-  const closeSidebar = document.getElementById('close-sidebar');
+  // Mobile hamburger → sidebar
+  const btn = document.getElementById('mobile-menu-btn');
+  const sidebar = document.getElementById('mobile-sidebar');
+  const content = document.getElementById('sidebar-content');
+  const closeBtn = document.getElementById('close-sidebar');
 
   function openSidebar() {
-    if (mobileSidebar && sidebarContent) {
-      mobileSidebar.classList.remove('hidden');
-      setTimeout(() => {
-        sidebarContent.classList.remove('-translate-x-full');
-      }, 10);
-    }
+    sidebar?.classList.remove('hidden');
+    setTimeout(() => content?.classList.remove('-translate-x-full'), 10);
+  }
+  function closeSidebar() {
+    content?.classList.add('-translate-x-full');
+    setTimeout(() => sidebar?.classList.add('hidden'), 300);
   }
 
-  function closeSidebarFunc() {
-    if (sidebarContent && mobileSidebar) {
-      sidebarContent.classList.add('-translate-x-full');
-      setTimeout(() => {
-        mobileSidebar.classList.add('hidden');
-      }, 300);
-    }
-  }
-
-  mobileMenuBtn?.addEventListener('click', openSidebar);
-  closeSidebar?.addEventListener('click', closeSidebarFunc);
-  
-  // Close sidebar when clicking outside
-  mobileSidebar?.addEventListener('click', (e) => {
-    if (e.target === mobileSidebar) {
-      closeSidebarFunc();
-    }
-  });
+  btn?.addEventListener('click', openSidebar);
+  closeBtn?.addEventListener('click', closeSidebar);
+  sidebar?.addEventListener('click', (e) => { if (e.target === sidebar) closeSidebar(); });
 </script>
 
 <style>
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
   .logo-font {
     font-family: 'Poppins', sans-serif;
-    font-weight: 800;
-    letter-spacing: -0.05em;
+    font-weight: 900;
+    letter-spacing: -0.04em;
   }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 </style>
