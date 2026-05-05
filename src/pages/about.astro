@@ -7,97 +7,82 @@ import BottomNav from '../components/BottomNav.astro';
 ---
 
 <Layout
-  title="About Mershal — Breaking World News"
-  description="Mershal is a world news publication delivering breaking news and in-depth coverage of global events."
+  title="About Us — Mershal World News"
+  description="Mershal is a digital news publication delivering breaking news and in-depth coverage of world events across politics, business, technology, sports, and entertainment."
 >
   <Header />
 
-  <main class="bg-gray-50 pb-20 md:pb-8">
+  <main class="bg-white pb-20 md:pb-8">
 
-    <!-- Hero -->
-    <section class="bg-white border-b border-gray-100 py-16">
-      <div class="container mx-auto px-4 max-w-4xl text-center">
-        <div class="w-16 h-16 bg-rose-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
-          <span class="text-2xl font-black text-white logo-font">M</span>
-        </div>
-        <h1 class="text-4xl md:text-5xl font-black text-gray-900 mb-4">About Mershal</h1>
-        <p class="text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed">
-          Your trusted source for breaking news and global coverage
+    <!-- Page Header -->
+    <div class="bg-red-600 text-white">
+      <div class="container mx-auto px-4 max-w-5xl py-12">
+        <p class="text-red-200 text-xs font-bold uppercase tracking-widest mb-2">Who We Are</p>
+        <h1 class="text-4xl md:text-5xl font-black leading-tight mb-4">About Mershal</h1>
+        <p class="text-red-100 text-lg max-w-2xl leading-relaxed">
+          Delivering breaking news and in-depth coverage of world events — trusted, fast, and independent.
         </p>
       </div>
-    </section>
+    </div>
 
-    <div class="container mx-auto px-4 py-12 max-w-4xl">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div class="container mx-auto px-4 max-w-5xl py-12">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
 
         <!-- Main Content -->
-        <div class="md:col-span-2 space-y-8">
+        <div class="lg:col-span-2 space-y-10">
 
-          <section class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-            <h2 class="text-2xl font-bold text-gray-900 mb-5">What is Mershal?</h2>
-            <div class="space-y-4 text-gray-600 leading-relaxed">
+          <!-- Mission -->
+          <section>
+            <h2 class="text-2xl font-black text-gray-900 mb-1 pb-2 border-b-4 border-red-600 inline-block">Our Mission</h2>
+            <div class="mt-5 space-y-4 text-gray-700 leading-relaxed text-[1.0625rem]">
               <p>
-                Mershal is a digital news publication delivering breaking news, in-depth analysis, and comprehensive coverage of world events. We cover politics, business, technology, sports, and entertainment from every corner of the globe.
+                Mershal was founded with a single purpose: to deliver accurate, timely, and comprehensive news coverage to readers around the world. In an era of information overload, we cut through the noise to bring you the stories that matter.
+              </p>
+              <p>
+                We believe that access to reliable news is a fundamental right. Our editorial team works around the clock to ensure that every story we publish meets the highest standards of accuracy, fairness, and journalistic integrity.
+              </p>
+              <p>
+                From breaking political developments to business trends, from technology breakthroughs to sports highlights — Mershal covers it all with depth, context, and clarity.
               </p>
             </div>
           </section>
 
-          <section class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-            <h2 class="text-2xl font-bold text-gray-900 mb-6">What We Cover</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div class="flex items-start gap-3 p-4 bg-rose-50 rounded-xl">
-                <span class="text-2xl">🌍</span>
-                <div>
-                  <h3 class="font-bold text-gray-900 text-sm mb-1">World News</h3>
-                  <p class="text-xs text-gray-600">Breaking news and in-depth coverage of global events and international affairs.</p>
+          <!-- What We Cover -->
+          <section>
+            <h2 class="text-2xl font-black text-gray-900 mb-1 pb-2 border-b-4 border-red-600 inline-block">What We Cover</h2>
+            <div class="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {[
+                { icon: '🌍', title: 'World News', desc: 'Breaking news and analysis of global events, international relations, and geopolitical developments.' },
+                { icon: '🏛️', title: 'Politics', desc: 'Elections, government policy, legislative updates, and political analysis from every corner of the world.' },
+                { icon: '💼', title: 'Business & Economy', desc: 'Markets, finance, corporate news, economic indicators, and business strategy.' },
+                { icon: '💻', title: 'Technology', desc: 'Tech industry news, product launches, AI developments, and the digital economy.' },
+                { icon: '⚽', title: 'Sports', desc: 'Live scores, match reports, transfer news, and analysis from major sports worldwide.' },
+                { icon: '🎬', title: 'Entertainment', desc: 'Movies, music, celebrity news, streaming, and cultural events from around the globe.' },
+              ].map(item => (
+                <div class="flex gap-4 p-4 border border-gray-100 hover:border-red-200 hover:bg-red-50 transition">
+                  <span class="text-2xl flex-shrink-0">{item.icon}</span>
+                  <div>
+                    <h3 class="font-bold text-gray-900 text-sm mb-1">{item.title}</h3>
+                    <p class="text-xs text-gray-600 leading-relaxed">{item.desc}</p>
+                  </div>
                 </div>
-              </div>
-              <div class="flex items-start gap-3 p-4 bg-blue-50 rounded-xl">
-                <span class="text-2xl">🏛️</span>
-                <div>
-                  <h3 class="font-bold text-gray-900 text-sm mb-1">Politics</h3>
-                  <p class="text-xs text-gray-600">Political news, elections, government policy, and analysis from around the world.</p>
-                </div>
-              </div>
-              <div class="flex items-start gap-3 p-4 bg-green-50 rounded-xl">
-                <span class="text-2xl">💼</span>
-                <div>
-                  <h3 class="font-bold text-gray-900 text-sm mb-1">Business & Economy</h3>
-                  <p class="text-xs text-gray-600">Markets, economy, finance, startups, and business news from across the globe.</p>
-                </div>
-              </div>
-              <div class="flex items-start gap-3 p-4 bg-purple-50 rounded-xl">
-                <span class="text-2xl">💻</span>
-                <div>
-                  <h3 class="font-bold text-gray-900 text-sm mb-1">Technology</h3>
-                  <p class="text-xs text-gray-600">Tech news, product launches, AI, and the latest from the world of technology.</p>
-                </div>
-              </div>
-              <div class="flex items-start gap-3 p-4 bg-yellow-50 rounded-xl">
-                <span class="text-2xl">⚽</span>
-                <div>
-                  <h3 class="font-bold text-gray-900 text-sm mb-1">Sports</h3>
-                  <p class="text-xs text-gray-600">Sports news, scores, analysis, and coverage of major events worldwide.</p>
-                </div>
-              </div>
-              <div class="flex items-start gap-3 p-4 bg-pink-50 rounded-xl">
-                <span class="text-2xl">🎬</span>
-                <div>
-                  <h3 class="font-bold text-gray-900 text-sm mb-1">Entertainment</h3>
-                  <p class="text-xs text-gray-600">Movies, music, celebrity news, and entertainment from around the world.</p>
-                </div>
-              </div>
+              ))}
             </div>
           </section>
 
-          <section class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-            <h2 class="text-2xl font-bold text-gray-900 mb-5">Our Editorial Approach</h2>
-            <div class="space-y-4 text-gray-600 leading-relaxed">
+          <!-- Editorial Standards -->
+          <section>
+            <h2 class="text-2xl font-black text-gray-900 mb-1 pb-2 border-b-4 border-red-600 inline-block">Editorial Standards</h2>
+            <div class="mt-5 space-y-4 text-gray-700 leading-relaxed text-[1.0625rem]">
               <p>
-                We report the facts, provide context, and deliver news that matters. Our coverage spans every continent and every major story.
+                Every article published on Mershal goes through a rigorous editorial process. We verify facts from multiple sources before publication, clearly distinguish between news reporting and opinion, and issue corrections promptly when errors occur.
               </p>
-              <blockquote class="border-l-4 border-rose-500 pl-4 italic text-gray-700 my-4">
-                "Accurate, timely, and comprehensive — news you can trust."
+              <p>
+                We are committed to editorial independence. Our news coverage is not influenced by advertisers, political affiliations, or commercial interests. We report the facts as they are.
+              </p>
+              <blockquote class="border-l-4 border-red-600 pl-4 my-6">
+                <p class="text-lg italic text-gray-700 font-light">"Our commitment is to the truth — reported accurately, delivered quickly, and presented with the context readers need to understand the world."</p>
+                <footer class="text-sm text-gray-500 mt-2 not-italic">— Mershal Editorial Team</footer>
               </blockquote>
             </div>
           </section>
@@ -105,40 +90,56 @@ import BottomNav from '../components/BottomNav.astro';
         </div>
 
         <!-- Sidebar -->
-        <div class="space-y-6">
+        <aside class="space-y-6">
 
-          <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-            <h3 class="font-bold text-gray-900 mb-4 text-sm uppercase tracking-wider">Publication Info</h3>
-            <ul class="space-y-3 text-sm text-gray-600">
-              <li class="flex items-center gap-2"><span>🌐</span> mershal.in</li>
-              <li class="flex items-center gap-2"><span>📍</span> India</li>
-              <li class="flex items-center gap-2"><span>🗓️</span> Est. 2026</li>
-              <li class="flex items-center gap-2"><span>🎯</span> World News</li>
-              <li class="flex items-center gap-2"><span>📧</span> contact@mershal.in</li>
-            </ul>
-          </div>
-
-          <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-            <h3 class="font-bold text-gray-900 mb-4 text-sm uppercase tracking-wider">Topics We Cover</h3>
-            <div class="flex flex-wrap gap-2">
-              {['World', 'Politics', 'Business', 'Technology', 'Sports', 'Entertainment', 'Breaking News', 'Analysis'].map(tag => (
-                <span class="bg-gray-100 text-gray-700 px-2.5 py-1 rounded-lg text-xs font-medium">{tag}</span>
+          <!-- Quick Facts -->
+          <div class="border border-gray-200">
+            <div class="bg-gray-900 text-white px-4 py-3">
+              <p class="text-xs font-black uppercase tracking-widest">Publication Info</p>
+            </div>
+            <div class="divide-y divide-gray-100">
+              {[
+                { label: 'Founded', value: '2026' },
+                { label: 'Coverage', value: 'Global' },
+                { label: 'Language', value: 'English' },
+                { label: 'Format', value: 'Digital' },
+                { label: 'Website', value: 'mershal.in' },
+                { label: 'Email', value: 'contact@mershal.in' },
+              ].map(item => (
+                <div class="flex justify-between px-4 py-2.5 text-sm">
+                  <span class="text-gray-500 font-medium">{item.label}</span>
+                  <span class="text-gray-900 font-semibold">{item.value}</span>
+                </div>
               ))}
             </div>
           </div>
 
-          <div class="bg-gray-900 rounded-2xl p-6 text-white">
-            <h3 class="font-bold mb-2">Work With Us</h3>
-            <p class="text-gray-400 text-sm mb-4">Interested in advertising or sponsoring content on Mershal?</p>
-            <a href="/advertise" class="block text-center bg-rose-600 hover:bg-rose-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition mb-2">
-              Advertise
-            </a>
-            <a href="/contact" class="block text-center bg-gray-800 hover:bg-gray-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition">
+          <!-- Categories -->
+          <div class="border border-gray-200">
+            <div class="bg-red-600 text-white px-4 py-3">
+              <p class="text-xs font-black uppercase tracking-widest">Our Sections</p>
+            </div>
+            <div class="divide-y divide-gray-100">
+              {['World', 'Politics', 'Business', 'Technology', 'Sports', 'Entertainment'].map(cat => (
+                <a href={`/category/${cat.toLowerCase()}`}
+                   class="flex items-center justify-between px-4 py-2.5 text-sm text-gray-700 hover:text-red-600 hover:bg-red-50 transition font-medium">
+                  {cat}
+                  <svg class="w-3.5 h-3.5 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+                </a>
+              ))}
+            </div>
+          </div>
+
+          <!-- Contact CTA -->
+          <div class="bg-gray-900 text-white p-5">
+            <h3 class="font-bold mb-2 text-sm uppercase tracking-wide">Get in Touch</h3>
+            <p class="text-gray-400 text-sm mb-4 leading-relaxed">News tips, corrections, advertising enquiries, or general questions.</p>
+            <a href="/contact" class="block text-center bg-red-600 hover:bg-red-700 text-white py-2.5 text-sm font-bold transition">
               Contact Us
             </a>
           </div>
 
-        </div>
+        </aside>
       </div>
     </div>
   </main>
@@ -146,10 +147,3 @@ import BottomNav from '../components/BottomNav.astro';
   <Footer />
   <BottomNav />
 </Layout>
-
-<style>
-  .logo-font {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 800;
-  }
-</style>
