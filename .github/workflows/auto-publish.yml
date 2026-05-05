@@ -1,29 +1,39 @@
 name: Auto Publish Articles
 
 on:
-  workflow_dispatch: # Manual trigger only - automation paused
-
-# Scheduled automation is paused. Re-enable by adding back:
-# schedule:
-#   - cron: '0 */2 * * *'
+  schedule:
+    # 4 runs per day = ~8 articles/day
+    # Times in UTC (IST = UTC+5:30)
+    - cron: '0 3 * * *'   # 8:30 AM IST
+    - cron: '0 7 * * *'   # 12:30 PM IST
+    - cron: '0 12 * * *'  # 5:30 PM IST
+    - cron: '0 17 * * *'  # 10:30 PM IST
+  workflow_dispatch:
+    inputs:
+      count:
+        description: 'Number of articles to publish'
+        required: false
+        default: '2'
 
 jobs:
   publish:
     runs-on: ubuntu-latest
-    
+    timeout-minutes: 20
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-      
+          cache: 'npm'
+
       - name: Install dependencies
         run: npm ci
-      
-      - name: Generate and publish articles
+
+      - name: Publish articles from Google Trends
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           FIREBASE_ADMIN_PROJECT_ID: ${{ secrets.FIREBASE_ADMIN_PROJECT_ID }}
@@ -38,11 +48,11 @@ jobs:
           GOOGLE_INDEXING_EMAIL: ${{ secrets.GOOGLE_INDEXING_EMAIL }}
           GOOGLE_INDEXING_PRIVATE_KEY: ${{ secrets.GOOGLE_INDEXING_PRIVATE_KEY }}
           DEPLOY_WEBHOOK_URL: ${{ secrets.DEPLOY_WEBHOOK_URL }}
-          WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
           UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
         run: |
-          echo "📝 Publishing articles..."
-          node automation/auto-publish.js 2
-      
+          COUNT=${{ github.event.inputs.count || '2' }}
+          echo "📰 Publishing $COUNT articles from Google Trends..."
+          node automation/auto-publish.js $COUNT
+
       - name: Summary
-        run: echo "✅ Articles published successfully!"
+        run: echo "✅ Auto-publish complete"

@@ -2,107 +2,95 @@
 
 import dotenv from 'dotenv';
 import { generateArticle } from './utils/ai-generator.js';
-import { savePost } from './utils/firebase.js';
+import { savePost, checkDuplicatePost } from './utils/firebase.js';
 import { triggerDeployment } from './utils/deployment.js';
 import { submitUrlToGoogle } from './utils/indexing.js';
-import { config } from './config.js';
-import { allTopics, getRandomTopics } from './topics.js';
 import { getTrendingTopics } from './utils/trending.js';
+import { config } from './config.js';
 
 dotenv.config();
 
-async function publishArticle(useTrending = false) {
+async function publishArticle(topic, category, trendContext = {}) {
   try {
-    let selectedTopic;
-    
-    if (useTrending && process.env.NEWS_API_KEY) {
-      // Fetch trending topics from top news sources
-      console.log('📰 Fetching trending topics from international news sources...\n');
-      const trendingTopics = await getTrendingTopics();
-      
-      if (trendingTopics.length > 0) {
-        // Pick a random trending topic
-        selectedTopic = trendingTopics[Math.floor(Math.random() * trendingTopics.length)];
-        console.log(`✓ Selected trending topic from ${selectedTopic.source}`);
-      } else {
-        console.log('⚠️  No trending topics found, using custom topics');
-        selectedTopic = getRandomTopics(1)[0];
-      }
-    } else {
-      // Use custom topics from topics.js
-      selectedTopic = getRandomTopics(1)[0];
+    console.log(`\n📝 Topic: "${topic}" [${category}]`);
+
+    // Skip if we already have an article on this topic
+    const isDuplicate = await checkDuplicatePost(topic);
+    if (isDuplicate) {
+      console.log(`⏭️  Skipping duplicate: "${topic}"`);
+      return false;
     }
-    
-    console.log(`\n📝 Generating article about: ${selectedTopic.topic}`);
-    console.log(`   Category: ${selectedTopic.category}`);
-    if (selectedTopic.source) {
-      console.log(`   Source: ${selectedTopic.source}`);
-    }
-    console.log();
-    
-    // Generate article
-    const article = await generateArticle(
-      selectedTopic.topic,
-      selectedTopic.category
-    );
-    
-    console.log('✓ Article generated successfully!');
-    console.log(`  Title: ${article.title}`);
-    console.log(`  Words: ${article.wordCount}`);
-    console.log(`  Slug: ${article.slug}\n`);
-    
+
+    // Generate article with Editor in Chief persona
+    console.log('🤖 Generating article...');
+    const article = await generateArticle(topic, category, trendContext);
+
+    console.log(`✓ Generated: "${article.title}" (${article.wordCount} words)`);
+
     // Save to Firestore
-    console.log('💾 Saving to Firestore...');
     const docId = await savePost(article);
-    console.log(`✓ Saved with ID: ${docId}\n`);
-    
-    // Trigger deployment
-    console.log('🚀 Triggering deployment...');
-    await triggerDeployment();
-    console.log('✓ Deployment triggered\n');
-    
-    // Submit to Google
-    const articleUrl = `${config.site.url}/news/${article.slug}`;
-    console.log('🔍 Submitting to Google...');
-    await submitUrlToGoogle(articleUrl);
-    console.log(`✓ Submitted: ${articleUrl}\n`);
-    
-    console.log('✅ Article published successfully!\n');
+    console.log(`💾 Saved: ${docId}`);
+
+    // Submit to Google Indexing API
+    const url = `${config.site.url}/news/${article.slug}`;
+    await submitUrlToGoogle(url).catch(e => console.warn('Indexing skipped:', e.message));
+    console.log(`🔍 Indexed: ${url}`);
+
     return true;
-    
   } catch (error) {
-    console.error('\n❌ Error:', error.message);
+    console.error(`❌ Failed for "${topic}":`, error.message);
     return false;
   }
 }
 
 async function main() {
-  const count = parseInt(process.argv[2]) || 1;
-  const useTrending = process.argv.includes('--trending') || process.env.USE_TRENDING === 'true';
-  
-  console.log(`\n🤖 Auto-Publishing ${count} article(s)...`);
-  if (useTrending) {
-    console.log('📰 Using trending topics from top news sources\n');
-  } else {
-    console.log('📋 Using custom topics\n');
+  const count = parseInt(process.argv[2]) || 8;
+  console.log(`\n🌐 Mershal Auto-Publisher — ${count} articles\n`);
+  console.log('📡 Fetching trending topics from Google Trends...');
+
+  // Get trending topics from Google Trends RSS
+  let topics = await getTrendingTopics('US');
+
+  if (topics.length === 0) {
+    console.warn('⚠️  No trending topics found. Exiting.');
+    process.exit(1);
   }
-  
+
+  console.log(`✓ ${topics.length} trending topics available\n`);
+
+  // Shuffle to get variety
+  topics = topics.sort(() => Math.random() - 0.5);
+
   let published = 0;
-  
-  for (let i = 0; i < count; i++) {
-    console.log(`\n--- Article ${i + 1} of ${count} ---`);
-    const success = await publishArticle(useTrending);
+  let attempted = 0;
+
+  for (const topic of topics) {
+    if (published >= count) break;
+    attempted++;
+
+    const success = await publishArticle(
+      topic.topic,
+      topic.category,
+      { relatedHeadlines: topic.relatedHeadlines, traffic: topic.traffic }
+    );
+
     if (success) published++;
-    
-    // Wait 10 seconds between articles
-    if (i < count - 1) {
-      console.log('⏳ Waiting 10 seconds before next article...\n');
-      await new Promise(resolve => setTimeout(resolve, 10000));
+
+    // Wait 15 seconds between articles to avoid rate limits
+    if (published < count) {
+      console.log('⏳ Waiting 15s...');
+      await new Promise(r => setTimeout(r, 15000));
     }
   }
-  
-  console.log(`\n📊 Summary: Published ${published} of ${count} articles`);
-  process.exit(published === count ? 0 : 1);
+
+  // Trigger one deployment after all articles
+  if (published > 0) {
+    console.log('\n🚀 Triggering deployment...');
+    await triggerDeployment().catch(e => console.warn('Deploy skipped:', e.message));
+  }
+
+  console.log(`\n✅ Done: ${published}/${count} articles published (${attempted} topics tried)`);
+  process.exit(published > 0 ? 0 : 1);
 }
 
 main();
