@@ -32,6 +32,29 @@ if (session?.value !== 'authenticated') return Astro.redirect('/admin');
     </div>
   </div>
 
+  <!-- AI Auto-Publish -->
+  <div class="mb-8">
+    <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">AI Auto-Publish</h2>
+    <div class="bg-gray-900 rounded-xl border border-gray-800 p-5">
+      <p class="text-sm text-gray-400 mb-4">Trigger the AI to fetch trending topics from Google and publish articles automatically via GitHub Actions.</p>
+      <div class="flex items-center gap-3 mb-4">
+        <label class="text-xs text-gray-400">Articles:</label>
+        <select id="publish-count" class="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-rose-500">
+          <option value="1">1</option>
+          <option value="2" selected>2</option>
+          <option value="3">3</option>
+          <option value="5">5</option>
+        </select>
+      </div>
+      <div id="publish-status" class="hidden mb-3 p-3 rounded-lg text-xs font-medium"></div>
+      <button id="trigger-publish" class="flex items-center gap-2 bg-rose-600 hover:bg-rose-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition w-full justify-center">
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/></svg>
+        Run Auto-Publish Now
+      </button>
+      <p class="text-xs text-gray-600 mt-2 text-center">Requires GitHub token with <code class="text-gray-500">workflow</code> scope · ~2 min per article</p>
+    </div>
+  </div>
+
   <!-- Recent Posts -->
   <div>
     <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Recent Posts</h2>
@@ -41,6 +64,7 @@ if (session?.value !== 'authenticated') return Astro.redirect('/admin');
   </div>
 
   <script>
+    // Stats
     fetch('/api/admin/stats').then(r => r.json()).then(data => {
       document.getElementById('stats-grid')!.innerHTML = `
         <div class="bg-gray-900 rounded-xl p-6 border border-gray-800">
@@ -85,6 +109,50 @@ if (session?.value !== 'authenticated') return Astro.redirect('/admin');
           </tr></thead>
           <tbody>${rows}</tbody>
         </table>`;
+    });
+
+    // Auto-Publish trigger
+    document.getElementById('trigger-publish')?.addEventListener('click', async () => {
+      const btn = document.getElementById('trigger-publish') as HTMLButtonElement;
+      const statusEl = document.getElementById('publish-status') as HTMLElement;
+      const count = (document.getElementById('publish-count') as HTMLSelectElement).value;
+
+      const token = prompt('Enter your GitHub Personal Access Token\n(Settings → Developer settings → Personal access tokens → Fine-grained or Classic with "workflow" scope):');
+      if (!token) return;
+
+      btn.disabled = true;
+      btn.textContent = 'Triggering...';
+
+      try {
+        const res = await fetch(
+          'https://api.github.com/repos/GitarchitK/mershal-2.0/actions/workflows/auto-publish.yml/dispatches',
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Accept': 'application/vnd.github.v3+json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ ref: 'main', inputs: { count } }),
+          }
+        );
+
+        if (res.status === 204) {
+          statusEl.textContent = `✓ Triggered! Publishing ${count} article(s). Check GitHub Actions tab for progress.`;
+          statusEl.className = 'mb-3 p-3 rounded-lg text-xs font-medium bg-green-900/50 text-green-300 border border-green-700';
+        } else {
+          const err = await res.json().catch(() => ({}));
+          statusEl.textContent = `✗ Failed (${res.status}): ${(err as any).message || 'Check token has workflow scope'}`;
+          statusEl.className = 'mb-3 p-3 rounded-lg text-xs font-medium bg-red-900/50 text-red-300 border border-red-700';
+        }
+      } catch (e: any) {
+        statusEl.textContent = `✗ Error: ${e.message}`;
+        statusEl.className = 'mb-3 p-3 rounded-lg text-xs font-medium bg-red-900/50 text-red-300 border border-red-700';
+      }
+
+      statusEl.classList.remove('hidden');
+      btn.disabled = false;
+      btn.innerHTML = `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/></svg> Run Auto-Publish Now`;
     });
   </script>
 </AdminLayout>
