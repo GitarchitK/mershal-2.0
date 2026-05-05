@@ -20,7 +20,7 @@ if (adminDb && slug) {
       const doc = snapshot.docs[0];
       article = { id: doc.id, ...doc.data() };
       const relatedSnapshot = await adminDb.collection('posts')
-        .where('category', '==', article.category).where('status', '==', 'published').limit(4).get();
+        .where('category', '==', article.category).where('status', '==', 'published').limit(5).get();
       relatedArticles = relatedSnapshot.docs.filter(d => d.id !== doc.id).map(d => ({ id: d.id, ...d.data() }));
     }
   } catch (e) { console.error('Error fetching article:', e); }
@@ -29,7 +29,9 @@ if (adminDb && slug) {
 if (!article) return Astro.redirect('/404');
 
 const publishedDate = article.publishedAt?.toDate?.() || new Date();
-const formattedDate = publishedDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+const formattedDate = publishedDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+const shortDate = publishedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+const categoryLabel = article.category ? article.category.charAt(0).toUpperCase() + article.category.slice(1) : '';
 ---
 
 <Layout
@@ -37,27 +39,34 @@ const formattedDate = publishedDate.toLocaleDateString('en-US', { year: 'numeric
   description={article.seoDescription || article.excerpt}
   image={article.featuredImage}
   type="article"
-  author={article.author}
+  author={article.author || 'Mershal Editorial Team'}
   publishedAt={publishedDate.toISOString()}
   modifiedAt={publishedDate.toISOString()}
 >
   <Fragment slot="head">
     <script type="application/ld+json" set:html={JSON.stringify({
-      "@context": "https://schema.org", "@type": "BlogPosting",
-      "headline": article.title, "description": article.excerpt,
-      "image": article.featuredImage,
-      "datePublished": publishedDate.toISOString(), "dateModified": publishedDate.toISOString(),
-      "author": { "@type": "Person", "name": "Archit Karmakar", "url": "https://mershal.in/about" },
-      "publisher": { "@type": "Person", "name": "Archit Karmakar", "url": "https://mershal.in/about" },
+      "@context": "https://schema.org",
+      "@type": "NewsArticle",
+      "headline": article.title,
+      "description": article.excerpt,
+      "image": [article.featuredImage],
+      "datePublished": publishedDate.toISOString(),
+      "dateModified": publishedDate.toISOString(),
+      "author": [{ "@type": "Organization", "name": "Mershal", "url": "https://mershal.in" }],
+      "publisher": {
+        "@type": "Organization",
+        "name": "Mershal",
+        "logo": { "@type": "ImageObject", "url": "https://mershal.in/favicon.svg" }
+      },
       "mainEntityOfPage": { "@type": "WebPage", "@id": `https://mershal.in/news/${slug}` },
-      "keywords": article.tags?.join(', '), "articleSection": article.category,
-      "wordCount": article.wordCount, "timeRequired": `PT${article.readingTime}M`
+      "articleSection": article.category,
+      "keywords": article.tags?.join(', ')
     })} />
     <script type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org", "@type": "BreadcrumbList",
       "itemListElement": [
         { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://mershal.in" },
-        { "@type": "ListItem", "position": 2, "name": article.category, "item": `https://mershal.in/category/${article.category}` },
+        { "@type": "ListItem", "position": 2, "name": categoryLabel, "item": `https://mershal.in/category/${article.category}` },
         { "@type": "ListItem", "position": 3, "name": article.title, "item": `https://mershal.in/news/${slug}` }
       ]
     })} />
@@ -66,172 +75,178 @@ const formattedDate = publishedDate.toLocaleDateString('en-US', { year: 'numeric
   <Header />
   <BreakingNews />
 
-  <main class="bg-gray-50 min-h-screen pb-20 md:pb-8">
+  <main class="bg-white min-h-screen pb-20 md:pb-8">
 
-    <!-- Article Header -->
-    <div class="bg-white border-b border-gray-100">
-      <div class="container mx-auto px-4 py-8 max-w-6xl">
-        <!-- Breadcrumb -->
-        <nav class="text-xs text-gray-400 flex items-center gap-1.5 mb-5">
-          <a href="/" class="hover:text-rose-600 transition">Home</a>
-          <span>›</span>
-          <a href={`/category/${article.category}`} class="hover:text-rose-600 transition capitalize">{article.category}</a>
-          <span>›</span>
-          <span class="text-gray-500 truncate max-w-xs">{article.title}</span>
-        </nav>
-
-        <!-- Category + reading time -->
-        <div class="flex items-center gap-3 mb-4">
-          <a href={`/category/${article.category}`} class="bg-rose-600 text-white px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full hover:bg-rose-700 transition">
-            {article.category}
-          </a>
-          <span class="text-gray-400 text-xs flex items-center gap-1">
-            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>
-            {article.readingTime} min read
-          </span>
-          {article.wordCount && <span class="text-gray-400 text-xs">{article.wordCount.toLocaleString()} words</span>}
-        </div>
-
-        <!-- Title -->
-        <h1 class="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 leading-tight mb-5 max-w-4xl">
-          {article.title}
-        </h1>
-
-        <!-- Excerpt -->
-        <p class="text-lg text-gray-500 leading-relaxed mb-6 max-w-3xl">{article.excerpt}</p>
-
-        <!-- Author + date -->
-        <div class="flex items-center gap-3 pt-5 border-t border-gray-100">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center text-white font-black text-sm flex-shrink-0">AK</div>
-          <div>
-            <p class="text-sm font-bold text-gray-900">{article.author}</p>
-            <p class="text-xs text-gray-400">Full Stack Developer · <time datetime={publishedDate.toISOString()}>{formattedDate}</time></p>
-          </div>
-          <!-- Share buttons inline -->
-          <div class="ml-auto flex items-center gap-2">
-            <button id="share-twitter" class="w-8 h-8 bg-sky-50 hover:bg-sky-100 text-sky-600 rounded-lg flex items-center justify-center transition" title="Share on Twitter">
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
-            </button>
-            <button id="share-whatsapp" class="w-8 h-8 bg-green-50 hover:bg-green-100 text-green-600 rounded-lg flex items-center justify-center transition" title="Share on WhatsApp">
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-            </button>
-            <button id="copy-link" class="w-8 h-8 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg flex items-center justify-center transition" title="Copy link">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-            </button>
-          </div>
+    <!-- Category bar -->
+    <div class="border-b border-gray-200 bg-white">
+      <div class="container mx-auto px-4 max-w-6xl">
+        <div class="flex items-center gap-2 py-2.5 text-xs">
+          <a href="/" class="text-gray-500 hover:text-red-600 transition">Home</a>
+          <span class="text-gray-300">›</span>
+          <a href={`/category/${article.category}`} class="text-red-600 font-bold uppercase tracking-wider hover:text-red-700 transition">{categoryLabel}</a>
         </div>
       </div>
     </div>
 
-    <!-- Featured Image -->
-    {article.featuredImage && (
-      <div class="container mx-auto px-4 max-w-6xl">
-        <figure class="mt-6 mb-0 overflow-hidden rounded-2xl shadow-lg">
-          <img
-            src={`${article.featuredImage.split('?')[0]}?w=1200&h=600&fit=crop&auto=format&q=80`}
-            alt={article.title}
-            width="1200" height="600"
-            fetchpriority="high"
-            class="w-full object-cover max-h-[480px]"
-          />
-        </figure>
-      </div>
-    )}
-
-    <!-- Content + Sidebar -->
     <div class="container mx-auto px-4 max-w-6xl py-8">
-      <div class="lg:grid lg:grid-cols-[1fr_260px] lg:gap-8">
+      <div class="lg:grid lg:grid-cols-[1fr_300px] lg:gap-10">
 
-        <!-- Article Body -->
-        <article>
-          <div class="article-content" set:html={article.content} />
+        <!-- Main Article -->
+        <div>
+          <!-- Article Header -->
+          <header class="mb-6">
+            <!-- Category badge -->
+            <a href={`/category/${article.category}`}
+               class="inline-block bg-red-600 text-white text-xs font-black uppercase tracking-widest px-3 py-1.5 mb-4 hover:bg-red-700 transition">
+              {categoryLabel}
+            </a>
+
+            <!-- Headline -->
+            <h1 class="text-3xl md:text-4xl lg:text-[2.625rem] font-black text-gray-950 leading-[1.15] mb-4 tracking-tight">
+              {article.title}
+            </h1>
+
+            <!-- Standfirst / Excerpt -->
+            <p class="text-lg md:text-xl text-gray-600 leading-relaxed font-light border-l-4 border-red-600 pl-4 mb-5">
+              {article.excerpt}
+            </p>
+
+            <!-- Meta bar -->
+            <div class="flex flex-wrap items-center gap-x-4 gap-y-2 py-3 border-t border-b border-gray-200 text-sm text-gray-500">
+              <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-full bg-red-600 flex items-center justify-center text-white text-xs font-black">M</div>
+                <span class="font-semibold text-gray-800">{article.author || 'Mershal Editorial Team'}</span>
+              </div>
+              <span class="text-gray-300 hidden sm:inline">·</span>
+              <time datetime={publishedDate.toISOString()} class="text-gray-500">{formattedDate}</time>
+              <span class="text-gray-300 hidden sm:inline">·</span>
+              <span class="flex items-center gap-1">
+                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>
+                {article.readingTime} min read
+              </span>
+              <!-- Share -->
+              <div class="ml-auto flex items-center gap-1.5">
+                <button id="share-twitter" class="flex items-center gap-1.5 px-3 py-1.5 bg-sky-500 hover:bg-sky-600 text-white rounded text-xs font-semibold transition">
+                  <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
+                  Share
+                </button>
+                <button id="share-whatsapp" class="flex items-center gap-1.5 px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white rounded text-xs font-semibold transition">
+                  <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                  WhatsApp
+                </button>
+                <button id="copy-link" class="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded text-xs font-semibold transition">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                  Copy
+                </button>
+              </div>
+            </div>
+          </header>
+
+          <!-- Featured Image -->
+          {article.featuredImage && (
+            <figure class="mb-8 -mx-4 md:mx-0">
+              <img
+                src={`${article.featuredImage.split('?')[0]}?w=1200&h=630&fit=crop&auto=format&q=80`}
+                alt={article.title}
+                width="1200" height="630"
+                fetchpriority="high"
+                class="w-full md:rounded-lg object-cover max-h-[520px]"
+              />
+              <figcaption class="text-xs text-gray-400 mt-2 px-4 md:px-0">
+                {article.title} — Mershal
+              </figcaption>
+            </figure>
+          )}
+
+          <!-- Article Body -->
+          <article class="article-content" set:html={article.content} />
 
           <!-- Tags -->
           {article.tags && article.tags.length > 0 && (
-            <div class="mt-10 pt-8 border-t border-gray-200">
-              <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Tagged</p>
+            <div class="mt-8 pt-6 border-t border-gray-200">
               <div class="flex flex-wrap gap-2">
                 {article.tags.map((tag: string) => (
-                  <span class="px-3 py-1.5 bg-gray-100 text-gray-600 rounded-full text-xs font-medium hover:bg-rose-50 hover:text-rose-600 transition cursor-default">
-                    #{tag}
+                  <span class="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-medium hover:bg-red-50 hover:text-red-600 transition cursor-default">
+                    {tag}
                   </span>
                 ))}
               </div>
             </div>
           )}
 
-          <!-- Author Card -->
-          <div class="mt-10 p-6 bg-white rounded-2xl border border-gray-100 shadow-sm flex gap-5">
-            <div class="w-12 h-12 rounded-xl bg-rose-600 flex items-center justify-center text-white font-black text-lg flex-shrink-0 shadow-sm">M</div>
-            <div>
-              <div class="flex items-center gap-2 mb-1">
-                <p class="font-bold text-gray-900">Mershal Editorial Team</p>
-                <span class="text-xs bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full font-medium">Author</span>
-              </div>
-              <p class="text-xs text-gray-400 mb-2">World News</p>
-              <p class="text-sm text-gray-600 leading-relaxed">Mershal delivers breaking news and comprehensive coverage of world events, politics, business, technology, sports, and entertainment.</p>
-              <a href="/about" class="inline-block mt-2 text-xs font-semibold text-rose-600 hover:underline">About Mershal →</a>
-            </div>
+          <!-- Source line -->
+          <div class="mt-6 pt-4 border-t border-gray-200 flex items-center justify-between text-xs text-gray-400">
+            <span>Published by <a href="/about" class="text-red-600 hover:underline font-medium">Mershal</a> · {shortDate}</span>
+            <a href={`/category/${article.category}`} class="text-red-600 hover:underline font-medium capitalize">More {categoryLabel} →</a>
           </div>
 
           <!-- Related Articles -->
           {relatedArticles.length > 0 && (
-            <div class="mt-12">
-              <h2 class="text-xl font-black text-gray-900 mb-5 flex items-center gap-2">
-                <span class="w-1 h-5 bg-rose-600 rounded-full inline-block"></span>
-                Related Articles
-              </h2>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <section class="mt-10 pt-8 border-t-4 border-gray-900">
+              <h2 class="text-lg font-black text-gray-900 uppercase tracking-wide mb-5">More from {categoryLabel}</h2>
+              <div class="divide-y divide-gray-100">
                 {relatedArticles.slice(0, 4).map((related: any) => (
-                  <a href={`/news/${related.slug}`} class="group flex gap-3 bg-white rounded-xl p-4 border border-gray-100 hover:border-rose-200 hover:shadow-sm transition">
-                    <img
-                      src={related.featuredImage ? `${related.featuredImage.split('?')[0]}?w=120&h=80&fit=crop&auto=format&q=70` : ''}
-                      alt={related.title}
-                      width="80" height="60"
-                      loading="lazy"
-                      class="w-20 h-16 object-cover rounded-lg flex-shrink-0"
-                    />
+                  <a href={`/news/${related.slug}`} class="group flex gap-4 py-4 hover:bg-gray-50 -mx-2 px-2 transition">
+                    {related.featuredImage && (
+                      <img
+                        src={`${related.featuredImage.split('?')[0]}?w=160&h=100&fit=crop&auto=format&q=70`}
+                        alt={related.title}
+                        width="100" height="65"
+                        loading="lazy"
+                        class="w-24 h-16 object-cover flex-shrink-0 rounded"
+                      />
+                    )}
                     <div class="flex-1 min-w-0">
-                      <p class="text-xs text-rose-600 font-semibold uppercase mb-1">{related.category}</p>
-                      <h3 class="text-sm font-bold text-gray-900 line-clamp-2 group-hover:text-rose-600 transition leading-snug">{related.title}</h3>
+                      <p class="text-xs font-bold text-red-600 uppercase mb-1">{related.category}</p>
+                      <h3 class="text-sm font-bold text-gray-900 line-clamp-2 group-hover:text-red-600 transition leading-snug">{related.title}</h3>
+                      <p class="text-xs text-gray-400 mt-1">{related.readingTime} min read</p>
                     </div>
                   </a>
                 ))}
               </div>
-            </div>
+            </section>
           )}
-        </article>
+        </div>
 
         <!-- Sidebar -->
         <aside class="hidden lg:block">
           <div class="sticky top-24 space-y-6">
 
-            <!-- Table of Contents (populated by JS) -->
-            <div id="toc-container" class="bg-white rounded-2xl border border-gray-100 p-5 hidden">
-              <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">On This Page</p>
-              <nav id="toc" class="space-y-1 text-sm"></nav>
-            </div>
-
-            <!-- Category -->
-            <div class="bg-white rounded-2xl border border-gray-100 p-5">
-              <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Category</p>
-              <a href={`/category/${article.category}`} class="flex items-center gap-2 text-sm font-semibold text-gray-700 hover:text-rose-600 transition capitalize">
-                <span class="w-2 h-2 bg-rose-600 rounded-full"></span>
-                {article.category}
-              </a>
-            </div>
-
-            <!-- About Author -->
-            <div class="bg-white rounded-2xl border border-gray-100 p-5">
-              <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Published By</p>
-              <div class="flex items-center gap-3 mb-3">
-                <div class="w-10 h-10 rounded-xl bg-rose-600 flex items-center justify-center text-white font-black text-sm shadow-sm">M</div>
-                <div>
-                  <p class="text-sm font-bold text-gray-900">Mershal</p>
-                  <p class="text-xs text-gray-400">World News</p>
-                </div>
+            <!-- Table of Contents -->
+            <div id="toc-container" class="border border-gray-200 hidden">
+              <div class="bg-gray-900 text-white px-4 py-2.5">
+                <p class="text-xs font-black uppercase tracking-widest">In This Article</p>
               </div>
-              <a href="/about" class="block text-center text-xs font-semibold text-rose-600 border border-rose-200 rounded-lg py-2 hover:bg-rose-50 transition">About Us</a>
+              <nav id="toc" class="p-4 space-y-1 bg-white text-sm"></nav>
+            </div>
+
+            <!-- About Mershal -->
+            <div class="border border-gray-200">
+              <div class="bg-red-600 text-white px-4 py-2.5">
+                <p class="text-xs font-black uppercase tracking-widest">About Mershal</p>
+              </div>
+              <div class="p-4 bg-white">
+                <p class="text-sm text-gray-600 leading-relaxed mb-3">
+                  Mershal delivers breaking news and comprehensive coverage of world events — politics, business, technology, sports, and entertainment.
+                </p>
+                <a href="/about" class="text-xs font-bold text-red-600 hover:underline uppercase tracking-wide">Learn More →</a>
+              </div>
+            </div>
+
+            <!-- Categories -->
+            <div class="border border-gray-200">
+              <div class="bg-gray-900 text-white px-4 py-2.5">
+                <p class="text-xs font-black uppercase tracking-widest">Browse Topics</p>
+              </div>
+              <div class="bg-white divide-y divide-gray-100">
+                {['world', 'politics', 'business', 'technology', 'sports', 'entertainment'].map(cat => (
+                  <a href={`/category/${cat}`}
+                     class={`flex items-center justify-between px-4 py-2.5 text-sm hover:bg-red-50 hover:text-red-600 transition ${cat === article.category ? 'text-red-600 font-bold bg-red-50' : 'text-gray-700 font-medium'}`}>
+                    <span class="capitalize">{cat}</span>
+                    <svg class="w-3.5 h-3.5 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+                  </a>
+                ))}
+              </div>
             </div>
 
           </div>
@@ -246,7 +261,6 @@ const formattedDate = publishedDate.toLocaleDateString('en-US', { year: 'numeric
 </Layout>
 
 <script>
-  // Share buttons
   const url = window.location.href;
   const title = document.title;
 
@@ -259,8 +273,8 @@ const formattedDate = publishedDate.toLocaleDateString('en-US', { year: 'numeric
   document.getElementById('copy-link')?.addEventListener('click', async () => {
     await navigator.clipboard.writeText(url);
     const btn = document.getElementById('copy-link') as HTMLButtonElement;
-    btn.style.background = '#dcfce7';
-    setTimeout(() => { btn.style.background = ''; }, 1500);
+    const span = btn.querySelector('span') as HTMLElement;
+    if (span) { span.textContent = 'Copied!'; setTimeout(() => { span.textContent = 'Copy'; }, 1500); }
   });
 
   // Table of Contents
@@ -270,78 +284,65 @@ const formattedDate = publishedDate.toLocaleDateString('en-US', { year: 'numeric
     const container = document.getElementById('toc-container')!;
     container.classList.remove('hidden');
     headings.forEach((h, i) => {
-      const id = `heading-${i}`;
+      const id = `h-${i}`;
       h.id = id;
       const a = document.createElement('a');
       a.href = `#${id}`;
       a.textContent = h.textContent || '';
       a.className = h.tagName === 'H2'
-        ? 'block text-gray-700 hover:text-rose-600 transition py-0.5 text-sm font-medium'
-        : 'block text-gray-500 hover:text-rose-600 transition py-0.5 pl-3 text-xs';
+        ? 'block text-gray-800 hover:text-red-600 transition py-1 text-sm font-semibold border-l-2 border-transparent hover:border-red-600 pl-2'
+        : 'block text-gray-500 hover:text-red-600 transition py-0.5 pl-5 text-xs';
       toc.appendChild(a);
     });
   }
-
-  // Copy button for code blocks
-  document.querySelectorAll('.article-content pre').forEach((block) => {
-    const btn = document.createElement('button');
-    btn.className = 'copy-code-btn';
-    btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><span>Copy</span>`;
-    btn.addEventListener('click', async () => {
-      const text = block.querySelector('code')?.textContent || '';
-      await navigator.clipboard.writeText(text);
-      btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Copied!</span>`;
-      btn.classList.add('copied');
-      setTimeout(() => {
-        btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><span>Copy</span>`;
-        btn.classList.remove('copied');
-      }, 2000);
-    });
-    if (block instanceof HTMLElement) block.style.position = 'relative';
-    block.appendChild(btn);
-  });
 </script>
 
 <style>
-  /* ── Article Typography ── */
+  /* ── News Article Typography ── */
   .article-content {
-    font-size: 1.0625rem;
-    line-height: 1.85;
-    color: #1f2937;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1.125rem;
+    line-height: 1.8;
+    color: #1a1a1a;
   }
 
   .article-content > * + * { margin-top: 1.5rem; }
 
   .article-content h2 {
-    font-size: 1.625rem;
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 1.5rem;
     font-weight: 800;
-    color: #111827;
-    line-height: 1.3;
-    margin-top: 2.75rem;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid #f3f4f6;
+    color: #111;
+    line-height: 1.25;
+    margin-top: 2.5rem;
+    margin-bottom: 0.75rem;
+    padding-top: 1.5rem;
+    border-top: 3px solid #111;
   }
 
   .article-content h3 {
-    font-size: 1.25rem;
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 1.2rem;
     font-weight: 700;
-    color: #1f2937;
+    color: #222;
     margin-top: 2rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .article-content h4 {
-    font-size: 1.0625rem;
-    font-weight: 700;
-    color: #374151;
-    margin-top: 1.5rem;
     margin-bottom: 0.5rem;
   }
 
   .article-content p {
-    color: #374151;
+    color: #1a1a1a;
     margin-bottom: 1.25rem;
+  }
+
+  .article-content p:first-of-type::first-letter {
+    font-size: 3.5rem;
+    font-weight: 900;
+    float: left;
+    line-height: 0.85;
+    margin-right: 0.1em;
+    margin-top: 0.05em;
+    color: #dc2626;
+    font-family: Georgia, serif;
   }
 
   .article-content ul, .article-content ol {
@@ -351,54 +352,61 @@ const formattedDate = publishedDate.toLocaleDateString('en-US', { year: 'numeric
 
   .article-content li {
     margin-bottom: 0.5rem;
-    color: #4b5563;
+    color: #333;
     line-height: 1.7;
   }
-
-  .article-content li::marker { color: #dc2626; }
 
   .article-content a {
     color: #dc2626;
     text-decoration: underline;
-    text-underline-offset: 3px;
-    font-weight: 500;
+    text-underline-offset: 2px;
   }
 
   .article-content a:hover { color: #b91c1c; }
 
   .article-content strong, .article-content b {
     font-weight: 700;
-    color: #111827;
+    color: #111;
   }
 
   .article-content em { font-style: italic; }
 
   .article-content blockquote {
     border-left: 4px solid #dc2626;
-    background: #fef2f2;
-    padding: 1.25rem 1.5rem;
     margin: 2rem 0;
-    border-radius: 0 0.75rem 0.75rem 0;
+    padding: 0.5rem 0 0.5rem 1.5rem;
   }
 
   .article-content blockquote p {
-    margin: 0;
-    color: #7f1d1d;
+    font-size: 1.25rem;
     font-style: italic;
-    font-size: 1.0625rem;
+    color: #333;
+    margin: 0;
+    line-height: 1.6;
   }
 
+  .article-content blockquote p::before { content: '\201C'; }
+  .article-content blockquote p::after  { content: '\201D'; }
+
   .article-content img {
-    border-radius: 0.75rem;
-    margin: 2rem 0;
     width: 100%;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    margin: 2rem 0;
+    border-radius: 0.25rem;
   }
 
   .article-content hr {
     border: none;
-    border-top: 2px solid #f3f4f6;
+    border-top: 1px solid #e5e7eb;
     margin: 2.5rem 0;
+  }
+
+  .article-content figure { margin: 2rem 0; }
+  .article-content figcaption {
+    font-size: 0.8125rem;
+    color: #6b7280;
+    font-style: italic;
+    margin-top: 0.5rem;
+    font-family: system-ui, sans-serif;
   }
 
   /* ── Code ── */
@@ -406,10 +414,10 @@ const formattedDate = publishedDate.toLocaleDateString('en-US', { year: 'numeric
     background: #f1f5f9;
     color: #dc2626;
     padding: 0.15em 0.4em;
-    border-radius: 0.3rem;
+    border-radius: 0.25rem;
     font-size: 0.875em;
     font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
-    border: 1px solid #e2e8f0;
+    font-style: normal;
   }
 
   .article-content pre {
@@ -417,7 +425,7 @@ const formattedDate = publishedDate.toLocaleDateString('en-US', { year: 'numeric
     background: #0d1117;
     color: #e6edf3;
     padding: 1.25rem;
-    border-radius: 0.625rem;
+    border-radius: 0.375rem;
     overflow-x: auto;
     margin: 1.75rem 0;
     font-size: 0.875rem;
@@ -434,30 +442,8 @@ const formattedDate = publishedDate.toLocaleDateString('en-US', { year: 'numeric
     font-size: inherit;
     white-space: pre;
     word-wrap: normal;
+    font-style: normal;
   }
-
-  /* ── Copy button ── */
-  .copy-code-btn {
-    position: absolute;
-    top: 0.625rem;
-    right: 0.625rem;
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-    padding: 0.3rem 0.625rem;
-    background: #21262d;
-    color: #c9d1d9;
-    border: 1px solid #30363d;
-    border-radius: 0.375rem;
-    font-size: 0.7rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.15s;
-    z-index: 10;
-  }
-
-  .copy-code-btn:hover { background: #30363d; }
-  .copy-code-btn.copied { background: #238636; border-color: #2ea043; color: #fff; }
 
   /* ── Table ── */
   .article-content table {
@@ -467,37 +453,38 @@ const formattedDate = publishedDate.toLocaleDateString('en-US', { year: 'numeric
     font-size: 0.9375rem;
     display: block;
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    font-family: system-ui, sans-serif;
   }
 
   .article-content th {
-    background: #f8fafc;
+    background: #111;
+    color: #fff;
     font-weight: 700;
     text-align: left;
-    padding: 0.75rem 1rem;
-    border-bottom: 2px solid #e2e8f0;
-    color: #374151;
-    font-size: 0.875rem;
+    padding: 0.625rem 1rem;
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
 
   .article-content td {
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid #f1f5f9;
-    color: #4b5563;
+    padding: 0.625rem 1rem;
+    border-bottom: 1px solid #e5e7eb;
+    color: #374151;
     vertical-align: top;
   }
 
-  .article-content tr:hover td { background: #fafafa; }
+  .article-content tr:nth-child(even) td { background: #f9fafb; }
 
-  /* ── Overflow protection ── */
+  /* ── Overflow ── */
   .article-content * { max-width: 100%; word-wrap: break-word; overflow-wrap: break-word; }
 
   /* ── Mobile ── */
   @media (max-width: 768px) {
     .article-content { font-size: 1rem; }
-    .article-content h2 { font-size: 1.375rem; margin-top: 2rem; }
-    .article-content h3 { font-size: 1.125rem; }
+    .article-content h2 { font-size: 1.25rem; }
+    .article-content h3 { font-size: 1.1rem; }
+    .article-content p:first-of-type::first-letter { font-size: 2.75rem; }
     .article-content pre { margin: 1.5rem -1rem; border-radius: 0; font-size: 0.8125rem; }
-    .copy-code-btn { top: 0.4rem; right: 0.4rem; padding: 0.25rem 0.5rem; font-size: 0.65rem; }
   }
 </style>
