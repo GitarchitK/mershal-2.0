@@ -15,195 +15,253 @@ if (adminDb) {
     const snapshot = await adminDb.collection('posts')
       .where('status', '==', 'published')
       .orderBy('publishedAt', 'desc')
-      .limit(30)
+      .limit(50)
       .get();
-
     articles = snapshot.docs.map(doc => {
       const d = doc.data();
       return {
-        id: doc.id,
-        slug: d.slug,
-        title: d.title,
-        excerpt: d.excerpt,
-        featuredImage: d.featuredImage,
-        category: d.category,
-        author: d.author || 'Archit Karmakar',
-        readingTime: d.readingTime || 0,
+        id: doc.id, slug: d.slug, title: d.title,
+        excerpt: d.excerpt, featuredImage: d.featuredImage,
+        category: d.category, readingTime: d.readingTime || 0,
         publishedAt: d.publishedAt?.toDate?.() || null,
       };
     });
-  } catch (e) {
-    console.error('Homepage fetch error:', e);
-  }
+  } catch (e) { console.error('Homepage fetch error:', e); }
 }
 
 const categories = ['world', 'politics', 'business', 'technology', 'sports', 'entertainment'];
-
-// Group articles by category (case-insensitive)
 const byCategory: Record<string, any[]> = {};
 categories.forEach(cat => {
-  byCategory[cat] = articles.filter(a => a.category?.toLowerCase() === cat.toLowerCase());
+  byCategory[cat] = articles.filter(a => a.category?.toLowerCase() === cat);
 });
 
-const featured = articles[0] || null;
-const latest = articles.slice(0, 6);
+// Hero: first article is big, next 3 are stacked right
+const hero = articles[0] || null;
+const heroStack = articles.slice(1, 4);
+// Latest ticker: next 6
+const latestTicker = articles.slice(4, 10);
+// Sidebar: latest 8 for right sidebar
+const sidebarArticles = articles.slice(0, 8);
+
+function imgUrl(url: string, w: number, h: number) {
+  if (!url) return `https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=${w}&h=${h}&fit=crop&auto=format&q=70`;
+  return `${url.split('?')[0]}?w=${w}&h=${h}&fit=crop&auto=format&q=75`;
+}
+
+function timeAgo(date: Date | null) {
+  if (!date) return '';
+  const diff = Math.floor((Date.now() - date.getTime()) / 60000);
+  if (diff < 60) return `${diff}m ago`;
+  if (diff < 1440) return `${Math.floor(diff/60)}h ago`;
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
 ---
 
 <Layout title="Mershal — Breaking World News" description="Breaking news and comprehensive coverage of world events. Politics, business, technology, sports, and entertainment.">
   <Header />
   <BreakingNews />
 
-  <main class="bg-gray-50 min-h-screen pb-20 md:pb-8">
-    <div class="container mx-auto px-4 py-8 max-w-6xl">
+  <main class="bg-gray-100 min-h-screen pb-20 md:pb-4">
+    <div class="container mx-auto px-3 md:px-4 max-w-7xl py-4">
 
       {articles.length === 0 ? (
-        <div class="text-center py-20 bg-white rounded-2xl border border-gray-100">
-          <span class="text-5xl mb-4 block">✍️</span>
-          <h2 class="text-2xl font-bold text-gray-900 mb-2">No posts yet</h2>
-          <p class="text-gray-500 mb-4">Head to the <a href="/admin" class="text-rose-600 hover:underline">admin panel</a> to write your first post.</p>
+        <div class="text-center py-20 bg-white">
+          <p class="text-gray-500 mb-2">No articles yet.</p>
+          <a href="/admin" class="text-red-600 hover:underline text-sm font-semibold">Go to Admin Panel →</a>
         </div>
       ) : (
         <>
-          {/* Hero featured post */}
-          {featured && (
-            <div class="mb-10">
-              <a href={`/news/${featured.slug}`} class="group block bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 md:grid md:grid-cols-2">
-                <!-- Image -->
-                <div class="overflow-hidden h-56 md:h-full min-h-[280px]">
-                  <img
-                    src={featured.featuredImage ? `${featured.featuredImage.split('?')[0]}?w=800&h=500&fit=crop&auto=format&q=75` : 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&h=500&fit=crop&auto=format&q=75'}
-                    alt={featured.title}
-                    width="800"
-                    height="500"
-                    fetchpriority="high"
-                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
-                <!-- Text -->
-                <div class="p-6 md:p-10 flex flex-col justify-center">
-                  <div class="flex items-center gap-2 mb-4">
-                    <span class="bg-rose-600 text-white px-3 py-1 text-xs font-bold uppercase rounded-full">
-                      {featured.category}
-                    </span>
-                    <span class="text-gray-400 text-xs">{featured.readingTime} min read</span>
-                  </div>
-                  <h2 class="text-2xl md:text-3xl font-black text-gray-900 leading-tight mb-4 group-hover:text-rose-600 transition">
-                    {featured.title}
+          {/* ── HERO SECTION ── */}
+          <div class="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-4 mb-4">
+
+            {/* Left: Big featured story */}
+            {hero && (
+              <a href={`/news/${hero.slug}`} class="group relative block overflow-hidden bg-black">
+                <img
+                  src={imgUrl(hero.featuredImage, 900, 520)}
+                  alt={hero.title}
+                  width="900" height="520"
+                  fetchpriority="high"
+                  class="w-full h-[320px] md:h-[420px] object-cover opacity-90 group-hover:opacity-80 group-hover:scale-105 transition-all duration-500"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-4 md:p-6">
+                  <span class="inline-block bg-red-600 text-white text-xs font-black uppercase px-2.5 py-1 mb-2 tracking-wider">
+                    {hero.category}
+                  </span>
+                  <h2 class="text-white text-xl md:text-2xl lg:text-3xl font-black leading-tight line-clamp-3 group-hover:text-red-300 transition">
+                    {hero.title}
                   </h2>
-                  <p class="text-gray-500 line-clamp-3 mb-6 text-sm md:text-base">{featured.excerpt}</p>
-                  <div class="flex items-center gap-3 pt-4 border-t border-gray-100">
-                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center text-white text-xs font-black flex-shrink-0">AK</div>
-                    <div>
-                      <p class="text-sm font-semibold text-gray-900">{featured.author}</p>
-                      {featured.publishedAt && (
-                        <p class="text-xs text-gray-400">{featured.publishedAt.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
-                      )}
-                    </div>
-                    <span class="ml-auto text-sm font-semibold text-rose-600 group-hover:underline">Read article →</span>
-                  </div>
+                  <p class="text-gray-300 text-sm mt-2 line-clamp-2 hidden md:block">{hero.excerpt}</p>
+                  <p class="text-gray-400 text-xs mt-2">{timeAgo(hero.publishedAt)}</p>
                 </div>
               </a>
-            </div>
-          )}
+            )}
 
-          {/* Latest posts */}
-          {latest.length > 1 && (
-            <section class="mb-12">
-              <div class="flex items-center justify-between mb-5">
-                <h2 class="text-xl font-black text-gray-900 flex items-center gap-2">
-                  <span class="w-1 h-6 bg-rose-600 rounded-full inline-block"></span>
-                  Latest Posts
-                </h2>
-              </div>
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                {latest.slice(1).map(article => (
-                  <a href={`/news/${article.slug}`} class="group bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 flex flex-col">
-                    <div class="overflow-hidden">
-                      <img
-                        src={article.featuredImage ? `${article.featuredImage.split('?')[0]}?w=600&h=340&fit=crop&auto=format&q=70` : 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=340&fit=crop&auto=format&q=70'}
-                        alt={article.title}
-                        width="600"
-                        height="340"
-                        loading="lazy"
-                        class="w-full h-44 object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
-                    <div class="p-5 flex flex-col flex-1">
-                      <div class="flex items-center gap-2 mb-2">
-                        <a
-                          href={`/category/${article.category}`}
-                          class="text-xs font-bold text-rose-600 uppercase hover:text-rose-700 transition capitalize"
-                          onclick="event.stopPropagation()"
-                        >
-                          {article.category}
-                        </a>
-                        <span class="text-gray-300">·</span>
-                        <span class="text-xs text-gray-400">{article.readingTime} min read</span>
-                      </div>
-                      <h3 class="font-bold text-gray-900 line-clamp-2 group-hover:text-rose-600 transition mb-2 flex-1">
-                        {article.title}
-                      </h3>
-                      <p class="text-sm text-gray-500 line-clamp-2 mb-4">{article.excerpt}</p>
-                      <div class="flex items-center justify-between mt-auto pt-3 border-t border-gray-50">
-                        <span class="text-xs text-gray-400">
-                          {article.publishedAt?.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) || ''}
-                        </span>
-                        <span class="text-xs font-semibold text-rose-600 group-hover:underline">Read →</span>
-                      </div>
-                    </div>
-                  </a>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {/* Per-category sections */}
-          {categories.map(cat => byCategory[cat]?.length > 0 && (
-            <section class="mb-12">
-              <div class="flex items-center justify-between mb-5">
-                <h2 class="text-xl font-black text-gray-900 flex items-center gap-2">
-                  <span class="w-1 h-6 bg-rose-600 rounded-full inline-block"></span>
-                  {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                </h2>
-                <a href={`/category/${cat}`} class="text-sm font-semibold text-rose-600 hover:text-rose-700 transition flex items-center gap-1">
-                  View all <span>→</span>
+            {/* Right: 3 stacked stories */}
+            <div class="flex flex-col gap-3">
+              {heroStack.map(a => (
+                <a href={`/news/${a.slug}`} class="group flex gap-3 bg-white hover:bg-red-50 transition p-2.5 border-b border-gray-100">
+                  <img
+                    src={imgUrl(a.featuredImage, 200, 130)}
+                    alt={a.title}
+                    width="110" height="75"
+                    loading="lazy"
+                    class="w-28 h-20 object-cover flex-shrink-0"
+                  />
+                  <div class="flex-1 min-w-0">
+                    <span class="text-xs font-black text-red-600 uppercase tracking-wide">{a.category}</span>
+                    <h3 class="text-sm font-bold text-gray-900 line-clamp-3 leading-snug mt-0.5 group-hover:text-red-600 transition">{a.title}</h3>
+                    <p class="text-xs text-gray-400 mt-1">{timeAgo(a.publishedAt)}</p>
+                  </div>
                 </a>
-              </div>
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                {byCategory[cat].slice(0, 3).map((article: any) => (
-                  <a href={`/news/${article.slug}`} class="group bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 flex flex-col">
-                    <div class="overflow-hidden">
+              ))}
+              {/* Latest ticker box */}
+              {latestTicker.length > 0 && (
+                <div class="bg-white border-t-4 border-red-600 p-3 flex-1">
+                  <p class="text-xs font-black text-red-600 uppercase tracking-widest mb-2">Latest</p>
+                  <ul class="space-y-2">
+                    {latestTicker.slice(0, 4).map(a => (
+                      <li>
+                        <a href={`/news/${a.slug}`} class="text-xs text-gray-800 hover:text-red-600 transition font-medium line-clamp-2 leading-snug block">
+                          › {a.title}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* ── MAIN CONTENT + SIDEBAR ── */}
+          <div class="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-4">
+
+            {/* Main column */}
+            <div class="space-y-6">
+
+              {categories.map(cat => byCategory[cat]?.length > 0 && (
+                <section>
+                  {/* Category header bar */}
+                  <div class="flex items-center justify-between bg-red-600 text-white px-3 py-2 mb-3">
+                    <h2 class="text-sm font-black uppercase tracking-widest">{cat.charAt(0).toUpperCase() + cat.slice(1)}</h2>
+                    <a href={`/category/${cat}`} class="text-xs text-red-200 hover:text-white transition font-semibold uppercase tracking-wide">
+                      More →
+                    </a>
+                  </div>
+
+                  {/* First article: large left + 2 small right */}
+                  {byCategory[cat].length >= 1 && (
+                    <div class="grid grid-cols-1 md:grid-cols-[1fr_1fr] gap-3 mb-3">
+                      {/* Big card */}
+                      <a href={`/news/${byCategory[cat][0].slug}`} class="group relative block overflow-hidden bg-black">
+                        <img
+                          src={imgUrl(byCategory[cat][0].featuredImage, 600, 360)}
+                          alt={byCategory[cat][0].title}
+                          width="600" height="360"
+                          loading="lazy"
+                          class="w-full h-52 object-cover opacity-90 group-hover:opacity-80 group-hover:scale-105 transition-all duration-300"
+                        />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent"></div>
+                        <div class="absolute bottom-0 left-0 right-0 p-3">
+                          <h3 class="text-white text-sm md:text-base font-bold line-clamp-3 leading-snug group-hover:text-red-300 transition">
+                            {byCategory[cat][0].title}
+                          </h3>
+                          <p class="text-gray-400 text-xs mt-1">{timeAgo(byCategory[cat][0].publishedAt)}</p>
+                        </div>
+                      </a>
+
+                      {/* 2 small stacked */}
+                      <div class="flex flex-col gap-3">
+                        {byCategory[cat].slice(1, 3).map((a: any) => (
+                          <a href={`/news/${a.slug}`} class="group flex gap-2.5 bg-white hover:bg-red-50 transition p-2 border-b border-gray-100">
+                            <img
+                              src={imgUrl(a.featuredImage, 180, 120)}
+                              alt={a.title}
+                              width="90" height="65"
+                              loading="lazy"
+                              class="w-24 h-16 object-cover flex-shrink-0"
+                            />
+                            <div class="flex-1 min-w-0">
+                              <h4 class="text-xs font-bold text-gray-900 line-clamp-3 leading-snug group-hover:text-red-600 transition">{a.title}</h4>
+                              <p class="text-xs text-gray-400 mt-1">{timeAgo(a.publishedAt)}</p>
+                            </div>
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Bottom row: 3 cards */}
+                  {byCategory[cat].length > 3 && (
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      {byCategory[cat].slice(3, 6).map((a: any) => (
+                        <a href={`/news/${a.slug}`} class="group bg-white hover:shadow-md transition overflow-hidden">
+                          <img
+                            src={imgUrl(a.featuredImage, 400, 240)}
+                            alt={a.title}
+                            width="400" height="240"
+                            loading="lazy"
+                            class="w-full h-36 object-cover group-hover:opacity-90 transition"
+                          />
+                          <div class="p-2.5">
+                            <h4 class="text-xs font-bold text-gray-900 line-clamp-2 leading-snug group-hover:text-red-600 transition">{a.title}</h4>
+                            <p class="text-xs text-gray-400 mt-1">{timeAgo(a.publishedAt)}</p>
+                          </div>
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </section>
+              ))}
+            </div>
+
+            {/* Sidebar */}
+            <aside class="space-y-5">
+
+              {/* Latest News list */}
+              <div>
+                <div class="bg-red-600 text-white px-3 py-2 mb-0">
+                  <h3 class="text-sm font-black uppercase tracking-widest">Latest News</h3>
+                </div>
+                <div class="bg-white divide-y divide-gray-100">
+                  {sidebarArticles.map(a => (
+                    <a href={`/news/${a.slug}`} class="group flex gap-2.5 p-2.5 hover:bg-red-50 transition">
                       <img
-                        src={article.featuredImage ? `${article.featuredImage.split('?')[0]}?w=600&h=340&fit=crop&auto=format&q=70` : 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=340&fit=crop&auto=format&q=70'}
-                        alt={article.title}
-                        width="600"
-                        height="340"
+                        src={imgUrl(a.featuredImage, 160, 100)}
+                        alt={a.title}
+                        width="70" height="50"
                         loading="lazy"
-                        class="w-full h-44 object-cover group-hover:scale-105 transition-transform duration-300"
+                        class="w-16 h-12 object-cover flex-shrink-0"
                       />
-                    </div>
-                    <div class="p-5 flex flex-col flex-1">
-                      <div class="flex items-center gap-2 mb-2">
-                        <span class="text-xs font-bold text-rose-600 uppercase capitalize">{article.category}</span>
-                        <span class="text-gray-300">·</span>
-                        <span class="text-xs text-gray-400">{article.readingTime} min read</span>
+                      <div class="flex-1 min-w-0">
+                        <span class="text-xs font-black text-red-600 uppercase">{a.category}</span>
+                        <h4 class="text-xs font-semibold text-gray-900 line-clamp-2 leading-snug group-hover:text-red-600 transition mt-0.5">{a.title}</h4>
+                        <p class="text-xs text-gray-400 mt-0.5">{timeAgo(a.publishedAt)}</p>
                       </div>
-                      <h3 class="font-bold text-gray-900 line-clamp-2 group-hover:text-rose-600 transition mb-2 flex-1">
-                        {article.title}
-                      </h3>
-                      <p class="text-sm text-gray-500 line-clamp-2 mb-4">{article.excerpt}</p>
-                      <div class="flex items-center justify-between mt-auto pt-3 border-t border-gray-50">
-                        <span class="text-xs text-gray-400">
-                          {article.publishedAt?.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) || ''}
-                        </span>
-                        <span class="text-xs font-semibold text-rose-600 group-hover:underline">Read →</span>
-                      </div>
-                    </div>
-                  </a>
-                ))}
+                    </a>
+                  ))}
+                </div>
               </div>
-            </section>
-          ))}
+
+              {/* Categories box */}
+              <div>
+                <div class="bg-gray-900 text-white px-3 py-2">
+                  <h3 class="text-sm font-black uppercase tracking-widest">Browse Topics</h3>
+                </div>
+                <div class="bg-white divide-y divide-gray-100">
+                  {categories.map(cat => (
+                    <a href={`/category/${cat}`}
+                       class="flex items-center justify-between px-3 py-2.5 text-sm text-gray-700 hover:text-red-600 hover:bg-red-50 transition font-medium">
+                      <span class="capitalize">{cat}</span>
+                      <svg class="w-3.5 h-3.5 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+                    </a>
+                  ))}
+                </div>
+              </div>
+
+            </aside>
+          </div>
         </>
       )}
     </div>
