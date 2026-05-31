@@ -1,0 +1,91 @@
+---
+interface Props {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  imageUrl: string;
+  category: string;
+  categorySlug: string;
+  author: string;
+  authorAvatar?: string;
+  publishDate: Date | null;
+  readingTime: number;
+  featured?: boolean;
+}
+
+const {
+  slug,
+  title,
+  excerpt,
+  imageUrl,
+  category,
+  categorySlug,
+  author,
+  publishDate,
+  readingTime,
+  featured = false,
+} = Astro.props;
+
+function formattedDate(date: Date | null) {
+  if (!date) return '';
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+---
+
+<div class={`group bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col ${featured ? 'lg:flex-row col-span-1 lg:col-span-3' : ''}`}>
+  <!-- Image container -->
+  <div class={`relative overflow-hidden ${featured ? 'lg:w-1/2 min-h-[300px]' : 'aspect-video'}`}>
+    <a href={`/articles/${slug}`} class="block w-full h-full">
+      <img
+        src={imageUrl || 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800'}
+        alt={title}
+        loading="lazy"
+        class="w-full h-full object-cover transform group-hover:scale-103 transition-transform duration-500 min-h-[220px]"
+      />
+    </a>
+    <a
+      href={`/category/${categorySlug}`}
+      class="absolute top-4 left-4 bg-primary-crimson text-white text-xs font-black uppercase tracking-wider px-3 py-1 rounded-md shadow-md hover:bg-primary-crimson/90 transition"
+    >
+      {category}
+    </a>
+  </div>
+  
+  <!-- Content details -->
+  <div class={`p-6 flex flex-col justify-between flex-1 ${featured ? 'lg:p-10 lg:w-1/2' : ''}`}>
+    <div>
+      <!-- Meta row -->
+      <div class="flex items-center gap-2.5 text-xs text-slate-500 font-sans mb-3.5">
+        <span class="font-bold text-slate-700">{author}</span>
+        <span class="text-slate-300">•</span>
+        <time datetime={publishDate?.toISOString()}>{formattedDate(publishDate)}</time>
+        <span class="text-slate-300">•</span>
+        <span class="flex items-center gap-1 font-medium">
+          <svg class="w-3 h-3 text-slate-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>
+          {readingTime} min read
+        </span>
+      </div>
+      
+      <!-- Headline -->
+      <h3 class={`font-serif font-black text-slate-900 leading-snug tracking-tight mb-3 group-hover:text-primary-crimson transition-colors duration-200 ${featured ? 'text-2xl md:text-3xl' : 'text-lg md:text-xl'}`}>
+        <a href={`/articles/${slug}`} class="hover:underline decoration-primary-crimson/30 decoration-2 underline-offset-4">
+          {title}
+        </a>
+      </h3>
+      
+      <!-- Excerpt -->
+      <p class="text-slate-500 text-sm leading-relaxed mb-6 line-clamp-3">
+        {excerpt}
+      </p>
+    </div>
+    
+    <!-- Link row -->
+    <div class="flex items-center justify-between pt-4 border-t border-slate-50 mt-auto">
+      <a href={`/articles/${slug}`} class="inline-flex items-center gap-1.5 text-sm font-black text-primary-crimson group-hover:text-primary-crimson/80 group-hover:translate-x-0.5 transition-all">
+        Read Article
+        <svg class="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+</div>

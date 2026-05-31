@@ -3,393 +3,316 @@ export const prerender = false;
 
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
-import BreakingNews from '../components/BreakingNews.astro';
 import Footer from '../components/Footer.astro';
-import BottomNav from '../components/BottomNav.astro';
+import AdUnit from '../components/AdUnit.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import NewsletterBox from '../components/NewsletterBox.astro';
 import { adminDb } from '../lib/firebase-admin';
 
 let articles: any[] = [];
+let featuredArticles: any[] = [];
+let latestArticles: any[] = [];
 
 if (adminDb) {
   try {
-    const snapshot = await adminDb.collection('posts')
+    // Attempt to fetch from articles first, fallback to posts if collection not migrated yet
+    let snapshot = await adminDb.collection('articles')
       .where('status', '==', 'published')
-      .orderBy('publishedAt', 'desc')
-      .limit(100)
+      .orderBy('publish_date', 'desc')
+      .limit(15)
       .get();
+      
+    if (snapshot.empty) {
+      // Fallback to legacy posts collection during migration transition
+      snapshot = await adminDb.collection('posts')
+        .where('status', '==', 'published')
+        .orderBy('publishedAt', 'desc')
+        .limit(15)
+        .get();
+    }
+
     articles = snapshot.docs.map(doc => {
       const d = doc.data();
       return {
-        id: doc.id, slug: d.slug, title: d.title,
-        excerpt: d.excerpt, featuredImage: d.featuredImage,
-        category: d.category, readingTime: d.readingTime || 0,
-        publishedAt: d.publishedAt?.toDate?.() || null,
+        id: doc.id,
+        slug: d.slug || doc.id,
+        title: d.title || '',
+        excerpt: d.excerpt || '',
+        featuredImage: d.featured_image || d.featuredImage || 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800',
+        category: d.category || 'AI Tools',
+        categorySlug: (d.category || 'ai-tools').toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+        author: d.author || 'Mershal Editorial Team',
+        publishDate: d.publish_date?.toDate?.() || d.publishedAt?.toDate?.() || null,
+        readingTime: d.readingTime || d.reading_time || 5,
+        status: d.status || 'published'
       };
     });
-  } catch (e) { console.error('Homepage fetch error:', e); }
+
+    featuredArticles = articles.slice(0, 3);
+    latestArticles = articles.slice(3, 12);
+  } catch (e) {
+    console.error('Index page data fetch error:', e);
+  }
 }
 
-const categories = ['world', 'politics', 'business', 'technology', 'sports', 'entertainment'];
-const byCategory: Record<string, any[]> = {};
-categories.forEach(cat => {
-  byCategory[cat] = articles.filter(a => a.category?.toLowerCase() === cat);
-});
+const categoriesList = [
+  { name: 'AI Tools', slug: 'ai-tools', desc: 'Reviews & workflows for generative AI models', icon: '🤖', color: 'from-blue-500/10 to-indigo-500/5' },
+  { name: 'SaaS Reviews', slug: 'saas-reviews', desc: 'In-depth analyses of software platforms', icon: '💻', color: 'from-emerald-500/10 to-teal-500/5' },
+  { name: 'Productivity', slug: 'productivity', desc: 'Apps and frameworks to boost output', icon: '📈', color: 'from-amber-500/10 to-orange-500/5' },
+  { name: 'Freelancing', slug: 'freelancing', desc: 'Contracting, pricing models, and clients', icon: '✍️', color: 'from-purple-500/10 to-fuchsia-500/5' },
+  { name: 'Online Business', slug: 'online-business', desc: 'Ecommerce, remote agencies, and growth', icon: '💼', color: 'from-rose-500/10 to-pink-500/5' },
+  { name: 'CRM', slug: 'crm', desc: 'Customer pipeline and service automation', icon: '👥', color: 'from-cyan-500/10 to-sky-500/5' },
+  { name: 'Marketing', slug: 'marketing', desc: 'SEO, conversions, and email newsletters', icon: '📣', color: 'from-violet-500/10 to-purple-500/5' },
+];
 
-// Hero: first article is big, next 3 are stacked right
-const hero = articles[0] || null;
-const heroStack = articles.slice(1, 5);
-// Latest ticker: next 8
-const latestTicker = articles.slice(5, 13);
-// Sidebar: latest 12 for right sidebar
-const sidebarArticles = articles.slice(0, 12);
-
-function imgUrl(url: string, w: number, h: number) {
-  if (!url) return `https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=${w}&h=${h}&fit=crop&auto=format&q=70`;
-  return `${url.split('?')[0]}?w=${w}&h=${h}&fit=crop&auto=format&q=75`;
-}
-
-function timeAgo(date: Date | null) {
-  if (!date) return '';
-  const diff = Math.floor((Date.now() - date.getTime()) / 60000);
-  if (diff < 60) return `${diff}m ago`;
-  if (diff < 1440) return `${Math.floor(diff/60)}h ago`;
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-}
+const trendingGuides = [
+  { title: 'Best AI Coding Assistants: Visual Studio & Cursor compared', slug: 'best-ai-coding-assistants' },
+  { title: 'Top 10 CRM Platforms for Remote Agencies in 2026', slug: 'top-crm-platforms-remote-agencies' },
+  { title: 'How to Build an Automated Lead Generation Machine with Zapier', slug: 'build-automated-lead-gen-zapier' },
+];
 ---
 
-<Layout title="Mershal — Breaking World News" description="Breaking news and comprehensive coverage of world events. Politics, business, technology, sports, and entertainment.">
+<Layout title="Mershal — The Authority Resource for AI Tools & SaaS Reviews" description="Expert reviews, comparisons, and guides on AI Tools, SaaS platforms, Productivity Software, Freelancing, Online Business, CRM, and Digital Marketing.">
   <Header />
-  <BreakingNews />
 
-  <main class="bg-white min-h-screen pb-20 md:pb-4">
-    <div class="container mx-auto px-3 md:px-4 max-w-7xl py-5">
+  <!-- Top AdSense Leaderboard Placement -->
+  <div class="container mx-auto px-4 max-w-7xl">
+    <AdUnit type="header" />
+  </div>
 
-      {articles.length === 0 ? (
-        <div class="text-center py-20 bg-white">
-          <p class="text-gray-500 mb-2">No articles yet.</p>
-          <a href="/admin" class="text-red-600 hover:underline text-sm font-semibold">Go to Admin Panel →</a>
+  <main class="min-h-screen pb-16 font-sans">
+    
+    <!-- ── HERO BANNER SECTION ── -->
+    <section class="relative bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white py-12 md:py-20 overflow-hidden border-b border-slate-800">
+      <!-- Glow circles -->
+      <div class="absolute right-0 top-0 w-[500px] h-[500px] bg-primary-crimson/10 rounded-full blur-3xl"></div>
+      <div class="absolute left-1/4 bottom-0 w-[400px] h-[400px] bg-primary-gold/5 rounded-full blur-3xl"></div>
+      
+      <div class="container mx-auto px-4 max-w-6xl relative z-10">
+        <div class="text-center mb-10">
+          <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-slate-800 border border-slate-700 text-xs font-black uppercase tracking-wider text-primary-gold mb-6">
+            <span class="w-1.5 h-1.5 rounded-full bg-primary-gold animate-ping"></span>
+            Premium Business Intelligence
+          </span>
+          
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-black tracking-tight leading-[1.1] mb-6 max-w-4xl mx-auto">
+            Scale Your Business with <span class="bg-gradient-to-r from-primary-crimson via-rose-400 to-primary-gold bg-clip-text text-transparent">Automation & AI</span>
+          </h1>
+          
+          <p class="text-slate-400 text-sm md:text-base lg:text-lg max-w-2xl mx-auto leading-relaxed">
+            Mershal delivers research-backed reviews of SaaS tools, AI generators, and online workflows. We help remote agencies, freelancers, and marketers scale their revenue.
+          </p>
         </div>
-      ) : (
-        <>
-          {/* ── HERO SECTION ── */}
-          <div class="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-4 mb-4">
 
-            {/* Left: Big featured story */}
-            {hero && (
-              <a href={`/news/${hero.slug}`} class="group relative block overflow-hidden bg-black">
-                <img
-                  src={imgUrl(hero.featuredImage, 900, 520)}
-                  alt={hero.title}
-                  width="900" height="520"
-                  fetchpriority="high"
-                  class="w-full h-[320px] md:h-[420px] object-cover opacity-90 group-hover:opacity-80 group-hover:scale-105 transition-all duration-500"
-                />
-                <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
-                <div class="absolute bottom-0 left-0 right-0 p-4 md:p-6">
-                  <span class="inline-block bg-red-600 text-white text-xs font-black uppercase px-2.5 py-1 mb-2 tracking-wider">
-                    {hero.category}
-                  </span>
-                  <h2 class="text-white text-xl md:text-2xl lg:text-3xl font-black leading-tight line-clamp-3 group-hover:text-red-300 transition">
-                    {hero.title}
-                  </h2>
-                  <p class="text-gray-300 text-sm mt-2 line-clamp-2 hidden md:block">{hero.excerpt}</p>
-                  <p class="text-gray-400 text-xs mt-2">{timeAgo(hero.publishedAt)}</p>
+        <!-- ── HORIZONTAL TRENDING POSTS SWIPEABLE CAROUSEL ── -->
+        <div class="mt-8 max-w-5xl mx-auto">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xs uppercase tracking-widest font-black text-primary-gold flex items-center gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-primary-gold"></span>
+              Trending Guides & Reviews
+            </h2>
+            <div class="flex gap-2">
+              <button id="prev-trend" class="w-8 h-8 rounded-full bg-slate-800/80 border border-slate-700/50 text-slate-400 hover:text-white hover:bg-slate-750 transition flex items-center justify-center text-xs font-bold" aria-label="Previous">
+                &larr;
+              </button>
+              <button id="next-trend" class="w-8 h-8 rounded-full bg-slate-800/80 border border-slate-700/50 text-slate-400 hover:text-white hover:bg-slate-750 transition flex items-center justify-center text-xs font-bold" aria-label="Next">
+                &rarr;
+              </button>
+            </div>
+          </div>
+
+          <div id="trend-carousel" class="flex overflow-x-auto gap-4 snap-x snap-mandatory scroll-smooth pb-4 px-2 -mx-2 scrollbar-none">
+            {articles.slice(0, 5).map(art => (
+              <a href={`/articles/${art.slug}`} class="snap-start shrink-0 w-[270px] sm:w-[310px] bg-slate-900/40 backdrop-blur-md border border-slate-800/80 rounded-2xl overflow-hidden hover:border-primary-gold/30 hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between">
+                <div>
+                  <div class="aspect-[16/10] w-full overflow-hidden relative">
+                    <img src={art.featuredImage} alt={art.title} class="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500" loading="lazy" />
+                    <span class="absolute top-3 left-3 px-2.5 py-1 bg-slate-950/85 backdrop-blur-md rounded-lg text-[9px] font-black uppercase tracking-wider text-primary-gold border border-slate-800">
+                      {art.category}
+                    </span>
+                  </div>
+                  <div class="p-4">
+                    <h3 class="font-bold text-sm text-slate-100 group-hover:text-primary-gold transition line-clamp-2 leading-snug">
+                      {art.title}
+                    </h3>
+                    <p class="text-slate-400 text-xs mt-1.5 line-clamp-2 leading-relaxed">
+                      {art.excerpt}
+                    </p>
+                  </div>
+                </div>
+                <div class="p-4 pt-0 flex items-center justify-between text-[10px] text-slate-500 font-mono">
+                  <span>By {art.author.split(' ')[0]}</span>
+                  <span>{art.readingTime} min read</span>
                 </div>
               </a>
-            )}
-
-            {/* Right: stacked stories */}
-            <div class="flex flex-col gap-0 border border-gray-100">
-              {heroStack.map((a, i) => (
-                <a href={`/news/${a.slug}`} class={`group flex gap-3 bg-white hover:bg-red-50 transition p-3 ${i < heroStack.length - 1 ? 'border-b border-gray-100' : ''}`}>
-                  <img
-                    src={imgUrl(a.featuredImage, 200, 130)}
-                    alt={a.title}
-                    width="110" height="75"
-                    loading="lazy"
-                    class="w-24 h-16 object-cover flex-shrink-0"
-                  />
-                  <div class="flex-1 min-w-0">
-                    <span class="text-xs font-black text-red-600 uppercase tracking-wide">{a.category}</span>
-                    <h3 class="text-sm font-bold text-gray-900 line-clamp-2 leading-snug mt-0.5 group-hover:text-red-600 transition">{a.title}</h3>
-                    <p class="text-xs text-gray-400 mt-1">{timeAgo(a.publishedAt)}</p>
-                  </div>
-                </a>
-              ))}
-              {/* Latest ticker box */}
-              {latestTicker.length > 0 && (
-                <div class="bg-gray-50 border-t-4 border-red-600 p-3 flex-1">
-                  <p class="text-xs font-black text-red-600 uppercase tracking-widest mb-2">Latest Updates</p>
-                  <ul class="space-y-2">
-                    {latestTicker.slice(0, 6).map(a => (
-                      <li class="flex items-start gap-1.5">
-                        <span class="text-red-500 font-black text-xs mt-0.5 flex-shrink-0">›</span>
-                        <a href={`/news/${a.slug}`} class="text-xs text-gray-700 hover:text-red-600 transition font-medium line-clamp-2 leading-snug block">
-                          {a.title}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
+            ))}
           </div>
+        </div>
+      </div>
+    </section>
 
-          {/* ── ELECTION RESULTS WIDGET ── */}
-          <div class="mb-4 bg-white border-t-4 border-red-600">
-            <!-- Tab header -->
-            <div class="flex items-center border-b border-gray-200">
-              <div class="bg-red-600 text-white px-4 py-2.5 text-xs font-black uppercase tracking-widest flex-shrink-0">
-                🗳️ Election Results 2026
-              </div>
-              <div class="flex overflow-x-auto scrollbar-hide">
-                <button onclick="showElection('wb')" id="tab-wb"
-                  class="election-tab active-tab px-5 py-2.5 text-xs font-bold uppercase tracking-wide whitespace-nowrap border-b-2 border-red-600 text-red-600">
-                  West Bengal
-                </button>
-                <button onclick="showElection('tn')" id="tab-tn"
-                  class="election-tab px-5 py-2.5 text-xs font-bold uppercase tracking-wide whitespace-nowrap border-b-2 border-transparent text-gray-500 hover:text-red-600 transition">
-                  Tamil Nadu
-                </button>
-              </div>
-            </div>
+    <!-- ── POPULAR CATEGORIES GRID ── -->
+    <section class="container mx-auto px-4 max-w-7xl py-12">
+      <div class="text-center mb-8">
+        <h2 class="text-xs uppercase tracking-widest font-black text-primary-crimson">Explore Topics</h2>
+        <h3 class="text-2xl font-black font-serif text-slate-900 mt-1">Popular Content Categories</h3>
+      </div>
+      
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4">
+        {categoriesList.map(cat => (
+          <a
+            href={`/category/${cat.slug}`}
+            class={`group relative rounded-xl p-5 border border-slate-100 bg-white shadow-sm hover:shadow-md transition-all duration-300 flex flex-col items-center text-center`}
+          >
+            <span class="text-3xl mb-3 transform group-hover:scale-110 transition-transform duration-300">{cat.icon}</span>
+            <span class="text-xs font-black uppercase tracking-wider text-slate-800 group-hover:text-primary-crimson transition-colors">{cat.name}</span>
+          </a>
+        ))}
+      </div>
+    </section>
 
-            <!-- West Bengal Results -->
-            <div id="election-wb" class="election-panel p-4">
-              <div class="flex items-center justify-between mb-3">
-                <div>
-                  <p class="text-xs text-gray-500 font-medium">West Bengal Assembly Elections 2026</p>
-                  <p class="text-xs text-gray-400">Total Seats: 294 · Majority: 148 · Counted: 293</p>
-                </div>
-                <span class="text-xs bg-orange-100 text-orange-700 font-bold px-2 py-1 rounded">Results Declared</span>
-              </div>
-              <div class="space-y-2.5">
-                {[
-                  { party: 'BJP', name: 'Bharatiya Janata Party', color: '#f97316', won: 207, leading: 0, total: 207 },
-                  { party: 'AITC', name: 'All India Trinamool Congress', color: '#1a56db', won: 80, leading: 0, total: 80 },
-                  { party: 'INC', name: 'Indian National Congress', color: '#16a34a', won: 2, leading: 0, total: 2 },
-                  { party: 'AJUP', name: 'Aam Janata Unnayan Party', color: '#7c3aed', won: 2, leading: 0, total: 2 },
-                  { party: 'CPI(M)', name: 'Communist Party of India (Marxist)', color: '#dc2626', won: 1, leading: 0, total: 1 },
-                  { party: 'AISF', name: 'All India Secular Front', color: '#0891b2', won: 1, leading: 0, total: 1 },
-                ].map(p => (
-                  <div class="flex items-center gap-3">
-                    <div class="w-14 text-xs font-black text-center py-1 text-white rounded-sm flex-shrink-0 truncate px-1" style={`background:${p.color}`}>{p.party}</div>
-                    <div class="flex-1">
-                      <div class="flex items-center justify-between mb-0.5">
-                        <span class="text-xs text-gray-600 font-medium truncate max-w-[160px]">{p.name}</span>
-                        <span class="text-xs font-black text-gray-900 ml-2 flex-shrink-0">
-                          <span class="text-green-700">{p.won}</span>
-                          {p.leading > 0 && <span class="text-yellow-600"> +{p.leading}</span>}
-                        </span>
-                      </div>
-                      <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
-                        <div class="h-full rounded-full" style={`width:${Math.max(Math.round((p.total/294)*100), p.total > 0 ? 1 : 0)}%; background:${p.color}`}></div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div class="mt-3 pt-2 border-t border-gray-100 flex items-center justify-between">
-                <p class="text-xs text-gray-400">BJP wins majority · 293/294 seats counted</p>
-                <span class="text-xs font-bold text-orange-600">BJP WINS 🏆</span>
-              </div>
-            </div>
+    <!-- ── FEATURED BLOG POSTS ── -->
+    {featuredArticles.length > 0 && (
+      <section class="container mx-auto px-4 max-w-7xl py-6">
+        <div class="border-b border-slate-200 pb-4 mb-8 flex items-center justify-between">
+          <h2 class="text-lg font-black font-serif text-slate-900 flex items-center gap-2">
+            <span class="w-1 h-5 bg-primary-crimson rounded-full inline-block"></span>
+            Featured Articles
+          </h2>
+        </div>
 
-            <!-- Tamil Nadu Results -->
-            <div id="election-tn" class="election-panel hidden p-4">
-              <div class="flex items-center justify-between mb-3">
-                <div>
-                  <p class="text-xs text-gray-500 font-medium">Tamil Nadu Assembly Elections 2026</p>
-                  <p class="text-xs text-gray-400">Total Seats: 234 · Majority: 118 · Counted: 234</p>
-                </div>
-                <span class="text-xs bg-orange-100 text-orange-700 font-bold px-2 py-1 rounded">Results Declared</span>
-              </div>
-              <div class="space-y-2.5">
-                {[
-                  { party: 'TVK',    name: 'Tamilaga Vettri Kazhagam',              color: '#7c3aed', won: 108, total: 108 },
-                  { party: 'DMK',    name: 'Dravida Munnetra Kazhagam',             color: '#dc2626', won: 59,  total: 59  },
-                  { party: 'ADMK',   name: 'All India Anna DMK',                    color: '#16a34a', won: 47,  total: 47  },
-                  { party: 'INC',    name: 'Indian National Congress',              color: '#1a56db', won: 5,   total: 5   },
-                  { party: 'PMK',    name: 'Pattali Makkal Katchi',                 color: '#0891b2', won: 4,   total: 4   },
-                  { party: 'IUML',   name: 'Indian Union Muslim League',            color: '#065f46', won: 2,   total: 2   },
-                  { party: 'CPI',    name: 'Communist Party of India',              color: '#b91c1c', won: 2,   total: 2   },
-                  { party: 'VCK',    name: 'Viduthalai Chiruthaigal Katchi',        color: '#92400e', won: 2,   total: 2   },
-                  { party: 'CPI(M)', name: 'Communist Party of India (Marxist)',    color: '#991b1b', won: 2,   total: 2   },
-                  { party: 'BJP',    name: 'Bharatiya Janata Party',                color: '#f97316', won: 1,   total: 1   },
-                  { party: 'DMDK',   name: 'Desiya Murpokku Dravida Kazhagam',     color: '#6b7280', won: 1,   total: 1   },
-                  { party: 'AMMK',   name: 'Amma Makkal Munnettra Kazagam',        color: '#4b5563', won: 1,   total: 1   },
-                ].map(p => (
-                  <div class="flex items-center gap-3">
-                    <div class="w-14 text-xs font-black text-center py-1 text-white rounded-sm flex-shrink-0 truncate px-1" style={`background:${p.color}`}>{p.party}</div>
-                    <div class="flex-1">
-                      <div class="flex items-center justify-between mb-0.5">
-                        <span class="text-xs text-gray-600 font-medium truncate max-w-[160px]">{p.name}</span>
-                        <span class="text-xs font-black text-green-700 ml-2 flex-shrink-0">{p.won}</span>
-                      </div>
-                      <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
-                        <div class="h-full rounded-full" style={`width:${Math.max(Math.round((p.total/234)*100), p.total > 0 ? 1 : 0)}%; background:${p.color}`}></div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div class="mt-3 pt-2 border-t border-gray-100 flex items-center justify-between">
-                <p class="text-xs text-gray-400">TVK wins majority · 234/234 seats counted</p>
-                <span class="text-xs font-bold text-purple-700">TVK WINS 🏆</span>
-              </div>
-            </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {featuredArticles.map(art => (
+            <ArticleCard
+              id={art.id}
+              slug={art.slug}
+              title={art.title}
+              excerpt={art.excerpt}
+              imageUrl={art.featuredImage}
+              category={art.category}
+              categorySlug={art.categorySlug}
+              author={art.author}
+              publishDate={art.publishDate}
+              readingTime={art.readingTime}
+            />
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- ── LATEST & SIDEBAR SECTION ── -->
+    <section class="container mx-auto px-4 max-w-7xl py-12">
+      <div class="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-8">
+        
+        <!-- Left: Latest Articles List -->
+        <div>
+          <div class="border-b border-slate-200 pb-4 mb-6">
+            <h2 class="text-lg font-black font-serif text-slate-900 flex items-center gap-2">
+              <span class="w-1 h-5 bg-primary-gold rounded-full inline-block"></span>
+              Latest Guides & Reviews
+            </h2>
           </div>
-
-          {/* ── MAIN CONTENT + SIDEBAR ── */}
-          <div class="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-4">
-
-            {/* Main column */}
+          
+          {latestArticles.length === 0 ? (
+            <div class="bg-white rounded-2xl border border-slate-100 p-12 text-center text-slate-500">
+              <p class="text-sm font-semibold mb-2">No articles published yet.</p>
+              <a href="/admin/articles/new" class="text-primary-crimson font-bold text-xs uppercase hover:underline">Write one now →</a>
+            </div>
+          ) : (
             <div class="space-y-6">
-
-              {categories.map(cat => byCategory[cat]?.length > 0 && (
-                <section>
-                  {/* Category header bar */}
-                  <div class="flex items-center justify-between bg-red-600 text-white px-3 py-2 mb-3">
-                    <h2 class="text-sm font-black uppercase tracking-widest">{cat.charAt(0).toUpperCase() + cat.slice(1)}</h2>
-                    <a href={`/category/${cat}`} class="text-xs text-red-200 hover:text-white transition font-semibold uppercase tracking-wide">
-                      More →
-                    </a>
-                  </div>
-
-                  {/* First article: large left + 2 small right */}
-                  {byCategory[cat].length >= 1 && (
-                    <div class="grid grid-cols-1 md:grid-cols-[1fr_1fr] gap-3 mb-3">
-                      {/* Big card */}
-                      <a href={`/news/${byCategory[cat][0].slug}`} class="group relative block overflow-hidden bg-black">
-                        <img
-                          src={imgUrl(byCategory[cat][0].featuredImage, 600, 360)}
-                          alt={byCategory[cat][0].title}
-                          width="600" height="360"
-                          loading="lazy"
-                          class="w-full h-52 object-cover opacity-90 group-hover:opacity-80 group-hover:scale-105 transition-all duration-300"
-                        />
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent"></div>
-                        <div class="absolute bottom-0 left-0 right-0 p-3">
-                          <h3 class="text-white text-sm md:text-base font-bold line-clamp-3 leading-snug group-hover:text-red-300 transition">
-                            {byCategory[cat][0].title}
-                          </h3>
-                          <p class="text-gray-400 text-xs mt-1">{timeAgo(byCategory[cat][0].publishedAt)}</p>
-                        </div>
-                      </a>
-
-                      {/* 2 small stacked */}
-                      <div class="flex flex-col gap-3">
-                        {byCategory[cat].slice(1, 3).map((a: any) => (
-                          <a href={`/news/${a.slug}`} class="group flex gap-2.5 bg-white hover:bg-red-50 transition p-2 border-b border-gray-100">
-                            <img
-                              src={imgUrl(a.featuredImage, 180, 120)}
-                              alt={a.title}
-                              width="90" height="65"
-                              loading="lazy"
-                              class="w-24 h-16 object-cover flex-shrink-0"
-                            />
-                            <div class="flex-1 min-w-0">
-                              <h4 class="text-xs font-bold text-gray-900 line-clamp-3 leading-snug group-hover:text-red-600 transition">{a.title}</h4>
-                              <p class="text-xs text-gray-400 mt-1">{timeAgo(a.publishedAt)}</p>
-                            </div>
-                          </a>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Bottom row: up to 6 cards */}
-                  {byCategory[cat].length > 3 && (
-                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                      {byCategory[cat].slice(3, 9).map((a: any) => (
-                        <a href={`/news/${a.slug}`} class="group bg-white border border-gray-100 hover:border-red-200 hover:shadow-sm transition overflow-hidden">
-                          <div class="overflow-hidden">
-                            <img
-                              src={imgUrl(a.featuredImage, 400, 240)}
-                              alt={a.title}
-                              width="400" height="240"
-                              loading="lazy"
-                              class="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-300"
-                            />
-                          </div>
-                          <div class="p-2.5">
-                            <h4 class="text-xs font-bold text-gray-900 line-clamp-2 leading-snug group-hover:text-red-600 transition">{a.title}</h4>
-                            <p class="text-xs text-gray-400 mt-1">{timeAgo(a.publishedAt)}</p>
-                          </div>
-                        </a>
-                      ))}
-                    </div>
-                  )}
-                </section>
+              {latestArticles.map(art => (
+                <ArticleCard
+                  id={art.id}
+                  slug={art.slug}
+                  title={art.title}
+                  excerpt={art.excerpt}
+                  imageUrl={art.featuredImage}
+                  category={art.category}
+                  categorySlug={art.categorySlug}
+                  author={art.author}
+                  publishDate={art.publishDate}
+                  readingTime={art.readingTime}
+                />
               ))}
             </div>
+          )}
+        </div>
 
-            {/* Sidebar */}
-            <aside class="space-y-5">
-
-              {/* Latest News list */}
-              <div>
-                <div class="bg-red-600 text-white px-3 py-2 mb-0">
-                  <h3 class="text-sm font-black uppercase tracking-widest">Latest News</h3>
-                </div>
-                <div class="bg-white divide-y divide-gray-100">
-                  {sidebarArticles.map(a => (
-                    <a href={`/news/${a.slug}`} class="group flex gap-2.5 p-2.5 hover:bg-red-50 transition">
-                      <img
-                        src={imgUrl(a.featuredImage, 160, 100)}
-                        alt={a.title}
-                        width="70" height="50"
-                        loading="lazy"
-                        class="w-16 h-12 object-cover flex-shrink-0"
-                      />
-                      <div class="flex-1 min-w-0">
-                        <span class="text-xs font-black text-red-600 uppercase">{a.category}</span>
-                        <h4 class="text-xs font-semibold text-gray-900 line-clamp-2 leading-snug group-hover:text-red-600 transition mt-0.5">{a.title}</h4>
-                        <p class="text-xs text-gray-400 mt-0.5">{timeAgo(a.publishedAt)}</p>
-                      </div>
+        <!-- Right Sidebar -->
+        <aside class="space-y-8">
+          
+          <!-- Sticky Sidebar Ad Slot -->
+          <div class="sticky top-24 space-y-6">
+            <AdUnit type="sidebar" />
+            
+            <!-- Trending Guides Box -->
+            <div class="bg-white rounded-xl p-5 border border-slate-100 shadow-sm">
+              <h3 class="text-xs uppercase tracking-widest font-black text-primary-crimson mb-4">Trending Guides</h3>
+              <ul class="space-y-4">
+                {trendingGuides.map((guide, idx) => (
+                  <li class="flex items-start gap-2.5">
+                    <span class="text-slate-300 font-serif font-black text-xl mt-[-3px]">0{idx + 1}</span>
+                    <a href={`/articles/${guide.slug}`} class="text-sm font-bold text-slate-700 hover:text-primary-crimson transition leading-snug line-clamp-2">
+                      {guide.title}
                     </a>
-                  ))}
-                </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            
+            <!-- Category Hub Links -->
+            <div class="bg-white rounded-xl p-5 border border-slate-100 shadow-sm">
+              <h3 class="text-xs uppercase tracking-widest font-black text-primary-gold mb-3">Topic Clusters</h3>
+              <div class="divide-y divide-slate-50">
+                {categoriesList.slice(0, 5).map(cat => (
+                  <a href={`/category/${cat.slug}`} class="flex items-center justify-between py-2.5 text-xs text-slate-600 hover:text-primary-crimson transition font-semibold">
+                    <span>{cat.name}</span>
+                    <svg class="w-3.5 h-3.5 text-slate-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+                  </a>
+                ))}
               </div>
-
-              {/* Categories box */}
-              <div>
-                <div class="bg-gray-900 text-white px-3 py-2">
-                  <h3 class="text-sm font-black uppercase tracking-widest">Browse Topics</h3>
-                </div>
-                <div class="bg-white divide-y divide-gray-100">
-                  {categories.map(cat => (
-                    <a href={`/category/${cat}`}
-                       class="flex items-center justify-between px-3 py-2.5 text-sm text-gray-700 hover:text-red-600 hover:bg-red-50 transition font-medium">
-                      <span class="capitalize">{cat}</span>
-                      <svg class="w-3.5 h-3.5 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
-                    </a>
-                  ))}
-                </div>
-              </div>
-
-            </aside>
+            </div>
           </div>
-        </>
-      )}
-    </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ── NEWSLETTER BOX SECTION ── -->
+    <section class="container mx-auto px-4 max-w-7xl py-6">
+      <NewsletterBox />
+    </section>
   </main>
 
   <Footer />
-  <BottomNav />
 </Layout>
 
 <script>
-  function showElection(state: string) {
-    document.querySelectorAll('.election-panel').forEach(p => p.classList.add('hidden'));
-    document.querySelectorAll('.election-tab').forEach(t => {
-      t.classList.remove('active-tab', 'border-red-600', 'text-red-600');
-      t.classList.add('border-transparent', 'text-gray-500');
-    });
-    document.getElementById(`election-${state}`)?.classList.remove('hidden');
-    const tab = document.getElementById(`tab-${state}`);
-    tab?.classList.add('active-tab', 'border-red-600', 'text-red-600');
-    tab?.classList.remove('border-transparent', 'text-gray-500');
-  }
-  (window as any).showElection = showElection;
+  // Trending Carousel Navigation
+  const carousel = document.getElementById('trend-carousel');
+  const prevBtn = document.getElementById('prev-trend');
+  const nextBtn = document.getElementById('next-trend');
+
+  prevBtn?.addEventListener('click', () => {
+    if (carousel) {
+      carousel.scrollBy({ left: -290, behavior: 'smooth' });
+    }
+  });
+
+  nextBtn?.addEventListener('click', () => {
+    if (carousel) {
+      carousel.scrollBy({ left: 290, behavior: 'smooth' });
+    }
+  });
 </script>
+
+<style>
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .scrollbar-none {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+</style>

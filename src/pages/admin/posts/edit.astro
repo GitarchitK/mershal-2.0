@@ -48,12 +48,13 @@ if (!postId) return Astro.redirect('/admin/posts');
           <div>
             <label class="block text-xs text-gray-400 mb-1.5">Category</label>
             <select id="category" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-rose-500">
-              <option value="world">World</option>
-              <option value="politics">Politics</option>
-              <option value="business">Business</option>
-              <option value="technology">Technology</option>
-              <option value="sports">Sports</option>
-              <option value="entertainment">Entertainment</option>
+              <option value="AI Tools">AI Tools</option>
+              <option value="SaaS Reviews">SaaS Reviews</option>
+              <option value="Productivity">Productivity</option>
+              <option value="Freelancing">Freelancing</option>
+              <option value="Online Business">Online Business</option>
+              <option value="CRM Software">CRM Software</option>
+              <option value="Digital Marketing">Digital Marketing</option>
             </select>
           </div>
           <div>
@@ -111,9 +112,9 @@ if (!postId) return Astro.redirect('/admin/posts');
       document.getElementById('featured-image').value = post.featuredImage || '';
       document.getElementById('seo-title').value = post.seoTitle || '';
       document.getElementById('seo-desc').value = post.seoDescription || '';
-      document.getElementById('category').value = post.category || 'world';
-      document.getElementById('post-slug-display').textContent = `/news/${post.slug}`;
-      document.getElementById('view-post-link').href = `/news/${post.slug}`;
+      document.getElementById('category').value = post.category || 'AI Tools';
+      document.getElementById('post-slug-display').textContent = `/articles/${post.slug}`;
+      document.getElementById('view-post-link').href = `/articles/${post.slug}`;
 
       if (post.featuredImage) {
         document.getElementById('preview-img').src = post.featuredImage;

@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import CookieConsent from '../components/CookieConsent.astro';
+import { adminDb } from '../lib/firebase-admin';
 
 interface Props {
   title: string;
@@ -16,7 +17,7 @@ interface Props {
 
 const {
   title,
-  description = 'Mershal — breaking news and in-depth coverage of world events. Politics, business, technology, sports, and entertainment.',
+  description = 'Mershal delivers reviews, tutorials, and insights about AI tools, CRM software, digital marketing, SaaS, and productivity software.',
   canonicalUrl,
   image = 'https://mershal.in/og-default.png',
   type = 'website',
@@ -29,6 +30,22 @@ const {
 const siteUrl = 'https://mershal.in';
 const currentUrl = canonicalUrl || Astro.url.href;
 const fullTitle = title.includes('Mershal') ? title : `${title} | Mershal`;
+
+// Load Google AdSense scripts dynamically
+let adsenseHeaderCode = '';
+let adsenseFooterCode = '';
+if (adminDb) {
+  try {
+    const doc = await adminDb.collection('settings').doc('adsense').get();
+    if (doc.exists) {
+      const data = doc.data();
+      adsenseHeaderCode = data?.header_code || '';
+      adsenseFooterCode = data?.footer_code || '';
+    }
+  } catch (e) {
+    console.error('Layout settings fetch error:', e);
+  }
+}
 ---
 
 <!DOCTYPE html>
@@ -71,16 +88,21 @@ const fullTitle = title.includes('Mershal') ? title : `${title} | Mershal`;
     <meta name="twitter:image" content={image} />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="manifest" href="/site.webmanifest" />
-    <meta name="theme-color" content="#dc2626" />
+    <meta name="theme-color" content="#8b0222" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;800;900&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;800;900&display=swap" /></noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet" />
+
+    <!-- AdSense Header Integration -->
+    {adsenseHeaderCode && <Fragment set:html={adsenseHeaderCode} />}
+    {!adsenseHeaderCode && (
+      <!-- Fallback AdSense client placeholder in development -->
+      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9426217436033785" crossorigin="anonymous"></script>
+    )}
 
     <!-- Website Schema -->
     <script type="application/ld+json" is:inline>
@@ -89,7 +111,7 @@ const fullTitle = title.includes('Mershal') ? title : `${title} | Mershal`;
       "@type": "NewsMediaOrganization",
       "name": "Mershal",
       "url": "https://mershal.in",
-      "description": "Mershal delivers breaking news and comprehensive coverage of world events.",
+      "description": "Mershal delivers expert reviews, guides, and insights on AI tools, SaaS, productivity, and online business automation.",
       "inLanguage": "en-US",
       "publisher": {
         "@type": "Organization",
@@ -97,7 +119,7 @@ const fullTitle = title.includes('Mershal') ? title : `${title} | Mershal`;
         "url": "https://mershal.in",
         "logo": {
           "@type": "ImageObject",
-          "url": "https://mershal.in/favicon.svg"
+          "url": "https://mershal.in/logo.png"
         }
       },
       "potentialAction": {
@@ -114,8 +136,14 @@ const fullTitle = title.includes('Mershal') ? title : `${title} | Mershal`;
     <!-- Breadcrumb / Page slot for extra head tags -->
     <slot name="head" />
   </head>
-  <body class="bg-gray-100">
-    <slot />
+  <body class="bg-slate-50 font-sans antialiased text-slate-900 min-h-screen flex flex-col justify-between">
+    <div class="flex-1">
+      <slot />
+    </div>
+    
+    <!-- AdSense Footer Integration -->
+    {adsenseFooterCode && <div class="container mx-auto px-4 py-4 max-w-7xl text-center"><Fragment set:html={adsenseFooterCode} /></div>}
+    
     <CookieConsent />
   </body>
 </html>

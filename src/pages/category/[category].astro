@@ -3,87 +3,75 @@ export const prerender = false;
 
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
-import BreakingNews from '../../components/BreakingNews.astro';
 import Footer from '../../components/Footer.astro';
-import BottomNav from '../../components/BottomNav.astro';
+import AdUnit from '../../components/AdUnit.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
 import { adminDb } from '../../lib/firebase-admin';
 
 const { category } = Astro.params;
 
-const validCategories = ['world', 'politics', 'business', 'technology', 'sports', 'entertainment'];
+// New categories taxonomy
+const validCategories = ['ai-tools', 'saas-reviews', 'productivity', 'freelancing', 'online-business', 'crm', 'marketing'];
 
 if (!category || !validCategories.includes(category.toLowerCase())) {
   return Astro.redirect('/404');
 }
 
-const categoryName = category.charAt(0).toUpperCase() + category.slice(1);
+const categorySlug = category.toLowerCase();
 
-const categoryMeta: Record<string, { desc: string; icon: string }> = {
-  world: { desc: 'Breaking news and in-depth coverage of global events and international affairs.', icon: '🌍' },
-  politics: { desc: 'Political news, elections, government policy, and analysis from around the world.', icon: '🏛️' },
-  business: { desc: 'Markets, economy, finance, startups, and business news from across the globe.', icon: '💼' },
-  technology: { desc: 'Tech news, product launches, AI, and the latest from the world of technology.', icon: '💻' },
-  sports: { desc: 'Sports news, scores, analysis, and coverage of major events worldwide.', icon: '⚽' },
-  entertainment: { desc: 'Movies, music, celebrity news, and entertainment from around the world.', icon: '🎬' },
+const categoryMeta: Record<string, { name: string; desc: string; icon: string }> = {
+  'ai-tools': { name: 'AI Tools', desc: 'Reviews, comparison guides, and workflows for generative AI models and automation tools.', icon: '🤖' },
+  'saas-reviews': { name: 'SaaS Reviews', desc: 'In-depth analyses, pricing updates, and features comparison of software platforms.', icon: '💻' },
+  'productivity': { name: 'Productivity', desc: 'Apps, frameworks, and workflows to optimize daily outputs and scale operations.', icon: '📈' },
+  'freelancing': { name: 'Freelancing', desc: 'Client acquisition, contract negotiation, pricing models, and gig scaling resources.', icon: '✍️' },
+  'online-business': { name: 'Online Business', desc: 'Ecommerce strategy, remote agency models, and scaling digital assets.', icon: '💼' },
+  'crm': { name: 'CRM Software', desc: 'Reviews and implementation guides for customer relationships pipelines and sales systems.', icon: '👥' },
+  'marketing': { name: 'Digital Marketing', desc: 'SEO audits, conversions optimization, funnel setups, and email list marketing guides.', icon: '📣' },
 };
 
-const meta = categoryMeta[category.toLowerCase()] || { desc: `Articles about ${categoryName}`, icon: '📄' };
+const meta = categoryMeta[categorySlug] || { name: category, desc: `Articles about ${category}`, icon: '📄' };
 
-interface Article {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string;
-  featuredImage: string;
-  category: string;
-  author: string;
-  publishedAt: any;
-  readingTime: number;
-  wordCount: number;
-}
-
-let articles: Article[] = [];
+let articles: any[] = [];
 
 if (adminDb) {
   try {
-    const snapshot = await adminDb.collection('posts')
-      .where('category', '==', category.toLowerCase())
+    // Query articles in category
+    let snapshot = await adminDb.collection('articles')
+      .where('category', '==', meta.name)
       .where('status', '==', 'published')
       .limit(50)
       .get();
-
-    // Also try exact match in case stored differently
-    let docs = snapshot.docs;
-    if (docs.length === 0) {
-      const fallback = await adminDb.collection('posts')
-        .where('category', '==', category)
+      
+    if (snapshot.empty) {
+      // Legacy fallback
+      snapshot = await adminDb.collection('posts')
+        .where('category', '==', categorySlug)
         .where('status', '==', 'published')
         .limit(50)
         .get();
-      docs = fallback.docs;
     }
 
-    articles = docs.map(doc => {
+    articles = snapshot.docs.map(doc => {
       const d = doc.data();
       return {
         id: doc.id,
+        slug: d.slug || doc.id,
         title: d.title || '',
-        slug: d.slug || '',
         excerpt: d.excerpt || '',
-        featuredImage: d.featuredImage || '',
-        category: d.category || '',
-        author: d.author || 'Archit Karmakar',
-        publishedAt: d.publishedAt,
-        readingTime: d.readingTime || 0,
-        wordCount: d.wordCount || 0,
+        featuredImage: d.featured_image || d.featuredImage || 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800',
+        category: d.category || meta.name,
+        categorySlug: categorySlug,
+        author: d.author || 'Mershal Editorial Team',
+        publishDate: d.publish_date?.toDate?.() || d.publishedAt?.toDate?.() || null,
+        readingTime: d.readingTime || d.reading_time || 5,
       };
     }).sort((a, b) => {
-      const aT = a.publishedAt?.toDate?.() || new Date(0);
-      const bT = b.publishedAt?.toDate?.() || new Date(0);
+      const aT = a.publishDate || new Date(0);
+      const bT = b.publishDate || new Date(0);
       return bT.getTime() - aT.getTime();
     });
   } catch (e) {
-    console.error('Category fetch error:', e);
+    console.error(`Category fetch error for ${category}:`, e);
   }
 }
 
@@ -92,151 +80,112 @@ const rest = articles.slice(1);
 ---
 
 <Layout
-  title={`${categoryName} — Mershal`}
+  title={`${meta.name} — Mershal`}
   description={meta.desc}
 >
   <Header />
-  <BreakingNews />
 
-  <main class="bg-gray-50 min-h-screen pb-20 md:pb-8">
+  <!-- AdSense Leaderboard Placement -->
+  <div class="container mx-auto px-4 max-w-7xl">
+    <AdUnit type="header" />
+  </div>
 
-    <!-- Category Hero -->
-    <div class="bg-white border-b border-gray-100">
-      <div class="container mx-auto px-4 py-10 max-w-6xl">
-        <div class="flex items-center gap-3 mb-2">
-          <!-- Breadcrumb -->
-          <nav class="text-sm text-gray-500 flex items-center gap-1.5">
-            <a href="/" class="hover:text-rose-600 transition">Home</a>
-            <span>›</span>
-            <span class="text-gray-800 font-medium capitalize">{category}</span>
-          </nav>
-        </div>
-        <div class="flex items-center gap-4 mt-4">
-          <span class="text-4xl">{meta.icon}</span>
+  <main class="bg-slate-50 min-h-screen pb-16 font-sans">
+    
+    <!-- Hero Block -->
+    <section class="bg-white border-b border-slate-100 py-10 md:py-14">
+      <div class="container mx-auto px-4 max-w-6xl">
+        <nav class="flex items-center gap-2 text-xs font-semibold text-slate-400 font-sans mb-4">
+          <a href="/" class="hover:text-primary-crimson transition-colors">Home</a>
+          <span>›</span>
+          <span class="text-slate-700 capitalize">{meta.name}</span>
+        </nav>
+        
+        <div class="flex items-start gap-5 mt-2">
+          <span class="text-5xl md:text-6xl p-3 bg-slate-50 rounded-2xl border border-slate-100 flex-shrink-0">{meta.icon}</span>
           <div>
-            <h1 class="text-3xl md:text-4xl font-black text-gray-900">{categoryName}</h1>
-            <p class="text-gray-500 mt-1">{meta.desc}</p>
+            <h1 class="text-3xl md:text-4xl lg:text-5xl font-black font-serif text-slate-900 tracking-tight leading-none capitalize">{meta.name}</h1>
+            <p class="text-slate-500 text-sm md:text-base mt-2 max-w-xl leading-relaxed">{meta.desc}</p>
           </div>
         </div>
-        <!-- Category nav pills -->
-        <div class="flex gap-2 mt-6 flex-wrap">
-          {['world', 'politics', 'business', 'technology', 'sports', 'entertainment'].map(cat => (
+
+        <!-- Tag pills -->
+        <div class="flex flex-wrap gap-2.5 mt-8">
+          {validCategories.map(cat => (
             <a
               href={`/category/${cat}`}
-              class={`px-4 py-1.5 rounded-full text-sm font-semibold transition ${
-                cat === category
-                  ? 'bg-rose-600 text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              class={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border transition ${
+                cat === categorySlug
+                  ? 'bg-primary-crimson text-white border-primary-crimson shadow-md hover:bg-primary-crimson/95'
+                  : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
               }`}
             >
-              {cat.charAt(0).toUpperCase() + cat.slice(1)}
+              {categoryMeta[cat]?.name || cat}
             </a>
           ))}
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="container mx-auto px-4 py-8 max-w-6xl">
-
+    <!-- Content Listing -->
+    <div class="container mx-auto px-4 py-12 max-w-6xl">
       {articles.length === 0 ? (
-        <div class="text-center py-20 bg-white rounded-2xl border border-gray-100">
-          <span class="text-5xl mb-4 block">{meta.icon}</span>
-          <h2 class="text-xl font-bold text-gray-900 mb-2">No posts yet in {categoryName}</h2>
-          <p class="text-gray-500 mb-6">Be the first to write about {categoryName.toLowerCase()}.</p>
-          <a href="/" class="text-rose-600 font-semibold hover:underline">← Back to Home</a>
+        <div class="bg-white border border-slate-100 shadow-sm rounded-2xl p-16 text-center text-slate-500">
+          <span class="text-6xl block mb-4">{meta.icon}</span>
+          <h2 class="text-xl font-serif font-black text-slate-900 mb-2">No articles in {meta.name} yet</h2>
+          <p class="text-slate-400 text-sm mb-6 max-w-md mx-auto">We are currently researching and writing in this category. Join the newsletter to get notified when articles launch.</p>
+          <a href="/" class="inline-flex items-center justify-center bg-slate-900 text-white font-bold text-xs uppercase px-5 py-3 rounded-lg shadow-sm">← Back Home</a>
         </div>
       ) : (
-        <>
-          {/* Featured post */}
+        <div class="space-y-12">
+          
+          <!-- Hero Featured Card -->
           {featured && (
-            <div class="mb-10">
-              <a href={`/news/${featured.slug}`} class="group block bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300 md:flex">
-                <div class="md:w-1/2 overflow-hidden">
-                  <img
-                    src={featured.featuredImage ? `${featured.featuredImage.split('?')[0]}?w=800&h=500&fit=crop&auto=format&q=75` : 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&h=500&fit=crop&auto=format&q=75'}
-                    alt={featured.title}
-                    width="800"
-                    height="500"
-                    fetchpriority="high"
-                    class="w-full h-64 md:h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
-                <div class="md:w-1/2 p-8 flex flex-col justify-center">
-                  <div class="flex items-center gap-2 mb-3">
-                    <span class="bg-rose-600 text-white px-3 py-1 text-xs font-bold uppercase rounded-full">{featured.category}</span>
-                    <span class="text-xs text-gray-400">{featured.readingTime} min read</span>
-                  </div>
-                  <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-3 leading-tight group-hover:text-rose-600 transition">
-                    {featured.title}
-                  </h2>
-                  <p class="text-gray-600 line-clamp-3 mb-5">{featured.excerpt}</p>
-                  <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center text-white text-xs font-black">AK</div>
-                    <div>
-                      <p class="text-sm font-semibold text-gray-900">{featured.author}</p>
-                      <p class="text-xs text-gray-400">
-                        {featured.publishedAt?.toDate?.()?.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) || ''}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </a>
+            <div class="space-y-4">
+              <h2 class="text-xs uppercase tracking-widest font-black text-primary-gold">Featured Guide</h2>
+              <ArticleCard
+                id={featured.id}
+                slug={featured.slug}
+                title={featured.title}
+                excerpt={featured.excerpt}
+                imageUrl={featured.featuredImage}
+                category={featured.category}
+                categorySlug={featured.categorySlug}
+                author={featured.author}
+                publishDate={featured.publishDate}
+                readingTime={featured.readingTime}
+                featured={true}
+              />
             </div>
           )}
 
-          {/* Rest of posts grid */}
+          <!-- Sidebar listing -->
           {rest.length > 0 && (
-            <div>
-              <h2 class="text-lg font-bold text-gray-900 mb-5 flex items-center gap-2">
-                <span class="w-1 h-5 bg-rose-600 rounded-full inline-block"></span>
-                More in {categoryName}
-              </h2>
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {rest.map(article => (
-                  <a href={`/news/${article.slug}`} class="group bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 flex flex-col">
-                    <div class="overflow-hidden">
-                      <img
-                        src={article.featuredImage ? `${article.featuredImage.split('?')[0]}?w=600&h=340&fit=crop&auto=format&q=70` : 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=340&fit=crop&auto=format&q=70'}
-                        alt={article.title}
-                        width="600"
-                        height="340"
-                        loading="lazy"
-                        class="w-full h-44 object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
-                    <div class="p-5 flex flex-col flex-1">
-                      <div class="flex items-center gap-2 mb-2">
-                        <a
-                          href={`/category/${article.category}`}
-                          class="text-xs font-bold text-rose-600 uppercase hover:text-rose-700 transition"
-                          onclick="event.stopPropagation()"
-                        >
-                          {article.category}
-                        </a>
-                        <span class="text-gray-300">·</span>
-                        <span class="text-xs text-gray-400">{article.readingTime} min read</span>
-                      </div>
-                      <h3 class="font-bold text-gray-900 line-clamp-2 group-hover:text-rose-600 transition mb-2 flex-1">
-                        {article.title}
-                      </h3>
-                      <p class="text-sm text-gray-500 line-clamp-2 mb-4">{article.excerpt}</p>
-                      <div class="flex items-center justify-between mt-auto pt-3 border-t border-gray-50">
-                        <span class="text-xs text-gray-400">
-                          {article.publishedAt?.toDate?.()?.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) || ''}
-                        </span>
-                        <span class="text-xs font-semibold text-rose-600 group-hover:underline">Read →</span>
-                      </div>
-                    </div>
-                  </a>
+            <div class="space-y-6 pt-6 border-t border-slate-200/60">
+              <h3 class="text-xs uppercase tracking-widest font-black text-slate-900 mb-6">More Guides & Comparisons</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {rest.map(art => (
+                  <ArticleCard
+                    id={art.id}
+                    slug={art.slug}
+                    title={art.title}
+                    excerpt={art.excerpt}
+                    imageUrl={art.featuredImage}
+                    category={art.category}
+                    categorySlug={art.categorySlug}
+                    author={art.author}
+                    publishDate={art.publishDate}
+                    readingTime={art.readingTime}
+                  />
                 ))}
               </div>
             </div>
           )}
-        </>
+
+        </div>
       )}
     </div>
   </main>
 
   <Footer />
-  <BottomNav />
 </Layout>

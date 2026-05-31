@@ -16,7 +16,7 @@ export const GET: APIRoute = async () => {
   const baseUrl = 'https://mershal.in';
   const siteName = 'Mershal';
   
-  let posts: any[] = [];
+  let articles: any[] = [];
   
   // Fetch posts from last 2 days (Google News requirement)
   if (adminDb) {
@@ -24,20 +24,27 @@ export const GET: APIRoute = async () => {
       const twoDaysAgo = new Date();
       twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
       
-      const snapshot = await adminDb
-        .collection('posts')
+      let snapshot = await adminDb
+        .collection('articles')
         .where('status', '==', 'published')
-        .where('publishedAt', '>=', twoDaysAgo)
-        .orderBy('publishedAt', 'desc')
+        .where('publish_date', '>=', twoDaysAgo)
         .get();
+        
+      if (snapshot.empty) {
+        snapshot = await adminDb
+          .collection('posts')
+          .where('status', '==', 'published')
+          .where('publishedAt', '>=', twoDaysAgo)
+          .get();
+      }
       
-      posts = snapshot.docs.map(doc => ({
-        slug: doc.data().slug,
-        title: doc.data().title,
-        publishedAt: doc.data().publishedAt?.toDate?.() || new Date(),
-      }));
+      articles = snapshot.docs.map(doc => ({
+        slug: doc.data().slug || doc.id,
+        title: doc.data().title || '',
+        publishedAt: doc.data().publish_date?.toDate?.() || doc.data().publishedAt?.toDate?.() || new Date(),
+      })).sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime());
     } catch (error) {
-      console.error('Error fetching posts for news sitemap:', error);
+      console.error('Error fetching articles for news sitemap:', error);
     }
   }
   
@@ -47,16 +54,16 @@ export const GET: APIRoute = async () => {
         xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
 `;
 
-  posts.forEach(post => {
+  articles.forEach(art => {
     newsSitemap += `  <url>
-    <loc>${baseUrl}/news/${post.slug}</loc>
+    <loc>${baseUrl}/articles/${art.slug}</loc>
     <news:news>
       <news:publication>
         <news:name>${siteName}</news:name>
         <news:language>en</news:language>
       </news:publication>
-      <news:publication_date>${post.publishedAt.toISOString()}</news:publication_date>
-      <news:title>${escapeXml(post.title)}</news:title>
+      <news:publication_date>${art.publishedAt.toISOString()}</news:publication_date>
+      <news:title>${escapeXml(art.title)}</news:title>
     </news:news>
   </url>
 `;
@@ -66,8 +73,8 @@ export const GET: APIRoute = async () => {
   
   return new Response(newsSitemap, {
     headers: {
-      'Content-Type': 'application/xml',
-      'Cache-Control': 'public, max-age=1800', // Cache for 30 minutes
+      'Content-Type': 'application/xml; charset=utf-8',
+      'Cache-Control': 'public, max-age=1800',
     },
   });
 };

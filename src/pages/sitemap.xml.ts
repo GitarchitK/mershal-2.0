@@ -6,27 +6,34 @@ import { adminDb } from '../lib/firebase-admin';
 export const GET: APIRoute = async () => {
   const baseUrl = 'https://mershal.in';
 
-  let posts: any[] = [];
+  let articles: any[] = [];
 
   if (adminDb) {
     try {
-      const snapshot = await adminDb
-        .collection('posts')
+      // Query articles first
+      let snapshot = await adminDb
+        .collection('articles')
         .where('status', '==', 'published')
-        .orderBy('publishedAt', 'desc')
         .get();
 
-      posts = snapshot.docs.map(doc => ({
-        slug: doc.data().slug,
-        updatedAt: doc.data().updatedAt?.toDate?.() || new Date(),
-        category: doc.data().category,
+      if (snapshot.empty) {
+        // Fallback to legacy posts
+        snapshot = await adminDb
+          .collection('posts')
+          .where('status', '==', 'published')
+          .get();
+      }
+
+      articles = snapshot.docs.map(doc => ({
+        slug: doc.data().slug || doc.id,
+        updatedAt: doc.data().updated_date?.toDate?.() || doc.data().updatedAt?.toDate?.() || new Date(),
       }));
     } catch (error) {
-      console.error('Error fetching posts for sitemap:', error);
+      console.error('Error fetching articles for sitemap:', error);
     }
   }
 
-  const categories = ['world', 'politics', 'business', 'technology', 'sports', 'entertainment'];
+  const categories = ['ai-tools', 'saas-reviews', 'productivity', 'freelancing', 'online-business', 'crm', 'marketing'];
   const now = new Date().toISOString();
 
   let sitemap = `<?xml version="1.0" encoding="UTF-8"?>
@@ -88,10 +95,10 @@ export const GET: APIRoute = async () => {
   });
 
   // Article pages
-  posts.forEach(post => {
+  articles.forEach(art => {
     sitemap += `  <url>
-    <loc>${baseUrl}/news/${post.slug}</loc>
-    <lastmod>${post.updatedAt.toISOString()}</lastmod>
+    <loc>${baseUrl}/articles/${art.slug}</loc>
+    <lastmod>${art.updatedAt.toISOString()}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>

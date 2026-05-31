@@ -2,9 +2,18 @@
 @import "tailwindcss/preflight" layer(base);
 @import "tailwindcss/utilities" layer(utilities);
 
+@theme {
+  --color-primary-crimson: #8b0222;
+  --color-primary-gold: #c29b38;
+  --color-neutral-dark: #0f172a;
+  --font-serif: "Lora", Georgia, serif;
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+}
+
 body {
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  background-color: #f8fafc;
 }
 
 /* Custom scrollbar for webkit browsers */
@@ -18,12 +27,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #dc2626;
+  background: #8b0222;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #b91c1c;
+  background: #680119;
 }
 
 /* Line clamp utilities */
@@ -48,16 +57,26 @@ a, button {
 
 /* Focus styles for accessibility */
 a:focus, button:focus {
-  outline: 2px solid #dc2626;
+  outline: 2px solid #8b0222;
   outline-offset: 2px;
 }
 
-/* Custom red theme colors */
+/* Custom theme colors */
 :root {
-  --color-primary: #dc2626;
-  --color-primary-dark: #b91c1c;
-  --color-primary-light: #ef4444;
+  --color-primary: #8b0222;
+  --color-primary-dark: #680119;
+  --color-primary-light: #ab173b;
 }
+
+/* AdSense placeholder styling */
+.ad-placeholder {
+  background-color: #f1f5f9;
+  border: 1px dashed #cbd5e1;
+  color: #64748b;
+  position: relative;
+  overflow: hidden;
+}
+
 
 /* Mobile responsiveness - prevent horizontal overflow */
 @media (max-width: 768px) {

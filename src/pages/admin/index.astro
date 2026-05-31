@@ -13,68 +13,98 @@ if (session?.value === 'authenticated') return Astro.redirect('/admin/dashboard'
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Login — Mershal</title>
   <meta name="robots" content="noindex, nofollow" />
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" href="/favicon-32x32.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 </head>
-<body class="min-h-screen bg-gray-950 flex items-center justify-center p-4">
-  <div class="w-full max-w-sm">
+<body class="min-h-screen bg-slate-950 flex items-center justify-center p-4 font-sans text-slate-300">
+  <div class="w-full max-w-md">
     <div class="text-center mb-8">
-      <h1 class="text-3xl font-black text-white">Mershal</h1>
-      <p class="text-gray-400 text-sm mt-1">Admin Panel</p>
+      <img src="/logo.png" alt="Mershal Logo" class="h-6 mx-auto object-contain brightness-0 invert mb-2" />
+      <p class="text-slate-500 text-xs font-black uppercase tracking-widest">Authority Publisher Console</p>
     </div>
 
-    <div class="bg-gray-900 rounded-2xl p-8 border border-gray-800 shadow-2xl">
-      <h2 class="text-lg font-bold text-white mb-6">Sign In</h2>
+    <div class="bg-slate-900/50 backdrop-blur-md rounded-2xl p-8 border border-slate-800 shadow-2xl">
+      <h2 class="text-xl font-bold text-white mb-6">Publisher Login</h2>
 
-      <div id="error" class="hidden mb-4 p-3 bg-red-900/50 border border-red-700 text-red-300 rounded-lg text-sm"></div>
+      <div id="error" class="hidden mb-4 p-3 bg-red-950/50 border border-red-800 text-red-300 rounded-xl text-xs font-semibold"></div>
 
-      <form id="login-form" class="space-y-4">
+      <form id="login-form" class="space-y-5">
         <div>
-          <label class="block text-sm font-medium text-gray-400 mb-1.5">Password</label>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Email Address</label>
+          <input
+            type="email"
+            id="email"
+            placeholder="name@mershal.in"
+            class="w-full bg-slate-850 border border-slate-700 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary-gold focus:ring-1 focus:ring-primary-gold transition"
+            required
+          />
+        </div>
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Password</label>
           <input
             type="password"
             id="password"
-            placeholder="Enter admin password"
-            class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500 transition"
+            placeholder="••••••••"
+            class="w-full bg-slate-850 border border-slate-700 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary-gold focus:ring-1 focus:ring-primary-gold transition"
             required
           />
         </div>
         <button
           type="submit"
           id="submit-btn"
-          class="w-full bg-rose-600 hover:bg-rose-700 text-white font-semibold py-3 rounded-lg text-sm transition"
+          class="w-full bg-primary-crimson hover:bg-primary-crimson/95 text-white font-bold py-3.5 rounded-xl text-sm transition shadow-lg hover:shadow-primary-crimson/10"
         >
           Sign In
         </button>
       </form>
     </div>
 
-    <p class="text-center text-gray-600 text-xs mt-6">
-      <a href="/" class="hover:text-gray-400 transition">← Back to site</a>
+    <p class="text-center text-slate-600 text-xs mt-6">
+      <a href="/" class="hover:text-slate-400 transition">← Back to website</a>
     </p>
   </div>
 
   <script>
-    document.getElementById('login-form')?.addEventListener('submit', async (e) => {
+    import { auth } from '../../lib/firebase';
+    import { signInWithEmailAndPassword } from 'firebase/auth';
+
+    const loginForm = document.getElementById('login-form') as HTMLFormElement;
+
+    loginForm?.addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = document.getElementById('submit-btn') as HTMLButtonElement;
-      const errorEl = document.getElementById('error') as HTMLElement;
+      const errorEl = document.getElementById('error') as HTMLDivElement;
+      const email = (document.getElementById('email') as HTMLInputElement).value.trim();
       const password = (document.getElementById('password') as HTMLInputElement).value;
 
       btn.textContent = 'Signing in...';
       btn.disabled = true;
       errorEl.classList.add('hidden');
 
-      const res = await fetch('/api/admin/auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password }),
-      });
+      try {
+        // 1. Authenticate with Firebase Client Auth SDK
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
 
-      if (res.ok) {
-        window.location.href = '/admin/dashboard';
-      } else {
-        const data = await res.json();
-        errorEl.textContent = data.error || 'Invalid password';
+        // 2. Fetch User ID Token
+        const idToken = await user.getIdToken();
+
+        // 3. Verify on server and create HTTP-Only session cookie
+        const res = await fetch('/api/admin/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ idToken }),
+        });
+
+        if (res.ok) {
+          window.location.href = '/admin/dashboard';
+        } else {
+          const data = await res.json();
+          throw new Error(data.error || 'Server session creation failed');
+        }
+      } catch (err: any) {
+        console.error('Authentication Error:', err);
+        errorEl.textContent = err.message || 'Authentication failed. Please verify credentials.';
         errorEl.classList.remove('hidden');
         btn.textContent = 'Sign In';
         btn.disabled = false;

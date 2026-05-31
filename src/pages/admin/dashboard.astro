@@ -97,7 +97,7 @@ if (session?.value !== 'authenticated') return Astro.redirect('/admin');
           <td class="px-5 py-3.5 text-sm text-gray-500">${p.publishedAt ? new Date(p.publishedAt).toLocaleDateString() : '—'}</td>
           <td class="px-5 py-3.5 text-sm">
             <a href="/admin/posts/edit?id=${p.id}" class="text-rose-400 hover:text-rose-300 mr-3">Edit</a>
-            <a href="/news/${p.slug}" target="_blank" class="text-gray-500 hover:text-gray-300">View</a>
+            <a href="/articles/${p.slug}" target="_blank" class="text-gray-500 hover:text-gray-300">View</a>
           </td>
         </tr>
       `).join('');

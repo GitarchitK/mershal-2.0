@@ -11,7 +11,7 @@ async function debugCategories() {
   try {
     // Fetch all published articles
     const snapshot = await db
-      .collection('posts')
+      .collection('articles')
       .where('status', '==', 'published')
       .get();
     
@@ -42,17 +42,17 @@ async function debugCategories() {
       console.log('');
     });
     
-    console.log('🔧 Valid categories in code:', ['india', 'politics', 'sports', 'entertainment', 'business', 'technology', 'ipl']);
+    const validCategories = ['AI Tools', 'SaaS Reviews', 'Productivity', 'Freelancing', 'Online Business', 'CRM Software', 'Digital Marketing'];
+    console.log('🔧 Valid categories in code:', validCategories);
     
     // Check for case mismatches
-    const validCategories = ['india', 'politics', 'sports', 'entertainment', 'business', 'technology', 'ipl'];
     const dbCategories = Object.keys(categoryCount);
     
     console.log('\n⚠️  Potential Issues:');
     console.log('=====================');
     
     dbCategories.forEach(dbCat => {
-      if (!validCategories.includes(dbCat.toLowerCase())) {
+      if (!validCategories.map(c => c.toLowerCase()).includes(dbCat.toLowerCase())) {
         console.log(`❌ Category "${dbCat}" not in valid list`);
       }
     });

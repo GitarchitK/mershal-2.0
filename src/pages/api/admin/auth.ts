@@ -1,10 +1,28 @@
 import type { APIRoute } from 'astro';
+import { adminAuth } from '../../../lib/firebase-admin';
 
 export const POST: APIRoute = async ({ request, cookies }) => {
-  const { password } = await request.json();
-  const adminPassword = process.env.ADMIN_PASSWORD || import.meta.env.ADMIN_PASSWORD || 'mershal2026';
+  try {
+    const { idToken } = await request.json();
+    
+    if (!idToken) {
+      return new Response(JSON.stringify({ error: 'ID Token required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
 
-  if (password === adminPassword) {
+    if (!adminAuth) {
+      return new Response(JSON.stringify({ error: 'Firebase Admin Auth is not initialized. Please verify environment credentials.' }), {
+        status: 550,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Verify ID Token on server using Admin SDK
+    const decodedToken = await adminAuth.verifyIdToken(idToken);
+    
+    // Set authenticated session cookie
     cookies.set('admin_session', 'authenticated', {
       path: '/',
       httpOnly: true,
@@ -12,15 +30,17 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       sameSite: 'strict',
       maxAge: 60 * 60 * 8, // 8 hours
     });
-    return new Response(JSON.stringify({ success: true }), {
+
+    return new Response(JSON.stringify({ success: true, email: decodedToken.email }), {
+      headers: { 'Content-Type': 'application/json' },
+    });
+  } catch (error: any) {
+    console.error('API Admin Auth verification error:', error);
+    return new Response(JSON.stringify({ error: 'Authentication verification failed: ' + error.message }), {
+      status: 401,
       headers: { 'Content-Type': 'application/json' },
     });
   }
-
-  return new Response(JSON.stringify({ error: 'Invalid password' }), {
-    status: 401,
-    headers: { 'Content-Type': 'application/json' },
-  });
 };
 
 export const DELETE: APIRoute = async ({ cookies }) => {

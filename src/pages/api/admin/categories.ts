@@ -12,19 +12,29 @@ export const GET: APIRoute = async ({ cookies }) => {
 
   // Default categories always shown
   const defaults = [
-    { id: 'technology', name: 'Technology', slug: 'technology', description: 'Tech news and updates', builtin: true },
-    { id: 'programming', name: 'Programming', slug: 'programming', description: 'Programming guides and tips', builtin: true },
-    { id: 'tutorials', name: 'Tutorials', slug: 'tutorials', description: 'Step-by-step tutorials', builtin: true },
+    { id: 'ai-tools', name: 'AI Tools', slug: 'ai-tools', description: 'Reviews, comparison guides, and workflows for generative AI models and automation tools.', builtin: true },
+    { id: 'saas-reviews', name: 'SaaS Reviews', slug: 'saas-reviews', description: 'In-depth analyses, pricing updates, and features comparison of software platforms.', builtin: true },
+    { id: 'productivity', name: 'Productivity', slug: 'productivity', description: 'Apps, frameworks, and workflows to optimize daily outputs and scale operations.', builtin: true },
+    { id: 'freelancing', name: 'Freelancing', slug: 'freelancing', description: 'Client acquisition, contract negotiation, pricing models, and gig scaling resources.', builtin: true },
+    { id: 'online-business', name: 'Online Business', slug: 'online-business', description: 'Ecommerce strategy, remote agency models, and scaling digital assets.', builtin: true },
+    { id: 'crm', name: 'CRM Software', slug: 'crm', description: 'Reviews and implementation guides for customer relationships pipelines and sales systems.', builtin: true },
+    { id: 'marketing', name: 'Digital Marketing', slug: 'marketing', description: 'SEO audits, conversions optimization, funnel setups, and email list marketing guides.', builtin: true },
   ];
 
   try {
     // Get post counts for each default category
     const withCounts = await Promise.all(defaults.map(async (cat) => {
       try {
-        const postsSnap = await adminDb!.collection('posts')
-          .where('category', '==', cat.slug)
+        let postsSnap = await adminDb!.collection('articles')
+          .where('category', '==', cat.name)
           .where('status', '==', 'published')
           .get();
+        if (postsSnap.empty) {
+          postsSnap = await adminDb!.collection('posts')
+            .where('category', '==', cat.slug)
+            .where('status', '==', 'published')
+            .get();
+        }
         return { ...cat, postCount: postsSnap.size };
       } catch {
         return { ...cat, postCount: 0 };

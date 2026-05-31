@@ -13,19 +13,52 @@ export const GET: APIRoute = async ({ url }) => {
     const category = url.searchParams.get('category');
     const limit = parseInt(url.searchParams.get('limit') || '20');
     
-    let query = adminDb.collection('articles')
-      .orderBy('publishedAt', 'desc')
-      .limit(limit);
-    
-    if (category) {
-      query = query.where('category', '==', category) as any;
+    // Attempt to query articles by publish_date or fallback to publishedAt
+    let snapshot;
+    try {
+      let query = adminDb.collection('articles')
+        .orderBy('publish_date', 'desc');
+        
+      if (category) {
+        query = query.where('category', '==', category);
+      }
+      
+      snapshot = await query.limit(limit).get();
+    } catch (e) {
+      // Fallback
+      let query = adminDb.collection('articles')
+        .orderBy('publishedAt', 'desc');
+        
+      if (category) {
+        query = query.where('category', '==', category);
+      }
+      
+      snapshot = await query.limit(limit).get();
+    }
+
+    if (snapshot.empty) {
+      // Try posts legacy collection fallback
+      let query = adminDb.collection('posts')
+        .orderBy('publishedAt', 'desc');
+      if (category) {
+        query = query.where('category', '==', category);
+      }
+      snapshot = await query.limit(limit).get();
     }
     
-    const snapshot = await query.get();
-    const articles = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
+    const articles = snapshot.docs.map(doc => {
+      const d = doc.data();
+      return {
+        id: doc.id,
+        slug: d.slug || doc.id,
+        title: d.title || '',
+        excerpt: d.excerpt || '',
+        content: d.content || '',
+        category: d.category || 'AI Tools',
+        tags: d.tags || [],
+        publish_date: d.publish_date || d.publishedAt || null
+      };
+    });
     
     return new Response(JSON.stringify(articles), {
       status: 200,

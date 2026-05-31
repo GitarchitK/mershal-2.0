@@ -15,7 +15,7 @@ function countWords(text: string) {
   return text.trim().split(/\s+/).length;
 }
 
-// Submit URL to Google Indexing API (fire-and-forget, won't block the response)
+// Submit URL to Google Indexing API
 async function notifyGoogle(slug: string) {
   try {
     const email = process.env.GOOGLE_INDEXING_EMAIL;
@@ -30,7 +30,7 @@ async function notifyGoogle(slug: string) {
     });
 
     const indexing = google.indexing({ version: 'v3', auth });
-    const url = `https://mershal.in/news/${slug}`;
+    const url = `https://mershal.in/articles/${slug}`;
 
     await indexing.urlNotifications.publish({
       requestBody: { url, type: 'URL_UPDATED' },
@@ -38,12 +38,11 @@ async function notifyGoogle(slug: string) {
 
     console.log('✓ Submitted to Google Indexing:', url);
   } catch (err: any) {
-    // Non-fatal — log and continue
     console.warn('Google Indexing skipped:', err.message);
   }
 }
 
-// GET - list all posts or single post
+// GET - list all articles or single article
 export const GET: APIRoute = async ({ url, cookies }) => {
   if (!isAuthenticated(cookies)) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
@@ -56,34 +55,65 @@ export const GET: APIRoute = async ({ url, cookies }) => {
 
   try {
     if (id) {
-      const doc = await adminDb.collection('posts').doc(id).get();
+      let doc = await adminDb.collection('articles').doc(id).get();
+      if (!doc.exists) {
+        // Fallback search in legacy posts
+        doc = await adminDb.collection('posts').doc(id).get();
+      }
       if (!doc.exists) return new Response(JSON.stringify({ error: 'Not found' }), { status: 404 });
-      return new Response(JSON.stringify({ id: doc.id, ...doc.data() }), {
+      
+      const d = doc.data() || {};
+      return new Response(JSON.stringify({
+        id: doc.id,
+        title: d.title,
+        slug: d.slug,
+        excerpt: d.excerpt,
+        content: d.content,
+        category: d.category,
+        tags: d.tags || [],
+        featuredImage: d.featured_image || d.featuredImage || '',
+        author: d.author,
+        status: d.status,
+        meta_title: d.meta_title || d.seoTitle || '',
+        meta_description: d.meta_description || d.seoDescription || '',
+        faq_items: d.faq_items || [],
+        schema_data: d.schema_data || {},
+      }), {
         headers: { 'Content-Type': 'application/json' },
       });
     }
 
-    const snapshot = await adminDb.collection('posts').orderBy('publishedAt', 'desc').limit(100).get();
-    const posts = snapshot.docs.map(doc => ({
-      id: doc.id,
-      title: doc.data().title,
-      slug: doc.data().slug,
-      category: doc.data().category,
-      status: doc.data().status,
-      author: doc.data().author,
-      publishedAt: doc.data().publishedAt?.toDate?.()?.toISOString() || null,
-      wordCount: doc.data().wordCount || 0,
-    }));
+    // List all articles
+    let snapshot = await adminDb.collection('articles').orderBy('publish_date', 'desc').limit(100).get();
+    
+    if (snapshot.empty) {
+      // Fallback list
+      snapshot = await adminDb.collection('posts').orderBy('publishedAt', 'desc').limit(100).get();
+    }
+
+    const posts = snapshot.docs.map(doc => {
+      const d = doc.data();
+      return {
+        id: doc.id,
+        title: d.title,
+        slug: d.slug,
+        category: d.category,
+        status: d.status,
+        author: d.author,
+        publishedAt: d.publish_date?.toDate?.()?.toISOString() || d.publishedAt?.toDate?.()?.toISOString() || null,
+        wordCount: d.wordCount || d.word_count || 0,
+      };
+    });
 
     return new Response(JSON.stringify(posts), {
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (e: any) {
-    return new Response(JSON.stringify({ error: e.message }), { status: 500 });
+    return new Response(JSON.stringify({ error: e.message }), { status: 550 });
   }
 };
 
-// POST - create new post
+// POST - create new article
 export const POST: APIRoute = async ({ request, cookies }) => {
   if (!isAuthenticated(cookies)) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
@@ -98,35 +128,37 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     const wordCount = countWords(data.content?.replace(/<[^>]*>/g, '') || '');
     const readingTime = Math.ceil(wordCount / 200);
 
-    // Check duplicate slug
-    const existing = await adminDb.collection('posts').where('slug', '==', slug).limit(1).get();
+    // Check duplicate slug in articles
+    const existing = await adminDb.collection('articles').where('slug', '==', slug).limit(1).get();
     if (!existing.empty) {
-      return new Response(JSON.stringify({ error: 'A post with this slug already exists' }), { status: 409 });
+      return new Response(JSON.stringify({ error: 'An article with this slug already exists' }), { status: 409 });
     }
 
-    const post = {
+    const articleDoc = {
       title: data.title,
       slug,
       excerpt: data.excerpt || '',
       content: data.content || '',
-      category: data.category || 'technology',
+      category: data.category || 'AI Tools',
       tags: data.tags || [],
-      featuredImage: data.featuredImage || '',
+      featured_image: data.featuredImage || data.featured_image || '',
       author: data.author || 'Archit Karmakar',
       status: data.status || 'published',
-      seoTitle: data.seoTitle || data.title,
-      seoDescription: data.seoDescription || data.excerpt || '',
+      meta_title: data.meta_title || data.seoTitle || data.title,
+      meta_description: data.meta_description || data.seoDescription || data.excerpt || '',
       wordCount,
       readingTime,
-      publishedAt: admin.firestore.FieldValue.serverTimestamp(),
-      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      publish_date: admin.firestore.FieldValue.serverTimestamp(),
+      updated_date: admin.firestore.FieldValue.serverTimestamp(),
+      faq_items: data.faq_items || [],
+      schema_data: data.schema_data || { article_type: 'BlogPosting' },
     };
 
-    const ref = await adminDb.collection('posts').add(post);
+    const ref = await adminDb.collection('articles').add(articleDoc);
 
     // Auto-submit to Google Indexing if published
-    if (post.status === 'published') {
-      notifyGoogle(slug); // fire-and-forget
+    if (articleDoc.status === 'published') {
+      notifyGoogle(slug);
     }
 
     return new Response(JSON.stringify({ id: ref.id, slug }), {
@@ -138,7 +170,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
   }
 };
 
-// PUT - update post
+// PUT - update article
 export const PUT: APIRoute = async ({ request, cookies }) => {
   if (!isAuthenticated(cookies)) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
@@ -155,16 +187,37 @@ export const PUT: APIRoute = async ({ request, cookies }) => {
     const wordCount = countWords(fields.content?.replace(/<[^>]*>/g, '') || '');
     const readingTime = Math.ceil(wordCount / 200);
 
-    await adminDb.collection('posts').doc(id).update({
-      ...fields,
+    const articleDoc = {
+      title: fields.title,
+      slug: fields.slug,
+      excerpt: fields.excerpt || '',
+      content: fields.content || '',
+      category: fields.category || 'AI Tools',
+      tags: fields.tags || [],
+      featured_image: fields.featuredImage || fields.featured_image || '',
+      author: fields.author || 'Archit Karmakar',
+      status: fields.status || 'published',
+      meta_title: fields.meta_title || fields.seoTitle || fields.title,
+      meta_description: fields.meta_description || fields.seoDescription || fields.excerpt || '',
       wordCount,
       readingTime,
-      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-    });
+      updated_date: admin.firestore.FieldValue.serverTimestamp(),
+      faq_items: fields.faq_items || [],
+      schema_data: fields.schema_data || { article_type: 'BlogPosting' },
+    };
+
+    // Check if updating in articles or legacy posts
+    let ref = adminDb.collection('articles').doc(id);
+    const checkDoc = await ref.get();
+    if (!checkDoc.exists) {
+      ref = adminDb.collection('posts').doc(id);
+    }
+    
+    await ref.update(articleDoc);
 
     // Auto-submit to Google Indexing if publishing
     if (fields.status === 'published' && fields.slug) {
-      notifyGoogle(fields.slug); // fire-and-forget
+      notifyGoogle(fields.slug);
     }
 
     return new Response(JSON.stringify({ success: true }), {
@@ -175,7 +228,7 @@ export const PUT: APIRoute = async ({ request, cookies }) => {
   }
 };
 
-// DELETE - delete post
+// DELETE - delete article
 export const DELETE: APIRoute = async ({ url, cookies }) => {
   if (!isAuthenticated(cookies)) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
@@ -188,7 +241,13 @@ export const DELETE: APIRoute = async ({ url, cookies }) => {
   if (!id) return new Response(JSON.stringify({ error: 'Missing id' }), { status: 400 });
 
   try {
-    await adminDb.collection('posts').doc(id).delete();
+    let ref = adminDb.collection('articles').doc(id);
+    const checkDoc = await ref.get();
+    if (!checkDoc.exists) {
+      ref = adminDb.collection('posts').doc(id);
+    }
+
+    await ref.delete();
     return new Response(JSON.stringify({ success: true }), {
       headers: { 'Content-Type': 'application/json' },
     });

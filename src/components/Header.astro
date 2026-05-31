@@ -1,190 +1,220 @@
 ---
-import { getCurrentWeather, getWeatherEmoji } from '../lib/weather';
-
 const categories = [
-  { name: 'Home', slug: '/' },
-  { name: 'World', slug: '/category/world' },
-  { name: 'Politics', slug: '/category/politics' },
-  { name: 'Business', slug: '/category/business' },
-  { name: 'Technology', slug: '/category/technology' },
-  { name: 'Sports', slug: '/category/sports' },
-  { name: 'Entertainment', slug: '/category/entertainment' },
+  { name: 'AI Tools', slug: '/category/ai-tools' },
+  { name: 'SaaS Reviews', slug: '/category/saas-reviews' },
+  { name: 'Productivity', slug: '/category/productivity' },
+  { name: 'Freelancing', slug: '/category/freelancing' },
+  { name: 'Online Business', slug: '/category/online-business' },
+  { name: 'CRM', slug: '/category/crm' },
+  { name: 'Marketing', slug: '/category/marketing' },
 ];
 
-const weatherData = await getCurrentWeather('Kolkata');
-const currentTemp = weatherData?.current.temp_c || 25;
-const weatherEmoji = weatherData ? getWeatherEmoji(weatherData.current.condition.text) : '🌤️';
-const condition = weatherData?.current.condition.text || 'Partly Cloudy';
-
 const today = new Date();
-const dayName = today.toLocaleDateString('en-US', { weekday: 'long' });
 const shortDate = today.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 ---
 
-<header class="sticky top-0 z-50 shadow-md">
+<header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-sm transition-all duration-300">
+  <!-- Top decorative thin brand accent bar -->
+  <div class="h-1 bg-gradient-to-r from-primary-crimson via-primary-gold to-primary-crimson w-full"></div>
 
-  <!-- ── Row 1: Red top bar (date / weather / social) ── -->
-  <div class="bg-red-600 text-white">
-    <div class="container mx-auto px-4 max-w-7xl">
-      <div class="flex items-center justify-between py-1.5 text-xs">
+  <!-- Primary navigation rows -->
+  <div class="container mx-auto px-4 max-w-7xl">
+    <div class="flex items-center justify-between h-20">
+      
+      <!-- Mobile menu hamburger trigger -->
+      <button id="mobile-menu-btn" class="lg:hidden text-slate-700 hover:text-primary-crimson p-2 rounded-lg hover:bg-slate-50 transition flex-shrink-0" aria-label="Open Menu">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
 
-        <!-- Left: date + time + weather -->
-        <div class="flex items-center gap-4">
-          <span class="font-semibold hidden sm:inline">{dayName},</span>
-          <span class="text-red-100">{shortDate}</span>
-          <span class="text-red-300 hidden md:inline">|</span>
-          <span id="live-time" class="font-mono hidden md:inline">--:--</span>
-          <span class="text-red-300 hidden lg:inline">|</span>
-          <span class="hidden lg:flex items-center gap-1">
-            <span>{weatherEmoji}</span>
-            <span class="font-semibold">{currentTemp}°C</span>
-            <span class="text-red-200">{condition}</span>
-          </span>
-        </div>
+      <!-- Centered/Left-aligned brand logo -->
+      <a href="/" class="flex items-center gap-3 flex-shrink-0">
+        <img src="/logo.png" alt="Mershal Logo" class="mobile-logo-adjust object-contain transition-transform duration-300 hover:scale-102" />
+      </a>
 
-        <!-- Right: social icons -->
-        <div class="flex items-center gap-3">
-          <a href="#" aria-label="Facebook" class="hover:text-red-200 transition">
-            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-          </a>
-          <a href="#" aria-label="Twitter/X" class="hover:text-red-200 transition">
-            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-          </a>
-          <a href="#" aria-label="YouTube" class="hover:text-red-200 transition">
-            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-          </a>
-          <a href="#" aria-label="Instagram" class="hover:text-red-200 transition">
-            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
-          </a>
-          <span class="text-red-300 hidden sm:inline">|</span>
-          <a href="/admin" class="hidden sm:inline text-red-100 hover:text-white transition text-xs font-medium">Admin</a>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── Row 2: White logo bar ── -->
-  <div class="bg-white border-b border-gray-200">
-    <div class="container mx-auto px-4 max-w-7xl">
-      <div class="flex items-center justify-between py-3">
-
-        <!-- Mobile hamburger -->
-        <button id="mobile-menu-btn" class="lg:hidden text-gray-700 hover:text-red-600 p-1" aria-label="Menu">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
-          </svg>
-        </button>
-
-        <!-- Logo — centered on desktop -->
-        <a href="/" class="flex-1 flex justify-center lg:justify-center">
-          <div class="flex flex-col items-center">
-            <span class="text-4xl md:text-5xl font-black text-red-600 logo-font tracking-tighter leading-none">Mershal</span>
-            <span class="text-xs text-gray-400 tracking-widest uppercase font-medium mt-0.5">World News</span>
-          </div>
-        </a>
-
-        <!-- Right: search icon placeholder -->
-        <div class="flex items-center gap-3">
-          <button class="text-gray-500 hover:text-red-600 transition" aria-label="Search">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-            </svg>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── Row 3: Dark red nav bar ── -->
-  <nav class="bg-red-700 text-white">
-    <div class="container mx-auto px-4 max-w-7xl">
-      <div class="hidden lg:flex items-center overflow-x-auto scrollbar-hide">
+      <!-- Desktop main links -->
+      <nav class="hidden lg:flex items-center gap-1.5">
         {categories.map(cat => (
           <a
             href={cat.slug}
-            class="px-4 py-2.5 text-sm font-bold uppercase tracking-wide whitespace-nowrap hover:bg-red-800 hover:text-white transition border-r border-red-600 last:border-r-0"
+            class="px-3.5 py-2 text-xs font-black uppercase tracking-wider text-slate-600 hover:text-primary-crimson hover:bg-slate-50 rounded-lg transition-all duration-200"
           >
             {cat.name}
           </a>
         ))}
-      </div>
-      <!-- Mobile nav (shown when hamburger open) -->
-      <div id="mobile-nav" class="lg:hidden hidden py-2">
-        {categories.map(cat => (
-          <a href={cat.slug} class="block px-4 py-2 text-sm font-bold uppercase tracking-wide hover:bg-red-800 transition">
-            {cat.name}
-          </a>
-        ))}
-      </div>
-    </div>
-  </nav>
+      </nav>
 
-  <!-- ── Mobile Sidebar ── -->
-  <div id="mobile-sidebar" class="fixed inset-0 bg-black/60 z-50 hidden backdrop-blur-sm">
-    <div id="sidebar-content" class="fixed left-0 top-0 bottom-0 w-72 bg-white shadow-2xl transform -translate-x-full transition-transform duration-300">
-      <div class="bg-red-700 text-white p-4 flex items-center justify-between">
-        <span class="text-xl font-black logo-font">Mershal</span>
-        <button id="close-sidebar" class="hover:bg-red-800 p-1.5 rounded transition" aria-label="Close">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+      <!-- Right utility tools (date / search / admin access) -->
+      <div class="flex items-center gap-3 md:gap-4 flex-shrink-0">
+        <time class="hidden xl:inline text-xs font-bold text-slate-400 font-mono">{shortDate}</time>
+        <span class="hidden xl:inline text-slate-200 font-light">|</span>
+        
+        <!-- Search dialog trigger -->
+        <button id="search-trigger" class="text-slate-500 hover:text-primary-crimson hover:bg-slate-50 p-2 rounded-lg transition-colors" aria-label="Search articles">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
           </svg>
         </button>
-      </div>
-      <nav class="divide-y divide-gray-100">
-        {categories.map(cat => (
-          <a href={cat.slug} class="flex items-center justify-between px-5 py-3 text-sm font-bold text-gray-800 hover:text-red-600 hover:bg-red-50 transition uppercase tracking-wide">
-            {cat.name}
-            <svg class="w-3.5 h-3.5 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
-          </a>
-        ))}
-      </nav>
-      <div class="p-4 border-t border-gray-100 mt-2">
-        <div class="flex gap-4 justify-center">
-          <a href="/about" class="text-xs text-gray-500 hover:text-red-600 transition">About</a>
-          <a href="/contact" class="text-xs text-gray-500 hover:text-red-600 transition">Contact</a>
-          <a href="/advertise" class="text-xs text-gray-500 hover:text-red-600 transition">Advertise</a>
-        </div>
+
+        <a href="/admin" class="hidden sm:inline-flex items-center justify-center bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-lg shadow-md hover:shadow-lg transition-all">
+          Write
+        </a>
       </div>
     </div>
   </div>
 
+  <!-- Mobile Dropdown Navigation Drawer -->
+  <div id="mobile-nav" class="lg:hidden hidden border-t border-slate-100 bg-white shadow-inner max-h-[80vh] overflow-y-auto">
+    <div class="p-4 space-y-1">
+      {categories.map(cat => (
+        <a href={cat.slug} class="block px-4 py-3 rounded-lg text-sm font-black uppercase tracking-wide text-slate-700 hover:bg-slate-50 hover:text-primary-crimson transition">
+          {cat.name}
+        </a>
+      ))}
+      <div class="pt-4 border-t border-slate-100 mt-2 flex gap-3">
+        <a href="/admin" class="flex-1 text-center bg-slate-900 text-white font-bold text-xs uppercase py-3 rounded-lg shadow-sm">
+          Admin Dashboard
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Modal Backdrop Overlay -->
+  <div id="search-modal" class="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm flex items-start justify-center pt-[10vh] px-4 hidden">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl overflow-hidden border border-slate-100 animate-in fade-in zoom-in-95 duration-200">
+      <div class="p-4 border-b border-slate-100 flex items-center gap-3 bg-slate-50">
+        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <input
+          type="text"
+          id="search-input"
+          placeholder="Search AI Tools, reviews, guides..."
+          class="flex-1 bg-transparent text-sm focus:outline-none text-slate-800 placeholder-slate-400"
+          autocomplete="off"
+        />
+        <button id="close-search" class="text-xs font-semibold text-slate-400 hover:text-slate-600 bg-slate-200/50 hover:bg-slate-200 px-2.5 py-1.5 rounded-md transition">
+          Esc
+        </button>
+      </div>
+      <div id="search-results" class="max-h-[350px] overflow-y-auto p-2 divide-y divide-slate-50 empty:hidden">
+        <!-- Results populated dynamically via client scripts -->
+      </div>
+      <div id="search-empty" class="p-8 text-center text-slate-400 text-sm">
+        Type to search articles...
+      </div>
+    </div>
+  </div>
 </header>
 
 <script>
-  // Live time
-  function updateTime() {
-    const el = document.getElementById('live-time');
-    if (el) el.textContent = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
-  }
-  updateTime();
-  setInterval(updateTime, 1000);
+  // Dynamic mobile menu toggle
+  const mobileBtn = document.getElementById('mobile-menu-btn');
+  const mobileNav = document.getElementById('mobile-nav');
 
-  // Mobile hamburger → sidebar
-  const btn = document.getElementById('mobile-menu-btn');
-  const sidebar = document.getElementById('mobile-sidebar');
-  const content = document.getElementById('sidebar-content');
-  const closeBtn = document.getElementById('close-sidebar');
+  mobileBtn?.addEventListener('click', () => {
+    mobileNav?.classList.toggle('hidden');
+  });
 
-  function openSidebar() {
-    sidebar?.classList.remove('hidden');
-    setTimeout(() => content?.classList.remove('-translate-x-full'), 10);
-  }
-  function closeSidebar() {
-    content?.classList.add('-translate-x-full');
-    setTimeout(() => sidebar?.classList.add('hidden'), 300);
+  // Modal Search Mechanics
+  const searchTrigger = document.getElementById('search-trigger');
+  const searchModal = document.getElementById('search-modal');
+  const closeSearch = document.getElementById('close-search');
+  const searchInput = document.getElementById('search-input') as HTMLInputElement;
+  const searchResults = document.getElementById('search-results') as HTMLDivElement;
+  const searchEmpty = document.getElementById('search-empty') as HTMLDivElement;
+
+  function openSearch() {
+    searchModal?.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => searchInput?.focus(), 50);
   }
 
-  btn?.addEventListener('click', openSidebar);
-  closeBtn?.addEventListener('click', closeSidebar);
-  sidebar?.addEventListener('click', (e) => { if (e.target === sidebar) closeSidebar(); });
+  function closeSearchModal() {
+    searchModal?.classList.add('hidden');
+    document.body.style.overflow = '';
+    if (searchInput) searchInput.value = '';
+    if (searchResults) searchResults.innerHTML = '';
+    if (searchEmpty) {
+      searchEmpty.textContent = 'Type to search articles...';
+      searchEmpty.classList.remove('hidden');
+    }
+  }
+
+  searchTrigger?.addEventListener('click', openSearch);
+  closeSearch?.addEventListener('click', closeSearchModal);
+  searchModal?.addEventListener('click', (e) => {
+    if (e.target === searchModal) closeSearchModal();
+  });
+
+  // Global escape key handler
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeSearchModal();
+  });
+
+  // Simple client-side search lookup using Firestore query or a JSON search index endpoint
+  let articlesIndex: any[] = [];
+  let isFetchingIndex = false;
+
+  async function fetchSearchIndex() {
+    if (articlesIndex.length > 0 || isFetchingIndex) return;
+    isFetchingIndex = true;
+    try {
+      // Query standard articles lists from the server dynamic endpoint
+      const response = await fetch('/api/articles');
+      if (response.ok) {
+        articlesIndex = await response.json();
+      }
+    } catch (err) {
+      console.error('Failed to load search index:', err);
+    } finally {
+      isFetchingIndex = false;
+    }
+  }
+
+  searchInput?.addEventListener('focus', fetchSearchIndex);
+  searchInput?.addEventListener('input', () => {
+    const q = searchInput.value.toLowerCase().trim();
+    if (!q) {
+      searchResults.innerHTML = '';
+      searchEmpty.textContent = 'Type to search articles...';
+      searchEmpty.classList.remove('hidden');
+      return;
+    }
+
+    const matches = articlesIndex.filter(art => 
+      art.title?.toLowerCase().includes(q) || 
+      art.excerpt?.toLowerCase().includes(q) ||
+      art.tags?.some((t: string) => t.toLowerCase().includes(q))
+    );
+
+    if (matches.length === 0) {
+      searchResults.innerHTML = '';
+      searchEmpty.textContent = `No results found for "${q}"`;
+      searchEmpty.classList.remove('hidden');
+      return;
+    }
+
+    searchEmpty.classList.add('hidden');
+    searchResults.innerHTML = matches.slice(0, 5).map(art => `
+      <a href="/articles/${art.slug}" class="block p-3 rounded-lg hover:bg-slate-50 transition-colors">
+        <span class="text-xs uppercase font-extrabold text-primary-crimson tracking-wider">${art.category || 'Article'}</span>
+        <h4 class="text-sm font-bold text-slate-800 line-clamp-1 mt-0.5">${art.title}</h4>
+        <p class="text-xs text-slate-400 line-clamp-1 mt-0.5">${art.excerpt}</p>
+      </a>
+    `).join('');
+  });
 </script>
 
 <style>
-  .logo-font {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 900;
-    letter-spacing: -0.04em;
+  .mobile-logo-adjust {
+    height: 28px !important;
+    width: auto !important;
   }
-  .scrollbar-hide::-webkit-scrollbar { display: none; }
-  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+  @media (min-width: 768px) {
+    .mobile-logo-adjust {
+      height: 36px !important;
+    }
+  }
 </style>
