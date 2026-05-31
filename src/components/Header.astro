@@ -13,54 +13,137 @@ const today = new Date();
 const shortDate = today.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 ---
 
-<header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-sm transition-all duration-300">
+<header class="sticky top-0 z-50 bg-white border-b border-slate-200/80 shadow-sm transition-all duration-300">
   <!-- Top decorative thin brand accent bar -->
   <div class="h-1 bg-gradient-to-r from-primary-crimson via-primary-gold to-primary-crimson w-full"></div>
 
-  <!-- Primary navigation rows -->
-  <div class="container mx-auto px-4 max-w-7xl">
-    <div class="flex items-center justify-between h-20">
+  <!-- Row 1: Brand Logo & Primary Action Row -->
+  <div class="border-b border-slate-100 bg-white">
+    <div class="container mx-auto px-4 max-w-7xl flex items-center justify-between h-16 md:h-20">
       
-      <!-- Mobile menu hamburger trigger -->
-      <button id="mobile-menu-btn" class="lg:hidden text-slate-700 hover:text-primary-crimson p-2 rounded-lg hover:bg-slate-50 transition flex-shrink-0" aria-label="Open Menu">
-        <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
-        </svg>
-      </button>
+      <!-- Left side: Hamburger + Logo + Horizontal Quick Links -->
+      <div class="flex items-center gap-4">
+        <!-- Mobile menu hamburger trigger -->
+        <button id="mobile-menu-btn" class="lg:hidden text-slate-700 hover:text-primary-crimson p-2 rounded-lg hover:bg-slate-50 transition flex-shrink-0" aria-label="Open Menu">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
 
-      <!-- Centered/Left-aligned brand logo -->
-      <a href="/" class="flex items-center gap-3 flex-shrink-0">
-        <img src="/logo.png" alt="Mershal Logo" class="mobile-logo-adjust object-contain transition-transform duration-300 hover:scale-102" />
-      </a>
+        <!-- Brand logo -->
+        <a href="/" class="flex items-center flex-shrink-0 mr-2 md:mr-4">
+          <img src="/logo.png" alt="Mershal Logo" class="mobile-logo-adjust object-contain transition-transform duration-300 hover:scale-[1.01]" />
+        </a>
 
-      <!-- Desktop main links -->
-      <nav class="hidden lg:flex items-center gap-1.5">
+        <!-- Horizontal Quick Links with Icons (Desktop Only) -->
+        <nav class="hidden lg:flex items-center gap-2">
+          <!-- News / Home -->
+          <a href="/" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-wider bg-primary-crimson/10 text-primary-crimson border border-primary-crimson/5 hover:bg-primary-crimson/15 transition-all">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+            </svg>
+            Home
+          </a>
+          <!-- SaaS Reviews -->
+          <a href="/category/saas-reviews" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-wider text-slate-600 hover:text-primary-crimson hover:bg-slate-50 transition-all">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499c.172-.376.702-.376.874 0l2.23 4.518 4.984.724c.414.06.58.567.28.854l-3.606 3.513 1.123 4.954c.093.412-.34.726-.708.532l-4.52-2.379-4.52 2.379c-.368.194-.801-.12-.708-.532l1.123-4.954-3.606-3.513c-.3-.287-.133-.794.28-.854l4.984-.724 2.23-4.52z" />
+            </svg>
+            SaaS Reviews
+          </a>
+          <!-- AI Tools -->
+          <a href="/category/ai-tools" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-wider text-slate-600 hover:text-primary-crimson hover:bg-slate-50 transition-all">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21l8.988-8.102a.5.5 0 00-.327-.898h-4.834L14.187 7 5.2 15.102a.5.5 0 00.327.898h4.286z" />
+            </svg>
+            AI Tools
+          </a>
+          <!-- Productivity -->
+          <a href="/category/productivity" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-wider text-slate-600 hover:text-primary-crimson hover:bg-slate-50 transition-all">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 002-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+            </svg>
+            Productivity
+          </a>
+        </nav>
+      </div>
+
+      <!-- Right side: Google News Badge + Search Bar + CTA + Profile -->
+      <div class="flex items-center gap-2 md:gap-3 flex-shrink-0">
+        <!-- Google News Follow Badge (Desktop Only) -->
+        <a href="https://news.google.com" target="_blank" rel="noopener noreferrer" class="hidden xl:flex items-center gap-1.5 px-3 py-1.5 border border-slate-200 rounded-lg bg-slate-50 text-slate-600 hover:bg-slate-100 hover:border-slate-300 transition-all text-[11px] font-bold">
+          <svg class="w-4 h-4 text-slate-500" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12.24 10.285V14.4h6.887c-.648 2.41-2.519 4.114-5.136 4.114A5.99 5.99 0 018 12.527a5.99 5.99 0 015.99-5.99c1.472 0 2.81.543 3.84 1.43l3.053-3.054C19.043 3.12 16.657 2 13.99 2 8.122 2 3.36 6.762 3.36 12.63s4.762 10.63 10.63 10.63c6.128 0 10.14-4.304 10.14-10.316 0-.693-.062-1.359-.177-1.996l-11.713-.663z"/>
+          </svg>
+          <span>Follow on Google News</span>
+        </a>
+
+        <!-- Search trigger box (Desktop) / Search trigger icon (Mobile) -->
+        <div class="relative">
+          <div id="search-trigger-bar" class="hidden md:flex items-center gap-2.5 bg-slate-100 hover:bg-slate-200/60 border border-slate-200/50 rounded-full px-4 py-2 w-44 lg:w-56 cursor-pointer transition-colors duration-150">
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <span class="text-xs text-slate-400 select-none">Search Mershal...</span>
+          </div>
+          <button id="search-trigger-mobile" class="md:hidden text-slate-500 hover:text-primary-crimson p-2 rounded-lg hover:bg-slate-50 transition" aria-label="Search">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Subscribe Button -->
+        <a href="#newsletter" class="flex items-center gap-1.5 bg-primary-crimson hover:bg-primary-crimson/95 text-white text-xs font-black uppercase tracking-wider px-4 py-2.5 rounded-lg shadow-sm hover:shadow transition-all flex-shrink-0">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+          </svg>
+          <span class="hidden sm:inline">Subscribe</span>
+        </a>
+
+        <!-- Profile/Admin link -->
+        <a href="/admin" class="text-slate-500 hover:text-primary-crimson p-1.5 rounded-full border border-transparent hover:border-slate-100 transition flex-shrink-0" aria-label="Admin console">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Row 2: Secondary Category Navigation Bar -->
+  <div class="bg-slate-50 border-b border-slate-200/60 py-2">
+    <div class="container mx-auto px-4 max-w-7xl flex items-center justify-between">
+      
+      <!-- Blinking Live Indicator -->
+      <div class="flex items-center gap-1.5 flex-shrink-0 pr-3.5 border-r border-slate-200">
+        <span class="relative flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-crimson opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-primary-crimson"></span>
+        </span>
+        <span class="text-[10px] font-black uppercase tracking-widest text-primary-crimson select-none">Live</span>
+      </div>
+
+      <!-- Scrollable Categories Menu (with swiping for mobile) -->
+      <nav class="flex-1 overflow-x-auto whitespace-nowrap scrollbar-none flex items-center gap-1 px-3">
         {categories.map(cat => (
           <a
             href={cat.slug}
-            class="px-3.5 py-2 text-xs font-black uppercase tracking-wider text-slate-600 hover:text-primary-crimson hover:bg-slate-50 rounded-lg transition-all duration-200"
+            class="px-3.5 py-1 text-xs font-black uppercase tracking-wider text-slate-600 hover:text-primary-crimson transition-all duration-150"
           >
             {cat.name}
           </a>
         ))}
       </nav>
 
-      <!-- Right utility tools (date / search / admin access) -->
-      <div class="flex items-center gap-3 md:gap-4 flex-shrink-0">
-        <time class="hidden xl:inline text-xs font-bold text-slate-400 font-mono">{shortDate}</time>
-        <span class="hidden xl:inline text-slate-200 font-light">|</span>
-        
-        <!-- Search dialog trigger -->
-        <button id="search-trigger" class="text-slate-500 hover:text-primary-crimson hover:bg-slate-50 p-2 rounded-lg transition-colors" aria-label="Search articles">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-          </svg>
-        </button>
-
-        <a href="/admin" class="hidden sm:inline-flex items-center justify-center bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-lg shadow-md hover:shadow-lg transition-all">
-          Write
-        </a>
+      <!-- Right dots placeholder/extra options -->
+      <div class="flex-shrink-0 pl-3.5 border-l border-slate-200 text-slate-400 hover:text-primary-crimson transition-colors cursor-pointer" aria-label="More categories">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+        </svg>
       </div>
+
     </div>
   </div>
 
@@ -118,7 +201,8 @@ const shortDate = today.toLocaleDateString('en-US', { month: 'short', day: 'nume
   });
 
   // Modal Search Mechanics
-  const searchTrigger = document.getElementById('search-trigger');
+  const searchTriggerBar = document.getElementById('search-trigger-bar');
+  const searchTriggerMobile = document.getElementById('search-trigger-mobile');
   const searchModal = document.getElementById('search-modal');
   const closeSearch = document.getElementById('close-search');
   const searchInput = document.getElementById('search-input') as HTMLInputElement;
@@ -142,7 +226,8 @@ const shortDate = today.toLocaleDateString('en-US', { month: 'short', day: 'nume
     }
   }
 
-  searchTrigger?.addEventListener('click', openSearch);
+  searchTriggerBar?.addEventListener('click', openSearch);
+  searchTriggerMobile?.addEventListener('click', openSearch);
   closeSearch?.addEventListener('click', closeSearchModal);
   searchModal?.addEventListener('click', (e) => {
     if (e.target === searchModal) closeSearchModal();
