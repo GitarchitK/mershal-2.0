@@ -13,6 +13,18 @@ const firebaseConfig = {
 };
 
 export const app = initializeApp(firebaseConfig);
+
+// Debug validation to help identify missing variables in client-side bundling
+if (typeof window !== 'undefined') {
+  const missingKeys = Object.entries(firebaseConfig)
+    .filter(([_, value]) => !value)
+    .map(([key]) => 'PUBLIC_FIREBASE_' + key.replace(/([A-Z])/g, '_$1').toUpperCase());
+  if (missingKeys.length > 0) {
+    console.error('❌ Firebase Client Configuration Error: Missing environment variables in client bundle:', missingKeys);
+    console.error('If running locally, restart your dev server. If on Vercel, add these to your Vercel Project Settings and redeploy.');
+  }
+}
+
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 export const auth = getAuth(app);
