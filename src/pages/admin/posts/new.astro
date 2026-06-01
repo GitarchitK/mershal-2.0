@@ -59,6 +59,9 @@ if (session?.value !== 'authenticated') return Astro.redirect('/admin');
             <button type="button" id="btn-warning" class="px-2.5 py-1.5 rounded bg-amber-900/80 hover:bg-amber-800 text-amber-100 transition" title="Insert Warning Callout">⚠️ Warning</button>
             <button type="button" id="btn-info" class="px-2.5 py-1.5 rounded bg-blue-900/80 hover:bg-blue-800 text-blue-100 transition" title="Insert Info Callout">ℹ️ Info</button>
             <button type="button" id="btn-step" class="px-2.5 py-1.5 rounded bg-rose-900/80 hover:bg-rose-800 text-rose-100 transition" title="Insert Step Block">🔢 Step</button>
+            
+            <span class="w-[1px] h-5 bg-gray-700 mx-1"></span>
+            <button type="button" id="btn-template" class="px-2.5 py-1.5 rounded bg-rose-600 hover:bg-rose-500 text-white font-semibold transition" title="Load Article Template">📄 Load Template</button>
           </div>
           
           <!-- Editor Content Area -->
@@ -180,6 +183,111 @@ if (session?.value !== 'authenticated') return Astro.redirect('/admin');
       const number = window.prompt('Step Number (e.g. 1):', '1');
       if (number) {
         editor.chain().focus().insertContent(`<div class="step"><div class="step-number">${number}</div><div><h4>Step Title</h4><p>Step explanation here...</p></div></div><p></p>`).run();
+      }
+    });
+
+    const ARTICLE_TEMPLATE_HTML = `
+      <h2>Overview of the Topic</h2>
+      <p>Write an engaging introduction hook here explaining the core problem and your solution. Emphasize keywords using the bold option or formatting options.</p>
+
+      <div class="info-box">
+        <p>ℹ️ <strong>Note:</strong> Enter interesting facts, market stats, or context regarding this topic here.</p>
+      </div>
+
+      <h2>Step-by-Step Implementation Guide</h2>
+
+      <div class="step">
+        <div class="step-number">1</div>
+        <div>
+          <h4>Establish Your First Step</h4>
+          <p>Describe what the reader needs to do in this initial step. Provide actionable detail and clear instructions.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">2</div>
+        <div>
+          <h4>Configure and Execute the Action</h4>
+          <p>Explain the next sequential step in the process, detailing any tools or software options required.</p>
+        </div>
+      </div>
+
+      <div class="tip-box">
+        <p>💡 <strong>Tip:</strong> Provide a useful operational hint or shortcut here to help the reader save time.</p>
+      </div>
+
+      <h2>Comparison of Key Options & Tools</h2>
+      <p>Here is a side-by-side comparison of the leading platforms or methods available:</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Option/Tool</th>
+            <th>Key Features</th>
+            <th>Pricing Model</th>
+            <th>Ideal For</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Example A</strong></td>
+            <td>Feature details here</td>
+            <td>Free / Paid (From $19/mo)</td>
+            <td>Beginners / Small scale</td>
+          </tr>
+          <tr>
+            <td><strong>Example B</strong></td>
+            <td>Feature details here</td>
+            <td>Paid (From $49/mo)</td>
+            <td>Enterprise developers</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Common Pitfalls & Best Practices</h2>
+      <p>Review these critical errors to avoid scaling bottlenecks or wasted resources.</p>
+
+      <div class="warning-box">
+        <p>⚠️ <strong>Warning:</strong> Identify a common mistake that readers make when executing this workflow and how to prevent it.</p>
+      </div>
+
+      <h2>Frequently Asked Questions</h2>
+      <h3>Q: What is the estimated time to implement this workflow?</h3>
+      <p>A: Most users can complete this setup in under 30 minutes using standard integration triggers.</p>
+
+      <h3>Q: Do I need premium subscriptions for these tools?</h3>
+      <p>A: Many of the tools listed offer robust free tiers suitable for testing and small-scale operations.</p>
+
+      <h2>Conclusion & Next Steps</h2>
+      <p>Summarize the main takeaways. Share your feedback in the comments, and don't forget to join our newsletter to stay updated on the latest AI and SaaS releases!</p>
+    `;
+
+    document.getElementById('btn-template')?.addEventListener('click', () => {
+      if (window.confirm("Are you sure you want to load the article template? This will replace your current editor content.")) {
+        editor.commands.setContent(ARTICLE_TEMPLATE_HTML);
+        
+        // Auto-fill form details with professional placeholder content
+        const titleInput = document.getElementById('title') as HTMLInputElement;
+        if (titleInput && !titleInput.value) {
+          titleInput.value = "How to Build a Low-Code SaaS Business Automation Workflow";
+          titleInput.dispatchEvent(new Event('input'));
+        }
+        
+        const excerptTextarea = document.getElementById('excerpt') as HTMLTextAreaElement;
+        if (excerptTextarea && !excerptTextarea.value) {
+          excerptTextarea.value = "Learn how to build a low-code SaaS business automation workflow to connect your tools, automate data pipes, and scale your business without touching a line of code.";
+        }
+        
+        const tagsInput = document.getElementById('tags') as HTMLInputElement;
+        if (tagsInput && !tagsInput.value) {
+          tagsInput.value = "saas, productivity, automation, tutorial";
+        }
+        
+        const featuredImageInput = document.getElementById('featured-image') as HTMLInputElement;
+        if (featuredImageInput && !featuredImageInput.value) {
+          featuredImageInput.value = "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80";
+          featuredImageInput.dispatchEvent(new Event('input'));
+        }
       }
     });
 
