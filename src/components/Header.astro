@@ -101,15 +101,6 @@ const shortDate = today.toLocaleDateString('en-US', { month: 'short', day: 'nume
   <div class="bg-slate-50 border-b border-slate-200/60 py-2">
     <div class="container mx-auto px-4 max-w-7xl flex items-center justify-between min-w-0">
       
-      <!-- Blinking Live Indicator -->
-      <div class="flex items-center gap-1.5 flex-shrink-0 pr-3.5 border-r border-slate-200">
-        <span class="relative flex h-2 w-2">
-          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-crimson opacity-75"></span>
-          <span class="relative inline-flex rounded-full h-2 w-2 bg-primary-crimson"></span>
-        </span>
-        <span class="text-[10px] font-black uppercase tracking-widest text-primary-crimson select-none">Live</span>
-      </div>
-
       <!-- Scrollable Categories Menu (with swiping for mobile) -->
       <nav class="flex-1 min-w-0 overflow-x-auto whitespace-nowrap scrollbar-none flex items-center gap-1 px-3">
         {categories.map(cat => (
