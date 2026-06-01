@@ -18,6 +18,11 @@ export default defineConfig({
     inlineStylesheets: 'always',
   },
   vite: {
+    build: {
+      modulePreload: {
+        polyfill: false,
+      },
+    },
     plugins: [tailwindcss()]
   }
 });
