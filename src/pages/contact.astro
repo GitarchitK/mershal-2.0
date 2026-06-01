@@ -7,20 +7,24 @@ import BottomNav from '../components/BottomNav.astro';
 ---
 
 <Layout
-  title="Contact Us — Mershal World News"
-  description="Get in touch with the Mershal editorial team. Submit news tips, corrections, advertising enquiries, or general questions."
+  title="Contact Us — Mershal"
+  description="Get in touch with the Mershal editorial team. Submit tool reviews, advertising proposals, guest write inquiries, or general questions."
 >
   <Header />
 
-  <main class="bg-white pb-20 md:pb-8">
+  <main class="bg-slate-50 pb-20 md:pb-8 font-sans text-slate-800">
 
-    <!-- Page Header -->
-    <div class="bg-red-600 text-white">
-      <div class="container mx-auto px-4 max-w-5xl py-12">
-        <p class="text-red-200 text-xs font-bold uppercase tracking-widest mb-2">Reach Out</p>
-        <h1 class="text-4xl md:text-5xl font-black leading-tight mb-4">Contact Us</h1>
-        <p class="text-red-100 text-lg max-w-2xl leading-relaxed">
-          News tips, corrections, advertising, or general enquiries — we'd love to hear from you.
+    <!-- Page Header Hero Banner -->
+    <div class="relative bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white border-b border-slate-850 py-16 overflow-hidden">
+      <div class="absolute right-0 top-0 w-[300px] h-[300px] bg-primary-crimson/10 rounded-full blur-3xl"></div>
+      <div class="container mx-auto px-4 max-w-5xl relative z-10">
+        <p class="text-primary-gold text-xs font-black uppercase tracking-widest mb-2 flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-primary-gold animate-pulse"></span>
+          Connect With Us
+        </p>
+        <h1 class="text-4xl md:text-5xl font-serif font-black leading-tight mb-4">Contact Us</h1>
+        <p class="text-slate-300 text-lg max-w-2xl leading-relaxed">
+          Questions about tool listings, SaaS reviews, sponsorship, or partnerships? We'd love to hear from you.
         </p>
       </div>
     </div>
@@ -30,120 +34,110 @@ import BottomNav from '../components/BottomNav.astro';
 
         <!-- Contact Form -->
         <div class="lg:col-span-2">
-          <h2 class="text-2xl font-black text-gray-900 mb-1 pb-2 border-b-4 border-red-600 inline-block">Send a Message</h2>
+          <div class="bg-white rounded-2xl border border-slate-100 p-6 md:p-8 shadow-sm">
+            <h2 class="text-2xl font-serif font-black text-slate-900 mb-4 pb-2 border-b-2 border-primary-crimson inline-block">Send a Message</h2>
+            <p class="text-sm text-slate-500 mb-6">Required fields are marked with an asterisk (*).</p>
 
-          <form id="contact-form" class="mt-6 space-y-5">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <div>
-                <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Full Name *</label>
-                <input
-                  type="text" id="name" name="name" required
-                  placeholder="Your full name"
-                  class="w-full border border-gray-300 px-4 py-3 text-sm text-gray-900 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition"
-                />
+            <form id="contact-form" class="space-y-5">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Full Name *</label>
+                  <input
+                    type="text" id="name" name="name" required
+                    placeholder="Your full name"
+                    class="w-full border border-slate-200 rounded-lg px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-primary-crimson focus:ring-1 focus:ring-primary-crimson transition bg-slate-50/50"
+                  />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Email Address *</label>
+                  <input
+                    type="email" id="email" name="email" required
+                    placeholder="your@email.com"
+                    class="w-full border border-slate-200 rounded-lg px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-primary-crimson focus:ring-1 focus:ring-primary-crimson transition bg-slate-50/50"
+                  />
+                </div>
               </div>
-              <div>
-                <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Email Address *</label>
-                <input
-                  type="email" id="email" name="email" required
-                  placeholder="your@email.com"
-                  class="w-full border border-gray-300 px-4 py-3 text-sm text-gray-900 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition"
-                />
-              </div>
-            </div>
 
-            <div>
-              <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Subject *</label>
-              <select
-                id="subject" name="subject" required
-                class="w-full border border-gray-300 px-4 py-3 text-sm text-gray-900 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition bg-white"
+              <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Subject *</label>
+                <select
+                  id="subject" name="subject" required
+                  class="w-full border border-slate-200 rounded-lg px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-primary-crimson focus:ring-1 focus:ring-primary-crimson transition bg-white"
+                >
+                  <option value="">Select a subject</option>
+                  <option value="review-request">SaaS Review / Tool Listing Submission</option>
+                  <option value="advertising">Advertising / Sponsor Package</option>
+                  <option value="partnership">Business Partnership</option>
+                  <option value="general">General Enquiry</option>
+                  <option value="feedback">Website Feedback</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Message *</label>
+                <textarea
+                  id="message" name="message" rows="6" required
+                  placeholder="Write your details here..."
+                  class="w-full border border-slate-200 rounded-lg px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-primary-crimson focus:ring-1 focus:ring-primary-crimson transition resize-none bg-slate-50/50"
+                ></textarea>
+              </div>
+
+              <div id="form-status" class="hidden p-4 rounded-lg text-sm font-medium"></div>
+
+              <button
+                type="submit" id="submit-btn"
+                class="w-full bg-primary-crimson hover:bg-primary-crimson/95 text-white py-3.5 rounded-lg text-xs font-black uppercase tracking-widest transition shadow-sm hover:shadow"
               >
-                <option value="">Select a subject</option>
-                <option value="news-tip">News Tip / Story Suggestion</option>
-                <option value="correction">Correction or Clarification</option>
-                <option value="advertising">Advertising Enquiry</option>
-                <option value="partnership">Partnership / Collaboration</option>
-                <option value="general">General Question</option>
-                <option value="other">Other</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Message *</label>
-              <textarea
-                id="message" name="message" rows="6" required
-                placeholder="Write your message here..."
-                class="w-full border border-gray-300 px-4 py-3 text-sm text-gray-900 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition resize-none"
-              ></textarea>
-            </div>
-
-            <div id="form-status" class="hidden p-4 text-sm font-medium"></div>
-
-            <button
-              type="submit" id="submit-btn"
-              class="w-full bg-red-600 hover:bg-red-700 text-white py-3.5 text-sm font-black uppercase tracking-widest transition"
-            >
-              Send Message
-            </button>
-          </form>
+                Send Message
+              </button>
+            </form>
+          </div>
         </div>
 
         <!-- Sidebar -->
         <aside class="space-y-6">
 
           <!-- Contact Details -->
-          <div class="border border-gray-200">
-            <div class="bg-gray-900 text-white px-4 py-3">
-              <p class="text-xs font-black uppercase tracking-widest">Contact Details</p>
+          <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm">
+            <div class="bg-slate-950 text-white px-4 py-3.5">
+              <p class="text-xs font-black uppercase tracking-widest text-primary-gold">Contact Details</p>
             </div>
-            <div class="divide-y divide-gray-100">
+            <div class="divide-y divide-slate-100">
               <div class="px-4 py-4">
-                <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">General Enquiries</p>
-                <a href="mailto:contact@mershal.in" class="text-sm text-red-600 hover:underline font-medium">contact@mershal.in</a>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">General Inquiries</p>
+                <a href="mailto:contact@mershal.in" class="text-sm text-primary-crimson hover:underline font-bold">contact@mershal.in</a>
               </div>
               <div class="px-4 py-4">
-                <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">News Tips</p>
-                <a href="mailto:tips@mershal.in" class="text-sm text-red-600 hover:underline font-medium">tips@mershal.in</a>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Advertising & Sponsorships</p>
+                <a href="mailto:advertise@mershal.in" class="text-sm text-primary-crimson hover:underline font-bold">advertise@mershal.in</a>
               </div>
               <div class="px-4 py-4">
-                <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Advertising</p>
-                <a href="mailto:advertise@mershal.in" class="text-sm text-red-600 hover:underline font-medium">advertise@mershal.in</a>
-              </div>
-              <div class="px-4 py-4">
-                <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Response Time</p>
-                <p class="text-sm text-gray-700 font-medium">Within 24–48 hours</p>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Expected Response Time</p>
+                <p class="text-sm text-slate-800 font-bold">Within 24 hours</p>
               </div>
             </div>
           </div>
 
-          <!-- News Tips -->
-          <div class="border border-red-200 bg-red-50">
-            <div class="bg-red-600 text-white px-4 py-3">
-              <p class="text-xs font-black uppercase tracking-widest">Submit a News Tip</p>
-            </div>
-            <div class="p-4">
-              <p class="text-sm text-gray-700 leading-relaxed mb-3">
-                Have a story we should cover? Send us your tip with as much detail as possible. All sources are kept confidential.
-              </p>
-              <a href="mailto:tips@mershal.in" class="block text-center bg-red-600 hover:bg-red-700 text-white py-2.5 text-xs font-black uppercase tracking-widest transition">
-                Submit a Tip
-              </a>
-            </div>
+          <!-- Tool Submission CTA -->
+          <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm">
+            <h3 class="font-bold text-slate-900 mb-2 text-sm uppercase tracking-wider">Submit Your Software</h3>
+            <p class="text-xs text-slate-500 leading-relaxed mb-4">
+              Own an AI tool or SaaS? Get featured in front of our readers. Choose "SaaS Review" in the subject line or send an email directly.
+            </p>
+            <a href="mailto:contact@mershal.in?subject=Tool%20Submission" class="block text-center bg-slate-950 hover:bg-slate-900 text-white py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition">
+              Email Submission
+            </a>
           </div>
 
-          <!-- Advertise -->
-          <div class="border border-gray-200">
-            <div class="bg-gray-900 text-white px-4 py-3">
-              <p class="text-xs font-black uppercase tracking-widest">Advertise with Us</p>
-            </div>
-            <div class="p-4">
-              <p class="text-sm text-gray-600 leading-relaxed mb-3">
-                Reach thousands of engaged readers. View our advertising plans starting at ₹299/month.
-              </p>
-              <a href="/advertise" class="block text-center border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white py-2.5 text-xs font-black uppercase tracking-widest transition">
-                View Plans
-              </a>
-            </div>
+          <!-- Ad Placements -->
+          <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm">
+            <h3 class="font-bold text-slate-900 mb-2 text-sm uppercase tracking-wider">Advertise with Us</h3>
+            <p class="text-xs text-slate-500 leading-relaxed mb-4">
+              Get targeted leads. Reach startup founders, software buyers, and marketers starting at ₹299/month.
+            </p>
+            <a href="/advertise" class="block text-center border border-slate-900 text-slate-900 hover:bg-slate-900 hover:text-white py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition">
+              View Advertising Rates
+            </a>
           </div>
 
         </aside>
@@ -174,8 +168,8 @@ import BottomNav from '../components/BottomNav.astro';
     const mailtoLink = `mailto:contact@mershal.in?subject=${encodeURIComponent(subject + ' - ' + name)}&body=${encodeURIComponent('Name: ' + name + '\nEmail: ' + email + '\n\n' + message)}`;
     window.location.href = mailtoLink;
 
-    status.textContent = '✓ Your email client has been opened. Please send the email to complete your message.';
-    status.className = 'p-4 text-sm font-medium bg-green-50 border border-green-200 text-green-800';
+    status.textContent = '✓ Your email client has been opened. Please complete sending the email to reach us.';
+    status.className = 'p-4 text-sm font-medium bg-green-900/10 border border-green-700/20 text-green-800 rounded-lg mb-4';
     status.classList.remove('hidden');
 
     btn.textContent = 'Send Message';

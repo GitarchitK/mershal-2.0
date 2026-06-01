@@ -1,87 +1,56 @@
 ---
-export const prerender = false;
-
+export const prerender = true;
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
-import BreakingNews from '../components/BreakingNews.astro';
 import Footer from '../components/Footer.astro';
 import BottomNav from '../components/BottomNav.astro';
 ---
 
-<Layout title="Terms of Service" description="Mershal Terms of Service - Rules and guidelines for using our website">
+<Layout title="Terms of Service - Mershal" description="Mershal Terms of Service - Rules and guidelines for using our website">
   <Header />
-  <BreakingNews />
   
-  <main class="container mx-auto px-4 py-8 pb-20 md:pb-8">
+  <main class="container mx-auto px-4 py-12 pb-20 md:pb-8 font-sans text-slate-800">
     <div class="max-w-4xl mx-auto">
-      <h1 class="text-4xl font-bold text-gray-900 mb-8">Terms of Service</h1>
+      <h1 class="text-4xl font-serif font-black text-slate-950 mb-3">Terms of Service</h1>
       
-      <div class="bg-blue-50 border-l-4 border-blue-500 p-6 mb-8">
-        <p class="text-blue-800">
-          <strong>Last updated:</strong> March 17, 2026
+      <div class="bg-slate-100 border-l-4 border-primary-crimson p-4 rounded-r-lg mb-8 shadow-sm">
+        <p class="text-slate-600 text-sm">
+          <strong>Last updated:</strong> June 1, 2026
         </p>
       </div>
 
-      <div class="prose prose-lg max-w-none">
-        <h2>1. Acceptance of Terms</h2>
-        <p>By accessing and using Mershal ("the website"), you accept and agree to be bound by the terms and provision of this agreement.</p>
+      <div class="prose prose-slate max-w-none text-slate-600 leading-relaxed space-y-6">
+        <h2 class="text-xl font-bold text-slate-950 mt-6">1. Acceptance of Terms</h2>
+        <p>By accessing and using Mershal (mershal.in, "the website"), you accept and agree to be bound by the terms and provisions of this agreement.</p>
 
-        <h2>2. Description of Service</h2>
-        <p>Mershal is a technology and programming news website that provides:</p>
-        <ul>
-          <li>Technology news and innovations</li>
-          <li>Programming tutorials and guides</li>
-          <li>App reviews and recommendations</li>
-          <li>Software development insights</li>
-          <li>Tech industry analysis and trends</li>
+        <h2 class="text-xl font-bold text-slate-950 mt-6">2. Description of Service</h2>
+        <p>Mershal is a digital publication providing:</p>
+        <ul class="list-disc pl-6 space-y-2">
+          <li>AI Tool guides and software workflows</li>
+          <li>SaaS reviews, metrics, and comparisons</li>
+          <li>Productivity app reviews and framework guides</li>
+          <li>Freelancing, online business, and digital marketing insights</li>
         </ul>
 
-        <h2>3. User Conduct</h2>
-        <p>You agree not to use the website to:</p>
-        <ul>
-          <li>Post or transmit any unlawful, harmful, or offensive content</li>
-          <li>Violate any applicable laws or regulations</li>
-          <li>Infringe on intellectual property rights</li>
-          <li>Distribute spam or unsolicited communications</li>
-          <li>Attempt to gain unauthorized access to our systems</li>
-        </ul>
+        <h2 class="text-xl font-bold text-slate-950 mt-6">3. User Conduct</h2>
+        <p>You agree not to use the website to post unlawful, offensive, or harmful content, attempt to bypass access controls, or gather user data without authorization.</p>
 
-        <h2>4. Intellectual Property</h2>
-        <p>All content on this website, including text, graphics, logos, and images, is the property of Mershal or its content suppliers and is protected by copyright laws.</p>
+        <h2 class="text-xl font-bold text-slate-950 mt-6">4. Intellectual Property</h2>
+        <p>All design assets, layout systems, original articles, logos, and scripts are the property of Mershal. Reproducing, re-publishing, or scraping our content without express consent is strictly prohibited.</p>
 
-        <h2>5. User-Generated Content</h2>
-        <p>By submitting content to our website, you grant us a non-exclusive, royalty-free license to use, modify, and display such content.</p>
+        <h2 class="text-xl font-bold text-slate-950 mt-6">5. Disclaimers & Limitation of Liability</h2>
+        <p>The content provided on Mershal is for educational and informational purposes only. We make no guarantees regarding accuracy, software updates, pricing fluctuations, or availability. Mershal is not liable for operational failures resulting from decisions made using our reviews.</p>
 
-        <h2>6. Disclaimers</h2>
-        <p>The information on this website is provided on an "as is" basis. We make no warranties, expressed or implied, regarding:</p>
-        <ul>
-          <li>The accuracy or completeness of information</li>
-          <li>The availability of the website</li>
-          <li>The fitness for any particular purpose</li>
-        </ul>
+        <h2 class="text-xl font-bold text-slate-950 mt-6">6. Third-Party Links & Advertising</h2>
+        <p>We feature third-party advertisements via Google AdSense and incorporate affiliate or sponsor referral links. We are not responsible for policies or content displayed on external destination sites.</p>
 
-        <h2>7. Limitation of Liability</h2>
-        <p>Mershal shall not be liable for any direct, indirect, incidental, or consequential damages arising from your use of the website.</p>
-
-        <h2>8. Advertising</h2>
-        <p>Our website displays advertisements through Google AdSense and other advertising partners. We are not responsible for the content of advertisements or the practices of advertisers.</p>
-
-        <h2>9. Privacy</h2>
-        <p>Your privacy is important to us. Please review our Privacy Policy, which also governs your use of the website.</p>
-
-        <h2>10. Modifications</h2>
-        <p>We reserve the right to modify these terms at any time. Changes will be effective immediately upon posting on the website.</p>
-
-        <h2>11. Termination</h2>
-        <p>We may terminate or suspend your access to the website at any time, without prior notice, for conduct that we believe violates these terms.</p>
-
-        <h2>12. Governing Law</h2>
+        <h2 class="text-xl font-bold text-slate-950 mt-6">7. Governing Law</h2>
         <p>These terms shall be governed by and construed in accordance with the laws of India.</p>
 
-        <h2>13. Contact Information</h2>
+        <h2 class="text-xl font-bold text-slate-950 mt-6">8. Contact Information</h2>
         <p>If you have any questions about these terms, please contact us at:</p>
-        <ul>
-          <li>Email: legal@mershal.in</li>
+        <ul class="list-disc pl-6 space-y-2">
+          <li>Email: <a href="mailto:legal@mershal.in" class="text-primary-crimson hover:underline font-bold">legal@mershal.in</a></li>
           <li>Address: Kolkata, West Bengal, India</li>
         </ul>
       </div>
@@ -91,36 +60,3 @@ import BottomNav from '../components/BottomNav.astro';
   <Footer />
   <BottomNav />
 </Layout>
-
-<style>
-  .prose h2 {
-    color: #1f2937;
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-  }
-  
-  .prose p {
-    margin-bottom: 1rem;
-    line-height: 1.7;
-  }
-  
-  .prose ul {
-    margin-bottom: 1rem;
-    padding-left: 1.5rem;
-  }
-  
-  .prose li {
-    margin-bottom: 0.5rem;
-  }
-  
-  .prose a {
-    color: #dc2626;
-    text-decoration: underline;
-  }
-  
-  .prose a:hover {
-    color: #b91c1c;
-  }
-</style>
