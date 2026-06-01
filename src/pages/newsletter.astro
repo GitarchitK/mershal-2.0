@@ -225,9 +225,6 @@ import BottomNav from '../components/BottomNav.astro';
 </Layout>
 
 <script>
-  import { db } from '../lib/firebase';
-  import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-
   const form = document.getElementById('newsletter-page-form') as HTMLFormElement;
   const emailInput = document.getElementById('newsletter-page-email') as HTMLInputElement;
   const submitBtn = document.getElementById('newsletter-page-submit') as HTMLButtonElement;
@@ -245,6 +242,10 @@ import BottomNav from '../components/BottomNav.astro';
     statusEl.classList.add('hidden');
 
     try {
+      // Lazy load Firebase client SDK
+      const { db } = await import('../lib/firebase');
+      const { collection, addDoc, serverTimestamp } = await import('firebase/firestore');
+
       // Save subscription doc directly to Firestore collection
       await addDoc(collection(db, 'newsletter_subscribers'), {
         email: email,

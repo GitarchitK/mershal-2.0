@@ -35,9 +35,6 @@
 </div>
 
 <script>
-  import { db } from '../lib/firebase';
-  import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-
   const form = document.getElementById('newsletter-form') as HTMLFormElement;
   const emailInput = document.getElementById('newsletter-email') as HTMLInputElement;
   const submitBtn = document.getElementById('newsletter-submit') as HTMLButtonElement;
@@ -53,6 +50,10 @@
     statusEl.classList.add('hidden');
 
     try {
+      // Dynamic lazy load of Firebase client SDK
+      const { db } = await import('../lib/firebase');
+      const { collection, addDoc, serverTimestamp } = await import('firebase/firestore');
+
       // Save subscription doc directly to Firestore collection
       await addDoc(collection(db, 'newsletter_subscribers'), {
         email: email,
