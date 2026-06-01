@@ -65,7 +65,7 @@ if (session?.value === 'authenticated') return Astro.redirect('/admin/dashboard'
   </div>
 
   <script>
-    import { auth } from '../../lib/firebase';
+    import { auth } from '../../lib/firebase-auth';
     import { signInWithEmailAndPassword } from 'firebase/auth';
 
     const loginForm = document.getElementById('login-form') as HTMLFormElement;
