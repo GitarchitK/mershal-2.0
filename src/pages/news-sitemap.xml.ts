@@ -24,25 +24,42 @@ export const GET: APIRoute = async () => {
       const twoDaysAgo = new Date();
       twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
       
+      // Perform in-memory date filtering to avoid Firestore composite index requirement
       let snapshot = await adminDb
         .collection('articles')
         .where('status', '==', 'published')
-        .where('publish_date', '>=', twoDaysAgo)
         .get();
         
-      if (snapshot.empty) {
+      let allArticles: any[] = [];
+      if (!snapshot.empty) {
+        allArticles = snapshot.docs.map(doc => {
+          const d = doc.data();
+          return {
+            slug: d.slug || doc.id,
+            title: d.title || '',
+            publishedAt: d.publish_date?.toDate?.() || d.publishedAt?.toDate?.() || new Date(),
+          };
+        });
+      } else {
+        // Fallback to legacy posts
         snapshot = await adminDb
           .collection('posts')
           .where('status', '==', 'published')
-          .where('publishedAt', '>=', twoDaysAgo)
           .get();
+          
+        allArticles = snapshot.docs.map(doc => {
+          const d = doc.data();
+          return {
+            slug: d.slug || doc.id,
+            title: d.title || '',
+            publishedAt: d.publishedAt?.toDate?.() || d.publish_date?.toDate?.() || new Date(),
+          };
+        });
       }
       
-      articles = snapshot.docs.map(doc => ({
-        slug: doc.data().slug || doc.id,
-        title: doc.data().title || '',
-        publishedAt: doc.data().publish_date?.toDate?.() || doc.data().publishedAt?.toDate?.() || new Date(),
-      })).sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime());
+      articles = allArticles
+        .filter(art => art.publishedAt >= twoDaysAgo)
+        .sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime());
     } catch (error) {
       console.error('Error fetching articles for news sitemap:', error);
     }
