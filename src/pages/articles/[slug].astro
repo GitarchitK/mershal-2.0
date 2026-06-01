@@ -173,46 +173,7 @@ const shortDate = article.publishDate.toLocaleDateString('en-US', { month: 'shor
     <AdUnit type="header" />
   </div>
 
-  <!-- Floating Share Sidebar (Desktop Only) -->
-  <div id="floating-share" class="fixed flex-col gap-3 z-40 hidden xl:flex">
-    <!-- Twitter -->
-    <a
-      id="share-float-twitter"
-      href="#"
-      target="_blank"
-      class="share-btn w-9 h-9 rounded-full border border-slate-200 bg-white text-slate-500 hover:text-primary-crimson hover:border-primary-crimson flex items-center justify-center transition-all shadow-sm group relative animate-in slide-in-from-left-4 duration-300"
-      title="Share on X"
-    >
-      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-      </svg>
-      <span class="tooltip absolute left-full ml-3 px-2 py-1.5 bg-slate-950 text-white text-[10px] rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 whitespace-nowrap shadow font-bold">Share on X</span>
-    </a>
-    <!-- LinkedIn -->
-    <a
-      id="share-float-linkedin"
-      href="#"
-      target="_blank"
-      class="share-btn w-9 h-9 rounded-full border border-slate-200 bg-white text-slate-500 hover:text-primary-crimson hover:border-primary-crimson flex items-center justify-center transition-all shadow-sm group relative"
-      title="Share on LinkedIn"
-    >
-      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
-      </svg>
-      <span class="tooltip absolute left-full ml-3 px-2 py-1.5 bg-slate-950 text-white text-[10px] rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 whitespace-nowrap shadow font-bold">Share on LinkedIn</span>
-    </a>
-    <!-- Copy Link -->
-    <button
-      id="share-float-copy"
-      class="share-btn w-9 h-9 rounded-full border border-slate-200 bg-white text-slate-500 hover:text-primary-crimson hover:border-primary-crimson flex items-center justify-center transition-all shadow-sm group relative cursor-pointer"
-      title="Copy Link"
-    >
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-      </svg>
-      <span id="float-copy-tooltip" class="tooltip absolute left-full ml-3 px-2 py-1.5 bg-slate-950 text-white text-[10px] rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 whitespace-nowrap shadow font-bold">Copy Link</span>
-    </button>
-  </div>
+
 
   <main class="bg-white min-h-screen pb-16 font-sans">
     
@@ -227,7 +188,51 @@ const shortDate = article.publishDate.toLocaleDateString('en-US', { month: 'shor
       <div class="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-10">
         
         <!-- Left: Main Article Content (Prose Width Constrained) -->
-        <article class="min-w-0 max-w-[680px] mx-auto w-full px-5 md:px-0">
+        <div class="relative max-w-[680px] mx-auto w-full">
+          <!-- Floating Share Sidebar (Desktop Only) -->
+          <div class="absolute right-full top-0 h-full mr-8 hidden xl:block">
+            <div class="sticky top-40 flex flex-col gap-3">
+              <!-- Twitter -->
+              <a
+                id="share-float-twitter"
+                href="#"
+                target="_blank"
+                class="share-btn w-9 h-9 rounded-full border border-slate-200 bg-white text-slate-500 hover:text-primary-crimson hover:border-primary-crimson flex items-center justify-center transition-all shadow-sm group relative animate-in slide-in-from-left-4 duration-300"
+                title="Share on X"
+              >
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+                <span class="tooltip absolute left-full ml-3 px-2 py-1.5 bg-slate-950 text-white text-[10px] rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 whitespace-nowrap shadow font-bold">Share on X</span>
+              </a>
+              <!-- LinkedIn -->
+              <a
+                id="share-float-linkedin"
+                href="#"
+                target="_blank"
+                class="share-btn w-9 h-9 rounded-full border border-slate-200 bg-white text-slate-500 hover:text-primary-crimson hover:border-primary-crimson flex items-center justify-center transition-all shadow-sm group relative"
+                title="Share on LinkedIn"
+              >
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                </svg>
+                <span class="tooltip absolute left-full ml-3 px-2 py-1.5 bg-slate-950 text-white text-[10px] rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 whitespace-nowrap shadow font-bold">Share on LinkedIn</span>
+              </a>
+              <!-- Copy Link -->
+              <button
+                id="share-float-copy"
+                class="share-btn w-9 h-9 rounded-full border border-slate-200 bg-white text-slate-500 hover:text-primary-crimson hover:border-primary-crimson flex items-center justify-center transition-all shadow-sm group relative cursor-pointer"
+                title="Copy Link"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                </svg>
+                <span id="float-copy-tooltip" class="tooltip absolute left-full ml-3 px-2 py-1.5 bg-slate-950 text-white text-[10px] rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 whitespace-nowrap shadow font-bold">Copy Link</span>
+              </button>
+            </div>
+          </div>
+
+          <article class="min-w-0 w-full px-5 md:px-0">
           
           <!-- Headers -->
           <header class="mb-8">
@@ -361,6 +366,7 @@ const shortDate = article.publishDate.toLocaleDateString('en-US', { month: 'shor
           )}
 
         </article>
+      </div>
 
         <!-- Right: Sticky Sidebar -->
         <aside class="hidden lg:block">
@@ -608,16 +614,5 @@ const shortDate = article.publishDate.toLocaleDateString('en-US', { month: 'shor
     font-weight: 700 !important;
   }
 
-  /* Floating Share Sidebar Desktop Only styles */
-  #floating-share {
-    position: fixed;
-    left: calc(50% - 340px - 75px);
-    top: 50%;
-    transform: translateY(-50%);
-  }
-  @media (max-width: 1200px) {
-    #floating-share {
-      display: none !important;
-    }
-  }
+
 </style>
