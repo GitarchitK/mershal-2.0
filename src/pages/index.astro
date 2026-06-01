@@ -123,7 +123,7 @@ const trendingGuides = [
 
           <div id="trend-carousel" class="flex overflow-x-auto gap-4 snap-x snap-mandatory scroll-smooth pb-4 px-2 -mx-2 scrollbar-none">
             {articles.slice(0, 5).map(art => (
-              <a href={`/articles/${art.slug}`} class="snap-start shrink-0 w-[270px] sm:w-[310px] bg-slate-900/40 backdrop-blur-md border border-slate-800/80 rounded-2xl overflow-hidden hover:border-primary-gold/30 hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between">
+              <a href={`/articles/${art.slug}`} class="snap-start shrink-0 w-[270px] sm:w-[310px] bg-slate-900/50 backdrop-blur-md border border-slate-800/50 rounded-2xl overflow-hidden hover:border-primary-crimson/40 hover:-translate-y-1 hover:shadow-[0_0_25px_rgba(139,2,34,0.25)] transition-all duration-300 group flex flex-col justify-between">
                 <div>
                   <div class="aspect-[16/10] w-full overflow-hidden relative">
                     <img src={art.featuredImage} alt={art.title} class="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500" loading="lazy" />
@@ -287,22 +287,83 @@ const trendingGuides = [
 </Layout>
 
 <script>
-  // Trending Carousel Navigation
+  // Trending Carousel Auto-Scrolling Navigation
   const carousel = document.getElementById('trend-carousel');
   const prevBtn = document.getElementById('prev-trend');
   const nextBtn = document.getElementById('next-trend');
 
-  prevBtn?.addEventListener('click', () => {
-    if (carousel) {
-      carousel.scrollBy({ left: -290, behavior: 'smooth' });
+  let scrollInterval: any = null;
+  const scrollDelay = 3500; // Auto-scroll every 3.5 seconds
+
+  function getScrollStep() {
+    const card = carousel?.firstElementChild as HTMLElement;
+    if (card) {
+      return card.offsetWidth + 16; // Card width + gap-4 (16px)
     }
+    return 300;
+  }
+
+  function startAutoScroll() {
+    stopAutoScroll();
+    scrollInterval = setInterval(() => {
+      if (carousel) {
+        const step = getScrollStep();
+        const maxScrollLeft = carousel.scrollWidth - carousel.clientWidth;
+        
+        // If we are at the end, wrap around to the beginning smoothly
+        if (carousel.scrollLeft >= maxScrollLeft - 10) {
+          carousel.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          carousel.scrollBy({ left: step, behavior: 'smooth' });
+        }
+      }
+    }, scrollDelay);
+  }
+
+  function stopAutoScroll() {
+    if (scrollInterval) {
+      clearInterval(scrollInterval);
+      scrollInterval = null;
+    }
+  }
+
+  // Prev Button Trigger
+  prevBtn?.addEventListener('click', () => {
+    stopAutoScroll();
+    if (carousel) {
+      const step = getScrollStep();
+      if (carousel.scrollLeft <= 10) {
+        // If at the beginning, scroll to the end
+        const maxScrollLeft = carousel.scrollWidth - carousel.clientWidth;
+        carousel.scrollTo({ left: maxScrollLeft, behavior: 'smooth' });
+      } else {
+        carousel.scrollBy({ left: -step, behavior: 'smooth' });
+      }
+    }
+    startAutoScroll();
   });
 
+  // Next Button Trigger
   nextBtn?.addEventListener('click', () => {
+    stopAutoScroll();
     if (carousel) {
-      carousel.scrollBy({ left: 290, behavior: 'smooth' });
+      const step = getScrollStep();
+      const maxScrollLeft = carousel.scrollWidth - carousel.clientWidth;
+      if (carousel.scrollLeft >= maxScrollLeft - 10) {
+        carousel.scrollTo({ left: 0, behavior: 'smooth' });
+      } else {
+        carousel.scrollBy({ left: step, behavior: 'smooth' });
+      }
     }
+    startAutoScroll();
   });
+
+  // Pause on hover
+  carousel?.addEventListener('mouseenter', stopAutoScroll);
+  carousel?.addEventListener('mouseleave', startAutoScroll);
+
+  // Initialize auto scroll on load
+  startAutoScroll();
 </script>
 
 <style>
