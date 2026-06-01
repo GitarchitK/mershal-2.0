@@ -7,6 +7,7 @@ import Footer from '../components/Footer.astro';
 import AdUnit from '../components/AdUnit.astro';
 import ArticleCard from '../components/ArticleCard.astro';
 import NewsletterBox from '../components/NewsletterBox.astro';
+import { Image } from 'astro:assets';
 import { adminDb } from '../lib/firebase-admin';
 
 let articles: any[] = [];
@@ -97,7 +98,7 @@ const trendingGuides = [
               <a href={`/articles/${heroArticles[0].slug}`} class="lg:col-span-2 lg:row-span-2 group relative overflow-hidden rounded-2xl border border-slate-800/80 bg-slate-900/40 hover:border-primary-crimson/50 hover:shadow-[0_0_30px_rgba(139,2,34,0.3)] transition-all duration-300 flex flex-col justify-end min-h-[300px] lg:min-h-[350px]">
                 <!-- Image Background with Gradient Overlay -->
                 <div class="absolute inset-0 z-0">
-                  <img src={heroArticles[0].featuredImage} alt={heroArticles[0].title} class="w-full h-full object-cover group-hover:scale-103 transition-transform duration-700 opacity-60 group-hover:opacity-75" />
+                  <Image src={heroArticles[0].featuredImage} alt={heroArticles[0].title} width={800} height={450} class="w-full h-full object-cover group-hover:scale-103 transition-transform duration-700 opacity-60 group-hover:opacity-75" loading="eager" fetchpriority="high" />
                   <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent"></div>
                 </div>
                 
@@ -128,7 +129,7 @@ const trendingGuides = [
               {heroArticles[1] && (
                 <a href={`/articles/${heroArticles[1].slug}`} class="flex-1 group flex gap-3 p-3.5 rounded-2xl border border-slate-800/80 bg-slate-900/30 hover:bg-slate-900/50 hover:border-primary-crimson/50 transition duration-300 items-center">
                   <div class="w-20 h-20 shrink-0 overflow-hidden rounded-xl relative bg-slate-950">
-                    <img src={heroArticles[1].featuredImage} alt={heroArticles[1].title} class="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500" />
+                    <Image src={heroArticles[1].featuredImage} alt={heroArticles[1].title} width={160} height={160} class="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500" loading="lazy" />
                   </div>
                   <div class="flex flex-col justify-between py-1 min-w-0 flex-1">
                     <div class="space-y-1">
@@ -150,7 +151,7 @@ const trendingGuides = [
               {heroArticles[2] && (
                 <a href={`/articles/${heroArticles[2].slug}`} class="flex-1 group flex gap-3 p-3.5 rounded-2xl border border-slate-800/80 bg-slate-900/30 hover:bg-slate-900/50 hover:border-primary-crimson/50 transition duration-300 items-center">
                   <div class="w-20 h-20 shrink-0 overflow-hidden rounded-xl relative bg-slate-950">
-                    <img src={heroArticles[2].featuredImage} alt={heroArticles[2].title} class="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500" />
+                    <Image src={heroArticles[2].featuredImage} alt={heroArticles[2].title} width={160} height={160} class="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500" loading="lazy" />
                   </div>
                   <div class="flex flex-col justify-between py-1 min-w-0 flex-1">
                     <div class="space-y-1">
@@ -177,7 +178,7 @@ const trendingGuides = [
               {heroArticles[3] && (
                 <a href={`/articles/${heroArticles[3].slug}`} class="group flex gap-3 p-3 rounded-2xl border border-slate-800/80 bg-slate-900/30 hover:bg-slate-900/50 hover:border-primary-crimson/50 transition duration-300 items-center">
                   <div class="w-16 h-12 shrink-0 overflow-hidden rounded-lg relative bg-slate-950">
-                    <img src={heroArticles[3].featuredImage} alt={heroArticles[3].title} class="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500" />
+                    <Image src={heroArticles[3].featuredImage} alt={heroArticles[3].title} width={128} height={96} class="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500" loading="lazy" />
                   </div>
                   <div class="flex flex-col justify-center min-w-0 flex-1">
                     <span class="text-[8px] font-black uppercase tracking-wider text-primary-gold block">
@@ -197,7 +198,7 @@ const trendingGuides = [
               {heroArticles[4] && (
                 <a href={`/articles/${heroArticles[4].slug}`} class="group flex gap-3 p-3 rounded-2xl border border-slate-800/80 bg-slate-900/30 hover:bg-slate-900/50 hover:border-primary-crimson/50 transition duration-300 items-center">
                   <div class="w-16 h-12 shrink-0 overflow-hidden rounded-lg relative bg-slate-950">
-                    <img src={heroArticles[4].featuredImage} alt={heroArticles[4].title} class="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500" />
+                    <Image src={heroArticles[4].featuredImage} alt={heroArticles[4].title} width={128} height={96} class="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500" loading="lazy" />
                   </div>
                   <div class="flex flex-col justify-center min-w-0 flex-1">
                     <span class="text-[8px] font-black uppercase tracking-wider text-primary-gold block">
@@ -217,7 +218,7 @@ const trendingGuides = [
               {heroArticles[5] && (
                 <a href={`/articles/${heroArticles[5].slug}`} class="group flex gap-3 p-3 rounded-2xl border border-slate-800/80 bg-slate-900/30 hover:bg-slate-900/50 hover:border-primary-crimson/50 transition duration-300 items-center">
                   <div class="w-16 h-12 shrink-0 overflow-hidden rounded-lg relative bg-slate-950">
-                    <img src={heroArticles[5].featuredImage} alt={heroArticles[5].title} class="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500" />
+                    <Image src={heroArticles[5].featuredImage} alt={heroArticles[5].title} width={128} height={96} class="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500" loading="lazy" />
                   </div>
                   <div class="flex flex-col justify-center min-w-0 flex-1">
                     <span class="text-[8px] font-black uppercase tracking-wider text-primary-gold block">

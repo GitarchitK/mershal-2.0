@@ -8,6 +8,7 @@ import AdUnit from '../../components/AdUnit.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import AuthorCard from '../../components/AuthorCard.astro';
 import FAQAccordion from '../../components/FAQAccordion.astro';
+import { Image } from 'astro:assets';
 import { adminDb } from '../../lib/firebase-admin';
 
 const { slug } = Astro.params;
@@ -242,7 +243,7 @@ const shortDate = article.publishDate.toLocaleDateString('en-US', { month: 'shor
             <div class="flex flex-wrap items-center gap-3 py-4 border-y border-slate-150 text-[14px] text-slate-500 font-sans">
               <!-- Author Avatar -->
               {authorData?.avatar ? (
-                <img src={authorData.avatar} alt={article.author} class="w-10 h-10 rounded-full object-cover border border-slate-200" />
+                <Image src={authorData.avatar} alt={article.author} width={80} height={80} class="w-10 h-10 rounded-full object-cover border border-slate-200" />
               ) : (
                 <div class="w-10 h-10 rounded-full bg-primary-crimson/10 text-primary-crimson flex items-center justify-center font-black text-sm tracking-wider uppercase border border-primary-crimson/20">
                   {article.author.split(' ').map((n: string) => n[0]).join('').slice(0, 2)}
@@ -289,9 +290,11 @@ const shortDate = article.publishDate.toLocaleDateString('en-US', { month: 'shor
 
           <!-- Featured cover photo (Cinematic layout with Category Badge) -->
           <div class="mb-10 relative rounded-[12px] overflow-hidden border border-slate-100 shadow-sm aspect-[16/9] md:aspect-[21/9]">
-            <img
+            <Image
               src={article.featuredImage}
               alt={article.title}
+              width={1200}
+              height={675}
               class="w-full h-full object-cover"
               loading="eager"
               fetchpriority="high"
@@ -337,7 +340,7 @@ const shortDate = article.publishDate.toLocaleDateString('en-US', { month: 'shor
                 {relatedArticles.map((rel: any) => (
                   <a href={`/articles/${rel.slug}`} class="group flex flex-col bg-white rounded-xl border border-slate-200/80 overflow-hidden shadow-sm hover:border-primary-crimson/50 hover:-translate-y-0.5 transition-all duration-205">
                     <div class="aspect-[16/9] w-full overflow-hidden border-b border-slate-100">
-                      <img src={rel.featuredImage} alt={rel.title} class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.02]" loading="lazy" />
+                      <Image src={rel.featuredImage} alt={rel.title} width={400} height={225} class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.02]" loading="lazy" />
                     </div>
                     <div class="p-4 flex flex-col flex-1 justify-between gap-3">
                       <div>

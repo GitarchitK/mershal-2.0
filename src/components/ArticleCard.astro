@@ -27,6 +27,8 @@ const {
   featured = false,
 } = Astro.props;
 
+import { Image } from 'astro:assets';
+
 function formattedDate(date: Date | null) {
   if (!date) return '';
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -37,9 +39,11 @@ function formattedDate(date: Date | null) {
   <!-- Image container -->
   <div class={`relative overflow-hidden ${featured ? 'lg:w-1/2 min-h-[300px]' : 'aspect-video'}`}>
     <a href={`/articles/${slug}`} class="block w-full h-full">
-      <img
+      <Image
         src={imageUrl || 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800'}
         alt={title}
+        width={featured ? 800 : 600}
+        height={featured ? 450 : 338}
         loading="lazy"
         class="w-full h-full object-cover transform group-hover:scale-103 transition-transform duration-500 min-h-[220px]"
       />
