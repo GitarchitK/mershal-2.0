@@ -25,15 +25,45 @@ if (session?.value !== 'authenticated') return Astro.redirect('/admin');
       <input id="title" type="text" placeholder="Post title..." class="w-full bg-gray-900 border border-gray-700 text-white text-xl font-bold rounded-xl px-5 py-4 focus:outline-none focus:border-rose-500 placeholder-gray-600" />
       <input id="slug" type="text" placeholder="url-slug (auto-generated)" class="w-full bg-gray-900 border border-gray-700 text-gray-400 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-rose-500 font-mono placeholder-gray-600" />
       <div>
-        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Excerpt</label>
-        <textarea id="excerpt" rows="2" placeholder="Brief description..." class="w-full bg-gray-900 border border-gray-700 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-rose-500 resize-none placeholder-gray-600"></textarea>
-      </div>
-      <div>
         <div class="flex items-center justify-between mb-2">
-          <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Content (HTML)</label>
+          <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Content (Visual Editor)</label>
           <span id="word-count" class="text-xs text-gray-500">0 words</span>
         </div>
-        <textarea id="content" rows="28" placeholder="Write your post content in HTML...&#10;&#10;<h2>Introduction</h2>&#10;<p>Your content here...</p>&#10;<pre><code>// code example</code></pre>" class="w-full bg-gray-900 border border-gray-700 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-rose-500 font-mono resize-y placeholder-gray-600"></textarea>
+        <div class="border border-gray-700 bg-gray-900 rounded-xl overflow-hidden shadow-inner">
+          <!-- Rich Text Toolbar -->
+          <div class="bg-gray-800 border-b border-gray-700 px-3 py-2 flex flex-wrap gap-1 items-center text-xs">
+            <button type="button" id="btn-bold" class="px-2.5 py-1.5 rounded bg-gray-700 hover:bg-gray-600 text-white font-bold transition" title="Bold">B</button>
+            <button type="button" id="btn-italic" class="px-2.5 py-1.5 rounded bg-gray-700 hover:bg-gray-600 text-white italic transition" title="Italic">I</button>
+            <button type="button" id="btn-underline" class="px-2.5 py-1.5 rounded bg-gray-700 hover:bg-gray-600 text-white underline transition" title="Underline">U</button>
+            <button type="button" id="btn-strike" class="px-2.5 py-1.5 rounded bg-gray-700 hover:bg-gray-600 text-white line-through transition" title="Strikethrough">S</button>
+            
+            <span class="w-[1px] h-5 bg-gray-700 mx-1"></span>
+            
+            <button type="button" id="btn-h2" class="px-2.5 py-1.5 rounded bg-gray-700 hover:bg-gray-600 text-white font-semibold transition" title="Heading 2">H2</button>
+            <button type="button" id="btn-h3" class="px-2.5 py-1.5 rounded bg-gray-700 hover:bg-gray-600 text-white font-semibold transition" title="Heading 3">H3</button>
+            <button type="button" id="btn-p" class="px-2.5 py-1.5 rounded bg-gray-700 hover:bg-gray-600 text-white transition" title="Paragraph">P</button>
+            
+            <span class="w-[1px] h-5 bg-gray-700 mx-1"></span>
+            
+            <button type="button" id="btn-ul" class="px-2.5 py-1.5 rounded bg-gray-700 hover:bg-gray-600 text-white transition" title="Bullet List">Bullet</button>
+            <button type="button" id="btn-ol" class="px-2.5 py-1.5 rounded bg-gray-700 hover:bg-gray-600 text-white transition" title="Numbered List">List</button>
+            
+            <span class="w-[1px] h-5 bg-gray-700 mx-1"></span>
+            
+            <button type="button" id="btn-link" class="px-2.5 py-1.5 rounded bg-gray-700 hover:bg-gray-600 text-white transition" title="Add Link">Link</button>
+            <button type="button" id="btn-image" class="px-2.5 py-1.5 rounded bg-gray-700 hover:bg-gray-600 text-white transition" title="Add Image">Image</button>
+            
+            <span class="w-[1px] h-5 bg-gray-700 mx-1"></span>
+            
+            <button type="button" id="btn-tip" class="px-2.5 py-1.5 rounded bg-emerald-900/80 hover:bg-emerald-800 text-emerald-100 transition" title="Insert Tip Callout">💡 Tip</button>
+            <button type="button" id="btn-warning" class="px-2.5 py-1.5 rounded bg-amber-900/80 hover:bg-amber-800 text-amber-100 transition" title="Insert Warning Callout">⚠️ Warning</button>
+            <button type="button" id="btn-info" class="px-2.5 py-1.5 rounded bg-blue-900/80 hover:bg-blue-800 text-blue-100 transition" title="Insert Info Callout">ℹ️ Info</button>
+            <button type="button" id="btn-step" class="px-2.5 py-1.5 rounded bg-rose-900/80 hover:bg-rose-800 text-rose-100 transition" title="Insert Step Block">🔢 Step</button>
+          </div>
+          
+          <!-- Editor Content Area -->
+          <div id="wysiwyg-editor" class="px-5 py-4 bg-gray-900/80 text-gray-200 min-h-[450px] overflow-y-auto"></div>
+        </div>
       </div>
     </div>
 
@@ -89,14 +119,73 @@ if (session?.value !== 'authenticated') return Astro.redirect('/admin');
   </div>
 
   <script>
+    import { Editor } from '@tiptap/core';
+    import StarterKit from '@tiptap/starter-kit';
+    import Link from '@tiptap/extension-link';
+    import Image from '@tiptap/extension-image';
+    import Underline from '@tiptap/extension-underline';
+    import Placeholder from '@tiptap/extension-placeholder';
+
+    // Initialize Tiptap Visual Rich Text Editor
+    const editor = new Editor({
+      element: document.querySelector('#wysiwyg-editor')!,
+      extensions: [
+        StarterKit,
+        Underline,
+        Link.configure({ openOnClick: false }),
+        Image,
+        Placeholder.configure({ placeholder: 'Write your post content visually here...' }),
+      ],
+      content: '',
+      onUpdate({ editor }) {
+        const text = editor.getText();
+        const count = text.trim() ? text.trim().split(/\s+/).length : 0;
+        document.getElementById('word-count')!.textContent = `${count} words`;
+      }
+    });
+
+    // Toolbar Command Bindings
+    document.getElementById('btn-bold')?.addEventListener('click', () => editor.chain().focus().toggleBold().run());
+    document.getElementById('btn-italic')?.addEventListener('click', () => editor.chain().focus().toggleItalic().run());
+    document.getElementById('btn-underline')?.addEventListener('click', () => editor.chain().focus().toggleUnderline().run());
+    document.getElementById('btn-strike')?.addEventListener('click', () => editor.chain().focus().toggleStrike().run());
+    document.getElementById('btn-h2')?.addEventListener('click', () => editor.chain().focus().toggleHeading({ level: 2 }).run());
+    document.getElementById('btn-h3')?.addEventListener('click', () => editor.chain().focus().toggleHeading({ level: 3 }).run());
+    document.getElementById('btn-p')?.addEventListener('click', () => editor.chain().focus().setParagraph().run());
+    document.getElementById('btn-ul')?.addEventListener('click', () => editor.chain().focus().toggleBulletList().run());
+    document.getElementById('btn-ol')?.addEventListener('click', () => editor.chain().focus().toggleOrderedList().run());
+    document.getElementById('btn-link')?.addEventListener('click', () => {
+      const previousUrl = editor.getAttributes('link').href;
+      const url = window.prompt('Enter link URL:', previousUrl);
+      if (url === null) return;
+      if (url === '') { editor.chain().focus().extendMarkRange('link').unsetLink().run(); return; }
+      editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+    });
+    document.getElementById('btn-image')?.addEventListener('click', () => {
+      const url = window.prompt('Enter image URL:');
+      if (url) editor.chain().focus().setImage({ src: url }).run();
+    });
+
+    // Custom Editorial Callouts Injections
+    document.getElementById('btn-tip')?.addEventListener('click', () => {
+      editor.chain().focus().insertContent('<div class="tip-box"><p>💡 <strong>Tip:</strong> Enter recommendation here...</p></div><p></p>').run();
+    });
+    document.getElementById('btn-warning')?.addEventListener('click', () => {
+      editor.chain().focus().insertContent('<div class="warning-box"><p>⚠️ <strong>Warning:</strong> Enter critical pitfall/mistake to avoid here...</p></div><p></p>').run();
+    });
+    document.getElementById('btn-info')?.addEventListener('click', () => {
+      editor.chain().focus().insertContent('<div class="info-box"><p>ℹ️ <strong>Note:</strong> Enter extra context/data facts here...</p></div><p></p>').run();
+    });
+    document.getElementById('btn-step')?.addEventListener('click', () => {
+      const number = window.prompt('Step Number (e.g. 1):', '1');
+      if (number) {
+        editor.chain().focus().insertContent(`<div class="step"><div class="step-number">${number}</div><div><h4>Step Title</h4><p>Step explanation here...</p></div></div><p></p>`).run();
+      }
+    });
+
     document.getElementById('title')?.addEventListener('input', (e) => {
       const slug = (e.target as HTMLInputElement).value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
       (document.getElementById('slug') as HTMLInputElement).value = slug;
-    });
-
-    document.getElementById('content')?.addEventListener('input', (e) => {
-      const text = (e.target as HTMLTextAreaElement).value.replace(/<[^>]*>/g, '');
-      document.getElementById('word-count')!.textContent = `${text.trim() ? text.trim().split(/\s+/).length : 0} words`;
     });
 
     document.getElementById('featured-image')?.addEventListener('input', (e) => {
@@ -123,7 +212,7 @@ if (session?.value !== 'authenticated') return Astro.redirect('/admin');
         title,
         slug: (document.getElementById('slug') as HTMLInputElement).value || undefined,
         excerpt: (document.getElementById('excerpt') as HTMLTextAreaElement).value,
-        content: (document.getElementById('content') as HTMLTextAreaElement).value,
+        content: editor.getHTML(),
         category: (document.getElementById('category') as HTMLSelectElement).value,
         author: (document.getElementById('author') as HTMLInputElement).value,
         tags,
@@ -153,4 +242,131 @@ if (session?.value !== 'authenticated') return Astro.redirect('/admin');
     document.getElementById('publish-btn')?.addEventListener('click', () => savePost('published'));
     document.getElementById('save-draft')?.addEventListener('click', () => savePost('draft'));
   </script>
+
+  <style>
+    /* Scoped ProseMirror Tiptap styles to map visual editor content to front-end branding */
+    :global(.ProseMirror) {
+      outline: none !important;
+      min-height: 450px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    :global(.ProseMirror p) {
+      margin-bottom: 1.25rem;
+      line-height: 1.75;
+      color: #cbd5e1;
+    }
+    :global(.ProseMirror h2) {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+      color: #f8fafc;
+    }
+    :global(.ProseMirror h3) {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-top: 1.75rem;
+      margin-bottom: 0.75rem;
+      color: #f8fafc;
+    }
+    :global(.ProseMirror ul) {
+      list-style-type: disc;
+      padding-left: 1.5rem;
+      margin-bottom: 1.25rem;
+      color: #cbd5e1;
+    }
+    :global(.ProseMirror ol) {
+      list-style-type: decimal;
+      padding-left: 1.5rem;
+      margin-bottom: 1.25rem;
+      color: #cbd5e1;
+    }
+    :global(.ProseMirror li) {
+      margin-bottom: 0.5rem;
+    }
+    :global(.ProseMirror blockquote) {
+      border-left: 4px solid #8b0222;
+      padding-left: 1rem;
+      font-style: italic;
+      color: #94a3b8;
+      margin: 1.5rem 0;
+    }
+    :global(.ProseMirror pre) {
+      background: #0f172a;
+      padding: 1rem;
+      border-radius: 0.75rem;
+      overflow-x: auto;
+      font-family: monospace;
+      margin: 1.5rem 0;
+      border: 1px solid #1e293b;
+    }
+    :global(.ProseMirror .tip-box) {
+      background: #f0fdf4;
+      border-left: 4px solid #22c55e;
+      padding: 1rem 1.25rem;
+      border-radius: 0 0.5rem 0.5rem 0;
+      margin: 1.5rem 0;
+      color: #166534;
+    }
+    :global(.ProseMirror .tip-box p) {
+      color: #166534;
+      margin: 0;
+    }
+    :global(.ProseMirror .warning-box) {
+      background: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      padding: 1rem 1.25rem;
+      border-radius: 0 0.5rem 0.5rem 0;
+      margin: 1.5rem 0;
+      color: #92400e;
+    }
+    :global(.ProseMirror .warning-box p) {
+      color: #92400e;
+      margin: 0;
+    }
+    :global(.ProseMirror .info-box) {
+      background: #eff6ff;
+      border-left: 4px solid #3b82f6;
+      padding: 1rem 1.25rem;
+      border-radius: 0 0.5rem 0.5rem 0;
+      margin: 1.5rem 0;
+      color: #1e40af;
+    }
+    :global(.ProseMirror .info-box p) {
+      color: #1e40af;
+      margin: 0;
+    }
+    :global(.ProseMirror .step) {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid #334155;
+      padding: 1rem 1.25rem;
+      border-radius: 0.75rem;
+      margin: 1.5rem 0;
+    }
+    :global(.ProseMirror .step-number) {
+      background: #8b0222;
+      color: white;
+      font-weight: 800;
+      font-size: 0.875rem;
+      width: 1.75rem;
+      height: 1.75rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    
+    /* Placeholder styles */
+    :global(.ProseMirror p.is-editor-empty:first-child::before) {
+      color: #475569;
+      content: attr(data-placeholder);
+      float: left;
+      height: 0;
+      pointer-events: none;
+    }
+  </style>
 </AdminLayout>
