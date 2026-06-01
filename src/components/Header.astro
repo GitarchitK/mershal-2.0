@@ -19,7 +19,7 @@ const shortDate = today.toLocaleDateString('en-US', { month: 'short', day: 'nume
 
   <!-- Row 1: Brand Logo & Primary Action Row -->
   <div class="border-b border-slate-100 bg-white">
-    <div class="container mx-auto px-4 max-w-7xl flex items-center justify-between h-16 md:h-20">
+    <div class="container mx-auto px-3 md:px-4 max-w-7xl flex items-center justify-between h-14 md:h-20">
       
       <!-- Left side: Hamburger + Logo + Horizontal Quick Links -->
       <div class="flex items-center gap-4">
@@ -31,8 +31,8 @@ const shortDate = today.toLocaleDateString('en-US', { month: 'short', day: 'nume
         </button>
 
         <!-- Brand logo -->
-        <a href="/" class="flex items-center flex-shrink-0 mr-2 md:mr-4">
-          <img src="/logo.png" alt="Mershal Logo" class="mobile-logo-adjust object-contain transition-transform duration-300 hover:scale-[1.01]" />
+        <a href="/" class="flex items-center flex-shrink-0 mr-1 md:mr-4">
+          <img src="/logo.png" alt="Mershal Logo" class="mobile-logo-adjust max-w-[110px] sm:max-w-none object-contain transition-transform duration-300 hover:scale-[1.01]" />
         </a>
 
         <!-- Horizontal Quick Links with Icons (Desktop Only) -->
@@ -79,30 +79,30 @@ const shortDate = today.toLocaleDateString('en-US', { month: 'short', day: 'nume
         </a>
 
         <!-- Search trigger box (Desktop) / Search trigger icon (Mobile) -->
-        <div class="relative">
+        <div class="relative flex-shrink-0">
           <div id="search-trigger-bar" class="hidden md:flex items-center gap-2.5 bg-slate-100 hover:bg-slate-200/60 border border-slate-200/50 rounded-full px-4 py-2 w-44 lg:w-56 cursor-pointer transition-colors duration-150">
             <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
             </svg>
             <span class="text-xs text-slate-400 select-none">Search Mershal...</span>
           </div>
-          <button id="search-trigger-mobile" class="md:hidden text-slate-500 hover:text-primary-crimson p-2 rounded-lg hover:bg-slate-50 transition" aria-label="Search">
+          <button id="search-trigger-mobile" class="md:hidden text-slate-500 hover:text-primary-crimson p-2 rounded-lg hover:bg-slate-50 transition flex-shrink-0" aria-label="Search">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
             </svg>
           </button>
         </div>
 
-        <!-- Subscribe Button -->
-        <a href="#newsletter" class="flex items-center gap-1.5 bg-primary-crimson hover:bg-primary-crimson/95 text-white text-xs font-black uppercase tracking-wider px-4 py-2.5 rounded-lg shadow-sm hover:shadow transition-all flex-shrink-0">
+        <!-- Subscribe Button (Hidden on Mobile) -->
+        <a href="#newsletter" class="hidden sm:flex items-center gap-1.5 bg-primary-crimson hover:bg-primary-crimson/95 text-white text-xs font-black uppercase tracking-wider px-4 py-2.5 rounded-lg shadow-sm hover:shadow transition-all flex-shrink-0">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
           </svg>
-          <span class="hidden sm:inline">Subscribe</span>
+          <span>Subscribe</span>
         </a>
 
-        <!-- Profile/Admin link -->
-        <a href="/admin" class="text-slate-500 hover:text-primary-crimson p-1.5 rounded-full border border-transparent hover:border-slate-100 transition flex-shrink-0" aria-label="Admin console">
+        <!-- Profile/Admin link (Hidden on Mobile) -->
+        <a href="/admin" class="hidden sm:flex text-slate-500 hover:text-primary-crimson p-1.5 rounded-full border border-transparent hover:border-slate-100 transition flex-shrink-0" aria-label="Admin console">
           <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
@@ -114,7 +114,7 @@ const shortDate = today.toLocaleDateString('en-US', { month: 'short', day: 'nume
 
   <!-- Row 2: Secondary Category Navigation Bar -->
   <div class="bg-slate-50 border-b border-slate-200/60 py-2">
-    <div class="container mx-auto px-4 max-w-7xl flex items-center justify-between">
+    <div class="container mx-auto px-4 max-w-7xl flex items-center justify-between min-w-0">
       
       <!-- Blinking Live Indicator -->
       <div class="flex items-center gap-1.5 flex-shrink-0 pr-3.5 border-r border-slate-200">
@@ -126,11 +126,11 @@ const shortDate = today.toLocaleDateString('en-US', { month: 'short', day: 'nume
       </div>
 
       <!-- Scrollable Categories Menu (with swiping for mobile) -->
-      <nav class="flex-1 overflow-x-auto whitespace-nowrap scrollbar-none flex items-center gap-1 px-3">
+      <nav class="flex-1 min-w-0 overflow-x-auto whitespace-nowrap scrollbar-none flex items-center gap-1 px-3">
         {categories.map(cat => (
           <a
             href={cat.slug}
-            class="px-3.5 py-1 text-xs font-black uppercase tracking-wider text-slate-600 hover:text-primary-crimson transition-all duration-150"
+            class="px-3.5 py-1 text-xs font-black uppercase tracking-wider text-slate-600 hover:text-primary-crimson transition-all duration-150 flex-shrink-0"
           >
             {cat.name}
           </a>
