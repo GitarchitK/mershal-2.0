@@ -89,23 +89,8 @@ const trendingGuides = [
       <div class="absolute left-1/4 bottom-0 w-[400px] h-[400px] bg-primary-gold/5 rounded-full blur-3xl"></div>
       
       <div class="container mx-auto px-4 max-w-7xl relative z-10">
-        <div class="text-center mb-10 max-w-3xl mx-auto">
-          <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-slate-800 border border-slate-700 text-xs font-black uppercase tracking-wider text-primary-gold mb-6">
-            <span class="w-1.5 h-1.5 rounded-full bg-primary-gold animate-pulse"></span>
-            Premium Business Intelligence
-          </span>
-          
-          <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-black tracking-tight leading-[1.1] mb-6">
-            Scale Your Business with <span class="bg-gradient-to-r from-primary-crimson via-rose-400 to-primary-gold bg-clip-text text-transparent">Automation & AI</span>
-          </h1>
-          
-          <p class="text-slate-400 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
-            Mershal delivers research-backed reviews of SaaS tools, AI generators, and online workflows. We help remote agencies, freelancers, and marketers scale their revenue.
-          </p>
-        </div>
-
         {heroArticles.length > 0 && (
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
             <!-- TOP ROW LEFT: Main Featured Card (Post 1) - Spans 2 Cols, 2 Rows on Desktop -->
             {heroArticles[0] && (
