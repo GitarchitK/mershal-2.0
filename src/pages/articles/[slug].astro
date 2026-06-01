@@ -97,6 +97,7 @@ if (adminDb && slug) {
             title: d.title || '',
             category: d.category || 'AI Tools',
             featuredImage: d.featured_image || d.featuredImage || 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=200',
+            readingTime: d.readingTime || d.reading_time || 5,
           };
         })
         .slice(0, 3);
@@ -163,9 +164,53 @@ const shortDate = article.publishDate.toLocaleDateString('en-US', { month: 'shor
 
   <Header />
 
+  <!-- Reading Progress Bar -->
+  <div id="reading-progress" class="fixed top-0 left-0 h-[3px] bg-primary-crimson w-0 z-[9999] transition-[width] duration-75 ease-out"></div>
+
   <!-- Top Leaderboard Ad Unit -->
   <div class="container mx-auto px-4 max-w-7xl">
     <AdUnit type="header" />
+  </div>
+
+  <!-- Floating Share Sidebar (Desktop Only) -->
+  <div id="floating-share" class="fixed flex-col gap-3 z-40 hidden xl:flex">
+    <!-- Twitter -->
+    <a
+      id="share-float-twitter"
+      href="#"
+      target="_blank"
+      class="share-btn w-9 h-9 rounded-full border border-slate-200 bg-white text-slate-500 hover:text-primary-crimson hover:border-primary-crimson flex items-center justify-center transition-all shadow-sm group relative animate-in slide-in-from-left-4 duration-300"
+      title="Share on X"
+    >
+      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+      </svg>
+      <span class="tooltip absolute left-full ml-3 px-2 py-1.5 bg-slate-950 text-white text-[10px] rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 whitespace-nowrap shadow font-bold">Share on X</span>
+    </a>
+    <!-- LinkedIn -->
+    <a
+      id="share-float-linkedin"
+      href="#"
+      target="_blank"
+      class="share-btn w-9 h-9 rounded-full border border-slate-200 bg-white text-slate-500 hover:text-primary-crimson hover:border-primary-crimson flex items-center justify-center transition-all shadow-sm group relative"
+      title="Share on LinkedIn"
+    >
+      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+      </svg>
+      <span class="tooltip absolute left-full ml-3 px-2 py-1.5 bg-slate-950 text-white text-[10px] rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 whitespace-nowrap shadow font-bold">Share on LinkedIn</span>
+    </a>
+    <!-- Copy Link -->
+    <button
+      id="share-float-copy"
+      class="share-btn w-9 h-9 rounded-full border border-slate-200 bg-white text-slate-500 hover:text-primary-crimson hover:border-primary-crimson flex items-center justify-center transition-all shadow-sm group relative cursor-pointer"
+      title="Copy Link"
+    >
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+      </svg>
+      <span id="float-copy-tooltip" class="tooltip absolute left-full ml-3 px-2 py-1.5 bg-slate-950 text-white text-[10px] rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 whitespace-nowrap shadow font-bold">Copy Link</span>
+    </button>
   </div>
 
   <main class="bg-white min-h-screen pb-16 font-sans">
@@ -180,12 +225,12 @@ const shortDate = article.publishDate.toLocaleDateString('en-US', { month: 'shor
     <div class="container mx-auto px-4 max-w-6xl py-8 md:py-12">
       <div class="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-10">
         
-        <!-- Left: Main Article Content -->
-        <article class="min-w-0">
+        <!-- Left: Main Article Content (Prose Width Constrained) -->
+        <article class="min-w-0 max-w-[680px] mx-auto w-full px-5 md:px-0">
           
           <!-- Headers -->
           <header class="mb-8">
-            <h1 class="text-3xl md:text-4xl lg:text-[2.5rem] font-serif font-black text-slate-900 leading-[1.15] mb-5 tracking-tight">
+            <h1 class="text-3xl md:text-4xl lg:text-[2.5rem] font-serif font-black text-slate-900 leading-[1.15] mb-5 tracking-tight animate-in fade-in duration-300">
               {article.title}
             </h1>
             
@@ -193,48 +238,84 @@ const shortDate = article.publishDate.toLocaleDateString('en-US', { month: 'shor
               {article.excerpt}
             </p>
             
-            <!-- Metadata line -->
-            <div class="flex flex-wrap items-center gap-4 py-4 border-y border-slate-100 text-xs text-slate-500 font-sans">
-              <span class="font-bold text-slate-800">{article.author}</span>
-              <span class="text-slate-200">|</span>
-              <time datetime={article.publishDate.toISOString()}>{shortDate}</time>
-              <span class="text-slate-200">|</span>
-              <span class="flex items-center gap-1">
-                <svg class="w-3.5 h-3.5 text-slate-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>
-                {article.readingTime} min read
-              </span>
+            <!-- Inline Author Byline Row -->
+            <div class="flex flex-wrap items-center gap-3 py-4 border-y border-slate-150 text-[14px] text-slate-500 font-sans">
+              <!-- Author Avatar -->
+              {authorData?.avatar ? (
+                <img src={authorData.avatar} alt={article.author} class="w-10 h-10 rounded-full object-cover border border-slate-200" />
+              ) : (
+                <div class="w-10 h-10 rounded-full bg-primary-crimson/10 text-primary-crimson flex items-center justify-center font-black text-sm tracking-wider uppercase border border-primary-crimson/20">
+                  {article.author.split(' ').map((n: string) => n[0]).join('').slice(0, 2)}
+                </div>
+              )}
+              
+              <div class="flex flex-wrap items-center gap-x-2 gap-y-1 ml-1">
+                <span class="font-bold text-slate-800">{article.author}</span>
+                <span class="text-slate-350 select-none">·</span>
+                <time datetime={article.publishDate.toISOString()}>{shortDate}</time>
+                <span class="text-slate-350 select-none">·</span>
+                <span class="flex items-center gap-1.5 font-medium">
+                  <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  {article.readingTime} min read
+                </span>
+              </div>
               
               <!-- Social sharing triggers -->
               <div class="sm:ml-auto flex items-center gap-2 pt-2 sm:pt-0">
-                <button id="share-twitter-btn" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-[10px] font-black uppercase tracking-wider transition">
+                <button id="share-twitter-btn" class="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-[10px] font-black uppercase tracking-wider transition shadow-sm cursor-pointer">
                   Share
                 </button>
-                <button id="copy-url-btn" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-[10px] font-black uppercase tracking-wider transition">
+                <button id="copy-url-btn" class="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-[10px] font-black uppercase tracking-wider transition border border-slate-200/50 cursor-pointer">
                   Copy URL
                 </button>
               </div>
             </div>
           </header>
 
-          <!-- Featured cover photo -->
-          <div class="mb-10 overflow-hidden rounded-2xl border border-slate-100 shadow-sm aspect-video max-h-[460px]">
+          <!-- Mobile TOC Toggle (visible below lg) -->
+          <div id="mobile-toc-box" class="lg:hidden mb-8 bg-slate-50 border border-slate-100 rounded-2xl overflow-hidden hidden shadow-sm">
+            <button id="mobile-toc-toggle" class="w-full flex items-center justify-between px-5 py-4 font-bold text-slate-800 text-sm hover:bg-slate-100/50 transition">
+              <span>Table of Contents</span>
+              <svg id="mobile-toc-arrow" class="w-4 h-4 text-slate-500 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <div id="mobile-toc-content" class="px-5 pb-4 hidden border-t border-slate-150 pt-3">
+              <nav id="mobile-toc-nav" class="space-y-2 text-xs font-semibold text-slate-500"></nav>
+            </div>
+          </div>
+
+          <!-- Featured cover photo (Cinematic layout with Category Badge) -->
+          <div class="mb-10 relative rounded-[12px] overflow-hidden border border-slate-100 shadow-sm aspect-[16/9] md:aspect-[21/9]">
             <img
               src={article.featuredImage}
               alt={article.title}
               class="w-full h-full object-cover"
+              loading="eager"
               fetchpriority="high"
             />
+            <!-- Gradient Overlay -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none"></div>
+            <!-- Category Badge bottom-left -->
+            <div class="absolute bottom-4 left-4 z-10 select-none">
+              <span class="inline-block bg-slate-950/75 backdrop-blur-sm text-white text-[12px] font-black uppercase tracking-wider px-3 py-1.5 rounded-full shadow-sm">
+                {article.category}
+              </span>
+            </div>
           </div>
 
           <!-- Structured Content Body -->
           <div class="article-content" set:html={adInjectedContent} />
 
-          <!-- Tags list -->
+          <!-- Tags list (pill chips) -->
           {article.tags && article.tags.length > 0 && (
-            <div class="mt-10 pt-6 border-t border-slate-100">
+            <div class="mt-10 pt-6 border-t border-slate-150 flex flex-wrap items-center gap-2">
+              <span class="text-xs font-black uppercase tracking-wider text-slate-400 mr-2 select-none">Tags:</span>
               <div class="flex flex-wrap gap-2">
                 {article.tags.map((tag: string) => (
-                  <span class="px-3 py-1 bg-slate-50 border border-slate-100 rounded-lg text-slate-600 text-xs font-semibold hover:border-primary-crimson/30 hover:text-primary-crimson transition cursor-default">
+                  <span class="px-3.5 py-1 bg-slate-100 text-slate-500 text-[13px] rounded-full border border-slate-200/60 hover:bg-slate-200/85 hover:text-primary-crimson transition-all cursor-default font-medium">
                     #{tag}
                   </span>
                 ))}
@@ -248,18 +329,28 @@ const shortDate = article.publishDate.toLocaleDateString('en-US', { month: 'shor
           <!-- FAQ Accordions -->
           <FAQAccordion items={faqItems} />
 
-          <!-- Related Posts Cluster -->
+          <!-- Related Posts Cluster Redesign -->
           {relatedArticles.length > 0 && (
-            <section class="mt-14 pt-8 border-t-2 border-slate-900">
+            <section class="mt-14 pt-8 border-t-2 border-slate-900 animate-in fade-in duration-300">
               <h3 class="text-lg font-black font-serif text-slate-900 uppercase tracking-wide mb-6">Related Guides & Reviews</h3>
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {relatedArticles.map((rel: any) => (
-                  <a href={`/articles/${rel.slug}`} class="group space-y-2 block">
-                    <div class="aspect-video overflow-hidden rounded-xl border border-slate-100 shadow-sm">
-                      <img src={rel.featuredImage} alt={rel.title} class="w-full h-full object-cover group-hover:scale-103 transition-transform duration-300" loading="lazy" />
+                  <a href={`/articles/${rel.slug}`} class="group flex flex-col bg-white rounded-xl border border-slate-200/80 overflow-hidden shadow-sm hover:border-primary-crimson/50 hover:-translate-y-0.5 transition-all duration-205">
+                    <div class="aspect-[16/9] w-full overflow-hidden border-b border-slate-100">
+                      <img src={rel.featuredImage} alt={rel.title} class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.02]" loading="lazy" />
                     </div>
-                    <span class="text-[10px] uppercase font-black tracking-wider text-primary-crimson">{rel.category}</span>
-                    <h4 class="text-sm font-bold text-slate-800 line-clamp-2 leading-snug group-hover:text-primary-crimson transition">{rel.title}</h4>
+                    <div class="p-4 flex flex-col flex-1 justify-between gap-3">
+                      <div>
+                        <span class="inline-block text-[11px] font-black uppercase tracking-wider text-primary-crimson mb-1.5">{rel.category}</span>
+                        <h4 class="text-[15px] font-medium text-slate-800 line-clamp-2 leading-[1.4] group-hover:text-primary-crimson transition-colors duration-200">{rel.title}</h4>
+                      </div>
+                      <div class="flex items-center gap-1.5 text-xs text-slate-400 font-medium">
+                        <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>{rel.readingTime} min read</span>
+                      </div>
+                    </div>
                   </a>
                 ))}
               </div>
@@ -276,7 +367,7 @@ const shortDate = article.publishDate.toLocaleDateString('en-US', { month: 'shor
             <AdUnit type="sidebar" />
             
             <!-- Dynamic Sidebar Table of Contents (TOC) -->
-            <div id="toc-box" class="bg-slate-50 rounded-2xl p-5 border border-slate-100 shadow-sm hidden">
+            <div id="toc-box" class="bg-slate-50 rounded-2xl p-5 border border-slate-100 shadow-sm hidden sticky top-8 max-h-[calc(100vh-4rem)] overflow-y-auto">
               <h3 class="text-xs uppercase tracking-widest font-black text-slate-900 mb-4 font-sans">Table of Contents</h3>
               <nav id="toc-nav" class="space-y-2 text-xs font-semibold text-slate-500"></nav>
             </div>
@@ -291,43 +382,149 @@ const shortDate = article.publishDate.toLocaleDateString('en-US', { month: 'shor
 </Layout>
 
 <script>
-  // Dynamic Table of Contents builder
+  // Dynamic Table of Contents builder (Desktop + Mobile)
   const headings = document.querySelectorAll('.article-content h2, .article-content h3');
-  if (headings.length > 1) {
+  const headingsArray = Array.from(headings);
+  
+  if (headingsArray.length > 1) {
     const tocBox = document.getElementById('toc-box');
     const tocNav = document.getElementById('toc-nav');
-    
+    const mobileTocBox = document.getElementById('mobile-toc-box');
+    const mobileTocNav = document.getElementById('mobile-toc-nav');
+    const mobileTocToggle = document.getElementById('mobile-toc-toggle');
+    const mobileTocContent = document.getElementById('mobile-toc-content');
+    const mobileTocArrow = document.getElementById('mobile-toc-arrow');
+
     if (tocBox && tocNav) {
       tocBox.classList.remove('hidden');
-      headings.forEach((heading, idx) => {
-        const id = `heading-anchor-${idx}`;
-        heading.id = id;
+    }
+    if (mobileTocBox && mobileTocNav) {
+      mobileTocBox.classList.remove('hidden');
+    }
 
+    headingsArray.forEach((heading, idx) => {
+      const id = heading.id || `heading-anchor-${idx}`;
+      heading.id = id;
+
+      // Create Desktop Link
+      if (tocNav) {
         const a = document.createElement('a');
         a.href = `#${id}`;
         a.textContent = heading.textContent;
         a.className = heading.tagName === 'H2' 
-          ? 'block text-slate-700 hover:text-primary-crimson hover:translate-x-0.5 transition-all'
-          : 'block pl-3 text-slate-400 hover:text-primary-crimson hover:translate-x-0.5 transition-all text-[11px]';
+          ? 'block text-slate-500 hover:text-primary-crimson hover:translate-x-0.5 transition-all text-xs font-semibold'
+          : 'block pl-3 text-slate-400 hover:text-primary-crimson hover:translate-x-0.5 transition-all text-[11px] font-semibold';
         tocNav.appendChild(a);
+      }
+
+      // Create Mobile Link
+      if (mobileTocNav) {
+        const aMobile = document.createElement('a');
+        aMobile.href = `#${id}`;
+        aMobile.textContent = heading.textContent;
+        aMobile.className = heading.tagName === 'H2' 
+          ? 'block text-slate-600 hover:text-primary-crimson py-1 text-xs font-semibold'
+          : 'block pl-3 text-slate-400 hover:text-primary-crimson py-0.5 text-[11px] font-semibold';
+        
+        aMobile.addEventListener('click', () => {
+          mobileTocContent?.classList.add('hidden');
+          mobileTocArrow?.classList.remove('rotate-180');
+        });
+        mobileTocNav.appendChild(aMobile);
+      }
+    });
+
+    // Mobile Toggle action
+    mobileTocToggle?.addEventListener('click', () => {
+      mobileTocContent?.classList.toggle('hidden');
+      mobileTocArrow?.classList.toggle('rotate-180');
+    });
+
+    // IntersectionObserver for active link highlighting
+    const observerOptions = {
+      root: null,
+      rootMargin: '-5% 0px -75% 0px',
+      threshold: [0, 1]
+    };
+
+    const observer = new IntersectionObserver(() => {
+      let currentActiveId = '';
+      headingsArray.forEach(heading => {
+        const rect = heading.getBoundingClientRect();
+        if (rect.top < window.innerHeight * 0.3) {
+          currentActiveId = heading.id;
+        }
       });
-    }
+
+      if (currentActiveId) {
+        // Highlight active link in both Desktop & Mobile TOC
+        const links = document.querySelectorAll('#toc-nav a, #mobile-toc-nav a');
+        links.forEach(link => {
+          if (link.getAttribute('href') === `#${currentActiveId}`) {
+            link.classList.add('active');
+          } else {
+            link.classList.remove('active');
+          }
+        });
+      }
+    }, observerOptions);
+
+    headingsArray.forEach(heading => observer.observe(heading));
   }
 
-  // Social actions
+  // Social sharing logic
   const url = window.location.href;
   const title = document.title;
 
+  // Header Twitter Share
   document.getElementById('share-twitter-btn')?.addEventListener('click', () => {
     window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`, '_blank');
   });
 
+  // Floating Twitter Share
+  const floatTwitter = document.getElementById('share-float-twitter');
+  if (floatTwitter) {
+    floatTwitter.setAttribute('href', `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`);
+  }
+
+  // Floating LinkedIn Share
+  const floatLinkedIn = document.getElementById('share-float-linkedin');
+  if (floatLinkedIn) {
+    floatLinkedIn.setAttribute('href', `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`);
+  }
+
+  // Header Copy URL Button
   document.getElementById('copy-url-btn')?.addEventListener('click', async () => {
     await navigator.clipboard.writeText(url);
     const btn = document.getElementById('copy-url-btn') as HTMLButtonElement;
     btn.textContent = 'Copied!';
     setTimeout(() => { btn.textContent = 'Copy URL'; }, 1500);
   });
+
+  // Floating Copy URL Button
+  document.getElementById('share-float-copy')?.addEventListener('click', async () => {
+    await navigator.clipboard.writeText(url);
+    const tooltip = document.getElementById('float-copy-tooltip');
+    if (tooltip) {
+      tooltip.textContent = 'Copied!';
+      tooltip.style.opacity = '1';
+      setTimeout(() => {
+        tooltip.textContent = 'Copy Link';
+        tooltip.style.opacity = '';
+      }, 1500);
+    }
+  });
+
+  // Reading Progress Bar handler
+  const bar = document.getElementById('reading-progress');
+  if (bar) {
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.body.scrollHeight - window.innerHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      bar.style.width = progress + '%';
+    });
+  }
 </script>
 
 <style is:global>
@@ -365,13 +562,24 @@ const shortDate = article.publishDate.toLocaleDateString('en-US', { month: 'shor
     color: #334155;
   }
   .article-content blockquote {
-    border-left: 4px solid #c29b38;
-    background-color: #f8fafc;
-    padding: 1rem 1.5rem;
-    margin: 2rem 0;
+    font-size: 1.1rem;
     font-style: italic;
-    color: #475569;
-    border-radius: 0 0.5rem 0.5rem 0;
+    color: #0f172a;
+    background-color: rgba(139, 2, 34, 0.03); /* subtle red/crimson accent tint */
+    border-left: 3px solid #8b0222;
+    border-radius: 0 8px 8px 0;
+    padding: 1rem 1.25rem;
+    margin: 2rem 0;
+    position: relative;
+  }
+  .article-content blockquote::before {
+    content: '"';
+    font-size: 4rem;
+    color: rgba(139, 2, 34, 0.15);
+    line-height: 0;
+    vertical-align: -1rem;
+    margin-right: 4px;
+    font-family: var(--font-serif);
   }
   .article-content ul, .article-content ol {
     padding-left: 1.5rem;
@@ -389,5 +597,24 @@ const shortDate = article.publishDate.toLocaleDateString('en-US', { month: 'shor
   }
   .article-content a:hover {
     color: #ab173b;
+  }
+
+  /* Table of Contents Active link styling */
+  #toc-nav a.active, #mobile-toc-nav a.active {
+    color: #8b0222 !important;
+    font-weight: 700 !important;
+  }
+
+  /* Floating Share Sidebar Desktop Only styles */
+  #floating-share {
+    position: fixed;
+    left: calc(50% - 340px - 75px);
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  @media (max-width: 1200px) {
+    #floating-share {
+      display: none !important;
+    }
   }
 </style>
