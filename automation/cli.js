@@ -36,7 +36,7 @@ async function main() {
       console.log(`  ${i + 1}. ${cat}`);
     });
     
-    const categoryIndex = await question('\nSelect category (1-6): ');
+    const categoryIndex = await question(`\nSelect category (1-${config.categories.length}): `);
     const category = config.categories[parseInt(categoryIndex) - 1];
     
     if (!category) {
@@ -51,7 +51,7 @@ async function main() {
     console.log('\n📝 Generating article...');
     
     // Generate article
-    const article = await generateArticle(topic, category, keywords);
+    const article = await generateArticle(topic, category, { keywords });
     
     console.log('\n✓ Article generated successfully!');
     console.log(`  Title: ${article.title}`);
@@ -67,10 +67,7 @@ async function main() {
       process.exit(0);
     }
     
-    // Add featured image
-    article.featuredImage = `https://images.unsplash.com/photo-${Date.now()}?w=800`;
-    
-    // Save to Firestore
+    // Save to Firestore articles collection
     console.log('\n💾 Saving to Firestore...');
     const postId = await savePost(article);
     console.log(`✓ Saved with ID: ${postId}`);
@@ -86,9 +83,9 @@ async function main() {
     // Submit to Google
     const index = await question('\nSubmit to Google Indexing API? (y/n): ');
     if (index.toLowerCase() === 'y') {
-      const articleUrl = `${config.site.url}/news/${article.slug}`;
+      const articleUrl = `${config.site.url}/articles/${article.slug}`;
       console.log('🔍 Submitting to Google...');
-      await submitUrlToGoogle(articleUrl);
+      await submitUrlToGoogle(articleUrl).catch(e => console.warn('Indexing skipped:', e.message));
       console.log('✓ Submitted to Google');
     }
     

@@ -34,6 +34,8 @@ const fullTitle = title.includes('Mershal') ? title : `${title} | Mershal`;
 // Load Google AdSense scripts dynamically
 let adsenseHeaderCode = '';
 let adsenseFooterCode = '';
+let adsenseClientId = '';
+
 if (adminDb) {
   try {
     const doc = await adminDb.collection('settings').doc('adsense').get();
@@ -41,10 +43,23 @@ if (adminDb) {
       const data = doc.data();
       adsenseHeaderCode = data?.header_code || '';
       adsenseFooterCode = data?.footer_code || '';
+      
+      // Extract client ID from headerCode if present
+      const match = adsenseHeaderCode.match(/client=(ca-pub-\d+)/);
+      if (match) {
+        adsenseClientId = match[1];
+        // Strip the main script tag to prevent it from loading synchronously
+        adsenseHeaderCode = adsenseHeaderCode.replace(/<script[^>]*src="[^"]*adsbygoogle[^"]*"[^>]*><\/script>/gi, '');
+      }
     }
   } catch (e) {
     console.error('Layout settings fetch error:', e);
   }
+}
+
+// Fallback client ID if not configured or in development
+if (!adsenseClientId) {
+  adsenseClientId = 'ca-pub-9426217436033785';
 }
 ---
 
@@ -115,10 +130,36 @@ if (adminDb) {
 
     <!-- AdSense Header Integration -->
     {adsenseHeaderCode && <Fragment set:html={adsenseHeaderCode} />}
-    {!adsenseHeaderCode && (
-      <!-- Fallback AdSense client placeholder in development -->
-      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9426217436033785" crossorigin="anonymous"></script>
-    )}
+
+    <!-- Lazy Loaded AdSense Script -->
+    <script is:inline define:vars={{ adsenseClientId }}>
+      (function() {
+        var adsenseLoaded = false;
+        function loadAdSense() {
+          if (adsenseLoaded) return;
+          adsenseLoaded = true;
+          
+          var script = document.createElement('script');
+          script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + adsenseClientId;
+          script.async = true;
+          script.crossOrigin = 'anonymous';
+          document.head.appendChild(script);
+          
+          // Remove event listeners
+          window.removeEventListener('scroll', loadAdSense);
+          window.removeEventListener('mousemove', loadAdSense);
+          window.removeEventListener('touchstart', loadAdSense);
+        }
+        
+        // Load AdSense on user interaction (scroll, mouse movement, touch)
+        window.addEventListener('scroll', loadAdSense, { passive: true });
+        window.addEventListener('mousemove', loadAdSense, { passive: true });
+        window.addEventListener('touchstart', loadAdSense, { passive: true });
+        
+        // Fallback: load after 4.5 seconds if no interaction
+        setTimeout(loadAdSense, 4500);
+      })();
+    </script>
 
     <!-- Website Schema -->
     <script type="application/ld+json" is:inline>

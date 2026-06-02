@@ -54,8 +54,9 @@ export const config = {
     schedulerInterval: 30, // minutes
   },
 
-  // Categories - World News focused
-  categories: ['world', 'politics', 'business', 'technology', 'sports', 'entertainment'],
+  // Categories - SaaS, AI, and Tech focused
+  categories: ['AI Tools', 'SaaS Reviews', 'Productivity', 'Freelancing', 'Online Business', 'CRM Software', 'Digital Marketing'],
+
 
   // Site Configuration
   site: {

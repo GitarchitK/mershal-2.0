@@ -21,12 +21,13 @@ function calculateReadingTime(wordCount) {
 async function generateThumbnail(topic, category) {
   const unsplashKey = process.env.UNSPLASH_ACCESS_KEY;
   const fallbacks = {
-    politics:      'https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=1200&h=630&fit=crop&auto=format&q=80',
-    business:      'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&h=630&fit=crop&auto=format&q=80',
-    technology:    'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&h=630&fit=crop&auto=format&q=80',
-    sports:        'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=1200&h=630&fit=crop&auto=format&q=80',
-    entertainment: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200&h=630&fit=crop&auto=format&q=80',
-    world:         'https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=1200&h=630&fit=crop&auto=format&q=80',
+    'ai-tools':          'https://images.unsplash.com/photo-1677442136019-21780efad99a?w=1200&h=630&fit=crop&auto=format&q=80',
+    'saas-reviews':      'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&h=630&fit=crop&auto=format&q=80',
+    'productivity':      'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=1200&h=630&fit=crop&auto=format&q=80',
+    'freelancing':       'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&h=630&fit=crop&auto=format&q=80',
+    'online-business':   'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&h=630&fit=crop&auto=format&q=80',
+    'crm-software':      'https://images.unsplash.com/photo-1552581230-c01591d6f597?w=1200&h=630&fit=crop&auto=format&q=80',
+    'digital-marketing': 'https://images.unsplash.com/photo-1533750516457-a7f992034fec?w=1200&h=630&fit=crop&auto=format&q=80',
   };
 
   if (unsplashKey) {
@@ -45,15 +46,16 @@ async function generateThumbnail(topic, category) {
     }
   }
 
-  return fallbacks[category] || fallbacks.world;
+  const categorySlug = category.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  return fallbacks[categorySlug] || fallbacks['ai-tools'];
 }
 
 /**
- * Generate a news article using GPT-4o.
+ * Generate a programmatic SEO article using GPT-4o.
  * The AI is instructed to write as the Editor in Chief of Mershal.
  *
- * @param {string} topic - The trending topic/headline
- * @param {string} category - world | politics | business | technology | sports | entertainment
+ * @param {string} topic - The keyword/topic
+ * @param {string} category - Category display name
  * @param {object} trendContext - Optional: { relatedHeadlines, traffic }
  */
 export async function generateArticle(topic, category, trendContext = {}) {
@@ -61,28 +63,13 @@ export async function generateArticle(topic, category, trendContext = {}) {
 
   const today = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
-  // Build real facts block from fetched news
-  const hasFacts = trendContext.realFacts?.length > 0;
-  const factsBlock = hasFacts
-    ? `\n\nREAL NEWS FACTS (verified from Google News — use these as your factual foundation):\n${
-        trendContext.realFacts.map((f, i) =>
-          `[${i+1}] "${f.headline}" — ${f.source}${f.snippet ? `\n    Context: ${f.snippet}` : ''}`
-        ).join('\n')
-      }\n\nYou MUST base your article on these real facts. Do NOT invent statistics, quotes, or events not supported by the above.`
-    : `\n\nNOTE: No real-time news data available for this topic. Write only what you know to be factually accurate. Do NOT fabricate quotes, statistics, or specific events. Use general, verifiable background information only.`;
-
-  const relatedBlock = trendContext.relatedHeadlines?.length
-    ? `\nRELATED HEADLINES FROM GOOGLE TRENDS:\n${trendContext.relatedHeadlines.map(h => `- ${h.headline}`).join('\n')}`
-    : '';
-
-  const systemPrompt = `You are the Editor in Chief of Mershal (mershal.in), a professional world news publication. 
+  const systemPrompt = `You are the Editor in Chief of Mershal (mershal.in), a premium SaaS, AI, and online business operations authority blog. 
 
 Your writing style:
-- Authoritative, clear, and direct — like a senior journalist at Reuters or BBC
+- Authoritative, clear, actionable, and engaging — like a senior writer at HubSpot, Ahrefs, or Zapier
 - Varied sentence length: mix short punchy sentences with longer analytical ones
 - Use active voice predominantly
-- Include specific details, numbers, and named sources where plausible
-- Write with genuine editorial perspective — not just summarizing, but analyzing
+- Include specific details, real-world examples, and numbers where plausible
 - Natural paragraph flow with smooth transitions
 - Occasional rhetorical questions to engage readers
 - Never use AI-sounding phrases like "In conclusion", "It is worth noting", "Delve into", "Comprehensive", "Multifaceted"
@@ -92,61 +79,59 @@ Your writing style:
 
 You always respond with valid JSON only.`;
 
-  const userPrompt = `Write a professional news article for Mershal about this trending topic.
+  const userPrompt = `Write a comprehensive, high-quality, 1200+ word evergreen article/guide for Mershal about this topic.
 
 TOPIC: "${topic}"
 CATEGORY: ${category}
 DATE: ${today}
-TRENDING TRAFFIC: ${trendContext.traffic || 'High'}${factsBlock}${relatedBlock}
 
 ARTICLE REQUIREMENTS:
 
-1. LENGTH: 900-1300 words
+1. LENGTH: 1200+ words
 
-2. FACTUAL ACCURACY — THIS IS CRITICAL:
-   - ONLY use facts from the REAL NEWS FACTS section above
-   - If a fact is not in the provided sources, do NOT include it
-   - Do NOT invent quotes — only use quotes if they appear in the source material
-   - Do NOT fabricate statistics, dates, or names
-   - If you are uncertain about a detail, write around it or omit it
-   - You may add verified background context (e.g. historical facts about a country, general knowledge about a company) but clearly distinguish analysis from reported facts
+2. VISUAL CALLOUTS & FORMATTING (CRITICAL FOR BRANDING):
+   You MUST inject these exact HTML class wrappers directly into the article content where appropriate (do not escape HTML tags inside the JSON string, output them directly):
+   - TIP CALLOUTS (For recommendations or insider tips):
+     <div class="tip-box"><p>💡 <strong>Tip:</strong> [Tip content here]</p></div>
+   - WARNING CALLOUTS (For critical mistakes, risks, or warnings):
+     <div class="warning-box"><p>⚠️ <strong>Warning:</strong> [Warning content here]</p></div>
+   - INFO/NOTE CALLOUTS (For extra context, facts, or statistics):
+     <div class="info-box"><p>ℹ️ <strong>Note:</strong> [Context content here]</p></div>
+   - STEP-BY-STEP SECTIONS (Use this exact structure for numbered instructions/steps):
+     <div class="step">
+       <div class="step-number">1</div>
+       <div>
+         <h4>[Step Title]</h4>
+         <p>[Step explanation...]</p>
+       </div>
+     </div>
+     (Repeat sequentially for Steps 2, 3, etc.)
+   - KEYWORD HIGHLIGHTS:
+     Use <span class="highlight">keyword or key phrase</span> to emphasize important terms.
 
 3. STRUCTURE:
-<h2>Subheading</h2> — 3-4 subheadings
-<p>Paragraph</p>
-<blockquote>Direct quote from source material only</blockquote>
-<ul><li>List item</li></ul> — for key points
-<strong>Term</strong> — sparingly
+   - Introduction (~150 words): Hook, identify core user pain points, state the solution clearly, and outline what the article covers.
+   - H2 headings for major sections (use 3-4 descriptive H2s).
+   - A comparison table comparing options/tools (use standard HTML table tags: <table>, <thead>, <tbody>, <tr>, <th>, <td>).
+   - Paragraphs should be short (2-3 sentences max) to improve readability on mobile devices.
+   - Do NOT use H1 in the content (the page title acts as H1).
 
-4. NEWS WRITING FORMAT:
-- Lead paragraph: Most important verified fact first
-- Second paragraph: Context and background
-- Middle: Details from sources, analysis, implications
-- Close: What happens next / why it matters
+4. FAQ SECTION:
+   - Provide 3-4 frequently asked questions with highly concise, direct answers. You will return these separately in the "faqItems" JSON field as well.
 
-5. ENGAGING WRITING:
-- Vary sentence length — mix short punchy sentences with longer analytical ones
-- Use specific details from the source material (names, places, numbers)
-- Explain WHY this story matters to the reader
-- Add editorial analysis: "This marks a shift...", "The decision raises questions..."
-- Use active voice
-- Write with genuine curiosity and engagement
-
-6. WHAT TO AVOID:
-- Do NOT start with "In today's world" or "In recent years"
-- Do NOT use "It is worth noting", "Delve into", "Comprehensive", "Multifaceted"
-- Do NOT fabricate ANY quotes, statistics, or events
-- Do NOT repeat the topic keyword more than 4 times
-- Do NOT write like a listicle
-
-Respond ONLY with this JSON (no markdown, no code blocks):
+Respond ONLY with this JSON structure (no markdown, no code blocks):
 {
-  "title": "Specific, compelling news headline (55-65 chars)",
-  "excerpt": "One-sentence summary of the key news (150-160 chars)",
-  "content": "Full HTML article 800-1200 words",
-  "seoTitle": "SEO headline - Mershal (under 60 chars)",
-  "seoDescription": "Meta description with key facts (150-160 chars)",
-  "tags": ["tag1", "tag2", "tag3", "tag4", "tag5"]
+  "title": "Compelling, benefit-driven SEO article title (55-65 chars)",
+  "excerpt": "One-sentence summary of the key takeaways (150-160 chars)",
+  "content": "Full HTML article content (1200+ words) formatted with the requested custom HTML wrappers",
+  "seoTitle": "SEO meta title - Mershal (under 60 chars)",
+  "seoDescription": "Meta description targeting high-value search terms (150-160 chars)",
+  "tags": ["tag1", "tag2", "tag3", "tag4", "tag5"],
+  "faqItems": [
+    { "question": "Question 1?", "answer": "Answer 1" },
+    { "question": "Question 2?", "answer": "Answer 2" },
+    { "question": "Question 3?", "answer": "Answer 3" }
+  ]
 }`;
 
   const completion = await openai.chat.completions.create({
@@ -156,10 +141,10 @@ Respond ONLY with this JSON (no markdown, no code blocks):
       { role: 'user', content: userPrompt },
     ],
     response_format: { type: 'json_object' },
-    temperature: 0.85,       // High enough for natural variation
+    temperature: 0.85,
     top_p: 0.92,
-    frequency_penalty: 0.5,  // Strongly discourages word repetition
-    presence_penalty: 0.4,   // Encourages covering different aspects
+    frequency_penalty: 0.5,
+    presence_penalty: 0.4,
   });
 
   const articleData = JSON.parse(completion.choices[0].message.content);

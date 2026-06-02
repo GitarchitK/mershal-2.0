@@ -27,12 +27,12 @@ async function publishArticle(topic, category, trendContext = {}) {
 
     console.log(`✓ Generated: "${article.title}" (${article.wordCount} words)`);
 
-    // Save to Firestore
+    // Save to Firestore articles collection
     const docId = await savePost(article);
     console.log(`💾 Saved: ${docId}`);
 
     // Submit to Google Indexing API
-    const url = `${config.site.url}/news/${article.slug}`;
+    const url = `${config.site.url}/articles/${article.slug}`;
     await submitUrlToGoogle(url).catch(e => console.warn('Indexing skipped:', e.message));
     console.log(`🔍 Indexed: ${url}`);
 
@@ -44,19 +44,38 @@ async function publishArticle(topic, category, trendContext = {}) {
 }
 
 async function main() {
-  const count = parseInt(process.argv[2]) || 8;
-  console.log(`\n🌐 Mershal Auto-Publisher — ${count} articles\n`);
-  console.log('📡 Fetching trending topics from Google Trends...');
+  const args = process.argv.slice(2);
+  const isProgrammaticMode = args.includes('--programmatic') || args.includes('-p');
+  
+  // Extract first positional argument that is not a flag
+  const countArg = args.find(arg => !arg.startsWith('-'));
+  const count = countArg ? parseInt(countArg) : 1;
 
-  // Get trending topics from Google Trends RSS
-  let topics = await getTrendingTopics('US');
+  console.log(`\n🌐 Mershal Auto-Publisher — Target: ${count} articles\n`);
+
+  let topics = [];
+
+  if (isProgrammaticMode) {
+    console.log('📚 Running in Programmatic SEO Mode (using local topics pool)...');
+    const { getRandomTopics } = await import('./topics.js');
+    topics = getRandomTopics(count * 3); // grab a pool to select from
+  } else {
+    console.log('📡 Fetching trending topics from Google Trends...');
+    topics = await getTrendingTopics('US');
+
+    if (topics.length === 0) {
+      console.warn('⚠️  No trending topics found. Falling back to local programmatic topics pool...');
+      const { getRandomTopics } = await import('./topics.js');
+      topics = getRandomTopics(count * 3);
+    }
+  }
 
   if (topics.length === 0) {
-    console.warn('⚠️  No trending topics found. Exiting.');
+    console.warn('⚠️  No topics available. Exiting.');
     process.exit(1);
   }
 
-  console.log(`✓ ${topics.length} trending topics available\n`);
+  console.log(`✓ ${topics.length} topics available for selection\n`);
 
   // Shuffle to get variety
   topics = topics.sort(() => Math.random() - 0.5);
@@ -71,19 +90,19 @@ async function main() {
     const success = await publishArticle(
       topic.topic,
       topic.category,
-      { relatedHeadlines: topic.relatedHeadlines, traffic: topic.traffic }
+      topic.realFacts ? { relatedHeadlines: topic.relatedHeadlines, traffic: topic.traffic, realFacts: topic.realFacts } : {}
     );
 
     if (success) published++;
 
-    // Wait 15 seconds between articles to avoid rate limits
-    if (published < count) {
-      console.log('⏳ Waiting 15s...');
+    // Wait 15 seconds between articles to avoid API rate limits
+    if (published < count && success) {
+      console.log('⏳ Waiting 15s before next generation...');
       await new Promise(r => setTimeout(r, 15000));
     }
   }
 
-  // Trigger one deployment after all articles
+  // Trigger Vercel rebuild to regenerate static pages
   if (published > 0) {
     console.log('\n🚀 Triggering deployment...');
     await triggerDeployment().catch(e => console.warn('Deploy skipped:', e.message));

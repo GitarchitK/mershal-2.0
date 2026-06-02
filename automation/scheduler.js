@@ -1,7 +1,6 @@
 import cron from 'node-cron';
 import { config } from './config.js';
-import { getTrendingTopics, getIPLTrendingTopics } from './utils/trending.js';
-import { generateArticle, generateIPLArticle } from './utils/ai-generator.js';
+import { generateArticle } from './utils/ai-generator.js';
 import { savePost, checkDuplicatePost } from './utils/firebase.js';
 import { triggerDeployment, waitForDeployment } from './utils/deployment.js';
 import { submitUrlToGoogle } from './utils/indexing.js';
@@ -19,7 +18,7 @@ function resetDailyCounter() {
 
 async function publishArticle(topic, category) {
   try {
-    console.log(`\n📝 Generating article: "${topic}"`);
+    console.log(`\n📝 Generating article: "${topic}" [${category}]`);
     
     // Check for duplicates
     const isDuplicate = await checkDuplicatePost(topic);
@@ -28,15 +27,12 @@ async function publishArticle(topic, category) {
       return false;
     }
     
-    // Generate article
+    // Generate article (automatically fetches Unsplash thumbnail inside generator)
     const article = await generateArticle(topic, category);
-    
-    // Add featured image (you can integrate with Unsplash API)
-    article.featuredImage = `https://images.unsplash.com/photo-${Date.now()}?w=800`;
     
     // Save to Firestore
     const postId = await savePost(article);
-    console.log(`✓ Article saved to Firestore: ${postId}`);
+    console.log(`✓ Article saved to Firestore articles collection: ${postId}`);
     
     // Trigger deployment
     await triggerDeployment();
@@ -45,8 +41,8 @@ async function publishArticle(topic, category) {
     await waitForDeployment(60000); // 1 minute
     
     // Submit to Google Indexing
-    const articleUrl = `${config.site.url}/news/${article.slug}`;
-    await submitUrlToGoogle(articleUrl);
+    const articleUrl = `${config.site.url}/articles/${article.slug}`;
+    await submitUrlToGoogle(articleUrl).catch(e => console.warn('Indexing skipped:', e.message));
     
     articlesPublishedToday++;
     console.log(`✓ Article published successfully! (${articlesPublishedToday}/${config.content.articlesPerDay} today)`);
@@ -70,42 +66,22 @@ async function runAutomation() {
   console.log(`Articles published today: ${articlesPublishedToday}/${config.content.articlesPerDay}`);
   
   try {
-    // Fetch trending topics
-    const topics = await getTrendingTopics();
+    // Fetch programmatic topics from local pool
+    const { getRandomTopics } = await import('./topics.js');
+    const topics = getRandomTopics(1);
     
     if (topics.length === 0) {
-      console.log('No trending topics found');
+      console.log('No programmatic topics found');
       return;
     }
     
-    // Select a random topic
-    const randomTopic = topics[Math.floor(Math.random() * topics.length)];
+    const selectedTopic = topics[0];
     
     // Publish article
-    await publishArticle(randomTopic.topic, randomTopic.category);
+    await publishArticle(selectedTopic.topic, selectedTopic.category);
     
   } catch (error) {
     console.error('Automation cycle error:', error);
-  }
-}
-
-async function runIPLAutomation() {
-  if (!config.ipl.enabled) {
-    return;
-  }
-  
-  console.log('\n🏏 Running IPL automation...');
-  
-  try {
-    // Get IPL trending topics
-    const iplTopics = await getIPLTrendingTopics();
-    
-    // Generate IPL articles
-    // This would integrate with cricket APIs to get match data
-    
-    console.log('IPL automation completed');
-  } catch (error) {
-    console.error('IPL automation error:', error);
   }
 }
 
@@ -120,13 +96,6 @@ export function startScheduler() {
   cron.schedule(cronExpression, async () => {
     await runAutomation();
   });
-  
-  // Run IPL automation every hour during IPL season
-  if (config.ipl.enabled) {
-    cron.schedule('0 * * * *', async () => {
-      await runIPLAutomation();
-    });
-  }
   
   // Reset counter at midnight
   cron.schedule('0 0 * * *', () => {
