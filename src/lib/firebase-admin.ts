@@ -19,6 +19,7 @@ if (privateKey) {
 
 // Check if Firebase Admin credentials are properly configured
 const hasValidCredentials = projectId && clientEmail && privateKey;
+const storageBucket = process.env.FIREBASE_STORAGE_BUCKET || process.env.PUBLIC_FIREBASE_STORAGE_BUCKET || import.meta.env.FIREBASE_STORAGE_BUCKET || import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET;
 
 if (!admin.apps.length && hasValidCredentials) {
   try {
@@ -27,7 +28,8 @@ if (!admin.apps.length && hasValidCredentials) {
         projectId,
         clientEmail,
         privateKey
-      })
+      }),
+      storageBucket
     });
     console.log('Firebase Admin initialized successfully');
   } catch (error) {
@@ -44,3 +46,4 @@ if (!admin.apps.length && hasValidCredentials) {
 // Export with null checks
 export const adminDb = admin.apps.length > 0 ? admin.firestore() : null;
 export const adminAuth = admin.apps.length > 0 ? admin.auth() : null;
+export const adminStorage = admin.apps.length > 0 ? admin.storage() : null;
