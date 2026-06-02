@@ -3,6 +3,15 @@ export const prerender = false;
 import type { APIRoute } from 'astro';
 import { adminDb } from '../lib/firebase-admin';
 
+function escapeXml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
 export const GET: APIRoute = async () => {
   const baseUrl = 'https://mershal.in';
 
@@ -26,6 +35,8 @@ export const GET: APIRoute = async () => {
 
       articles = snapshot.docs.map(doc => ({
         slug: doc.data().slug || doc.id,
+        title: doc.data().title || '',
+        featuredImage: doc.data().featured_image || doc.data().featuredImage || '',
         updatedAt: doc.data().updated_date?.toDate?.() || doc.data().updatedAt?.toDate?.() || new Date(),
       }));
     } catch (error) {
@@ -38,6 +49,7 @@ export const GET: APIRoute = async () => {
 
   let sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
@@ -96,11 +108,17 @@ export const GET: APIRoute = async () => {
 
   // Article pages
   articles.forEach(art => {
+    const featuredImage = art.featuredImage || '/logo.png';
+    const imageUrl = featuredImage.startsWith('http') ? featuredImage : `${baseUrl}${featuredImage}`;
     sitemap += `  <url>
     <loc>${baseUrl}/articles/${art.slug}</loc>
     <lastmod>${art.updatedAt.toISOString()}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>${imageUrl}</image:loc>
+      <image:title>${escapeXml(art.title)}</image:title>
+    </image:image>
   </url>
 `;
   });

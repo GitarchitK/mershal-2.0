@@ -37,6 +37,8 @@ if (adminDb && slug) {
     if (!snapshot.empty) {
       const doc = snapshot.docs[0];
       const d = doc.data();
+      const pDate = d.publish_date?.toDate?.() || d.publishedAt?.toDate?.() || new Date();
+      const mDate = d.updated_date?.toDate?.() || d.updatedAt?.toDate?.() || pDate;
       article = {
         id: doc.id,
         title: d.title || '',
@@ -49,7 +51,8 @@ if (adminDb && slug) {
         category: d.category || 'AI Tools',
         categorySlug: (d.category || 'ai-tools').toLowerCase().replace(/[^a-z0-9]+/g, '-'),
         author: d.author || 'Mershal Editorial Team',
-        publishDate: d.publish_date?.toDate?.() || d.publishedAt?.toDate?.() || new Date(),
+        publishDate: pDate,
+        modifiedDate: mDate,
         readingTime: d.readingTime || d.reading_time || 5,
         tags: d.tags || [],
       };
@@ -115,8 +118,91 @@ function injectAdsIntoHtml(contentHtml: string) {
   return contentHtml;
 }
 
-const adInjectedContent = injectAdsIntoHtml(article.content);
+// Automated contextual internal link injector to establish topic clusters
+function injectContextualLinks(contentHtml: string, currentSlug: string) {
+  const linkMappings = [
+    { term: 'AI coding assistants', url: '/articles/best-ai-coding-assistants' },
+    { term: 'CRM Software', url: '/category/crm' },
+    { term: 'SaaS reviews', url: '/category/saas-reviews' },
+    { term: 'AI Tools', url: '/category/ai-tools' },
+    { term: 'Productivity', url: '/category/productivity' },
+    { term: 'Freelancing', url: '/category/freelancing' },
+    { term: 'Online Business', url: '/category/online-business' },
+    { term: 'Digital Marketing', url: '/category/marketing' },
+    { term: 'HubSpot CRM', url: '/articles/top-crm-platforms-remote-agencies' },
+    { term: 'Pipedrive', url: '/articles/top-crm-platforms-remote-agencies' }
+  ];
+
+  let modifiedHtml = contentHtml;
+
+  for (const mapping of linkMappings) {
+    if (mapping.url.includes(currentSlug)) continue;
+
+    const paragraphRegex = /<p>([\s\S]*?)<\/p>/gi;
+    let match;
+    let replaced = false;
+
+    paragraphRegex.lastIndex = 0;
+
+    while ((match = paragraphRegex.exec(contentHtml)) !== null && !replaced) {
+      const paragraphContent = match[1];
+      
+      if (paragraphContent.toLowerCase().includes('href=') || !paragraphContent.toLowerCase().includes(mapping.term.toLowerCase())) {
+        continue;
+      }
+
+      const termRegex = new RegExp(`\\b(${mapping.term})\\b`, 'i');
+      if (termRegex.test(paragraphContent)) {
+        const newParagraph = paragraphContent.replace(termRegex, `<a href="${mapping.url}">$1</a>`);
+        modifiedHtml = modifiedHtml.replace(match[0], `<p>${newParagraph}</p>`);
+        replaced = true;
+      }
+    }
+  }
+
+  return modifiedHtml;
+}
+
+const linkedContent = injectContextualLinks(article.content, article.slug);
+const adInjectedContent = injectAdsIntoHtml(linkedContent);
 const shortDate = article.publishDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+const shortModifiedDate = article.modifiedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+const isUpdated = article.modifiedDate.getTime() > article.publishDate.getTime() + 86400000; // >24 hours later
+
+// Dynamic FAQ detection helper
+function detectFaqsFromHtml(html: string) {
+  const faqs: { question: string; answer: string }[] = [];
+  const qMatches = [...html.matchAll(/<h4>Q:\s*(.*?)<\/h4>\s*<p>A:\s*(.*?)<\/p>/gi)];
+  for (const match of qMatches) {
+    faqs.push({ question: match[1], answer: match[2] });
+  }
+  
+  if (faqs.length === 0) {
+    const faqSectionMatch = html.match(/<h[23][^>]*>(?:FAQ|Frequently Asked Questions)<\/h[23]>([\s\S]*?)(?:<h2|$)/i);
+    if (faqSectionMatch) {
+      const sectionHtml = faqSectionMatch[1];
+      const h4Matches = [...sectionHtml.matchAll(/<h4[^>]*>(.*?)<\/h4>\s*<p[^>]*>(.*?)<\/p>/gi)];
+      for (const match of h4Matches) {
+        const question = match[1].replace(/^Q:\s*/i, '').trim();
+        const answer = match[2].replace(/^A:\s*/i, '').trim();
+        if (question.length > 5 && answer.length > 10) {
+          faqs.push({ question, answer });
+        }
+      }
+    }
+  }
+  return faqs;
+}
+
+const detectedFaqs = detectFaqsFromHtml(article.content);
+const finalFaqs = [...(faqItems || []), ...detectedFaqs];
+const seenQuestions = new Set();
+const uniqueFaqs = finalFaqs.filter(faq => {
+  const q = faq.question?.trim().toLowerCase();
+  if (!q || seenQuestions.has(q)) return false;
+  seenQuestions.add(q);
+  return true;
+});
 ---
 
 <Layout
@@ -127,40 +213,94 @@ const shortDate = article.publishDate.toLocaleDateString('en-US', { month: 'shor
   author={article.author}
   publishedAt={article.publishDate.toISOString()}
 >
-  <!-- SEO JSON-LD Rich Schema Tags -->
+  <!-- SEO JSON-LD Rich Schema Tags (Consolidated Graph) -->
   <Fragment slot="head">
     <script type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org",
-      "@type": "BlogPosting",
-      "headline": article.title,
-      "description": article.excerpt,
-      "image": [article.featuredImage],
-      "datePublished": article.publishDate.toISOString(),
-      "dateModified": article.publishDate.toISOString(),
-      "author": [{ "@type": "Person", "name": article.author }],
-      "publisher": {
-        "@type": "Organization",
-        "name": "Mershal",
-        "logo": { "@type": "ImageObject", "url": "https://mershal.in/logo.png" }
-      },
-      "mainEntityOfPage": { "@type": "WebPage", "@id": `https://mershal.in/articles/${article.slug}` }
-    })} />
-    
-    <!-- FAQ Schema if FAQ items exist -->
-    {faqItems && faqItems.length > 0 && (
-      <script type="application/ld+json" set:html={JSON.stringify({
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": faqItems.map(f => ({
-          "@type": "Question",
-          "name": f.question,
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": f.answer
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://mershal.in/#organization",
+          "name": "Mershal",
+          "url": "https://mershal.in",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://mershal.in/logo.png"
           }
-        }))
-      })} />
-    )}
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://mershal.in/#website",
+          "url": "https://mershal.in",
+          "name": "Mershal",
+          "publisher": {
+            "@id": "https://mershal.in/#organization"
+          }
+        },
+        {
+          "@type": "BreadcrumbList",
+          "@id": `https://mershal.in/articles/${article.slug}/#breadcrumb`,
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://mershal.in/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": article.category,
+              "item": `https://mershal.in/category/${article.categorySlug}`
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "name": article.title,
+              "item": `https://mershal.in/articles/${article.slug}`
+            }
+          ]
+        },
+        {
+          "@type": "BlogPosting",
+          "@id": `https://mershal.in/articles/${article.slug}/#article`,
+          "isPartOf": {
+            "@id": "https://mershal.in/#website"
+          },
+          "headline": article.title,
+          "description": article.excerpt,
+          "image": {
+            "@type": "ImageObject",
+            "url": article.featuredImage.startsWith('http') ? article.featuredImage : `https://mershal.in${article.featuredImage}`
+          },
+          "datePublished": article.publishDate.toISOString(),
+          "dateModified": article.modifiedDate.toISOString(),
+          "author": {
+            "@type": "Person",
+            "name": authorData.name,
+            "jobTitle": authorData.role,
+            "description": authorData.bio,
+            "url": `https://mershal.in/author/${authorData.slug || 'archit-karmakar'}`
+          },
+          "publisher": {
+            "@id": "https://mershal.in/#organization"
+          },
+          "mainEntityOfPage": `https://mershal.in/articles/${article.slug}`
+        },
+        ...(uniqueFaqs.length > 0 ? [{
+          "@type": "FAQPage",
+          "@id": `https://mershal.in/articles/${article.slug}/#faq`,
+          "mainEntity": uniqueFaqs.map(f => ({
+            "@type": "Question",
+            "name": f.question,
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": f.answer
+            }
+          }))
+        }] : [])
+      ]
+    })} />
   </Fragment>
 
   <Header />
@@ -256,9 +396,15 @@ const shortDate = article.publishDate.toLocaleDateString('en-US', { month: 'shor
               )}
               
               <div class="flex flex-wrap items-center gap-x-2 gap-y-1 ml-1">
-                <span class="font-bold text-slate-800">{article.author}</span>
+                <a href={`/author/${authorData.slug || 'archit-karmakar'}`} class="font-bold text-slate-800 hover:text-primary-crimson transition-colors">
+                  {article.author}
+                </a>
                 <span class="text-slate-350 select-none">·</span>
-                <time datetime={article.publishDate.toISOString()}>{shortDate}</time>
+                {isUpdated ? (
+                  <span>Updated: <time datetime={article.modifiedDate.toISOString()}>{shortModifiedDate}</time></span>
+                ) : (
+                  <span>Published: <time datetime={article.publishDate.toISOString()}>{shortDate}</time></span>
+                )}
                 <span class="text-slate-350 select-none">·</span>
                 <span class="flex items-center gap-1.5 font-medium">
                   <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -335,7 +481,7 @@ const shortDate = article.publishDate.toLocaleDateString('en-US', { month: 'shor
           <AuthorCard name={authorData.name} role={authorData.role} bio={authorData.bio} avatar={authorData.avatar} />
 
           <!-- FAQ Accordions -->
-          <FAQAccordion items={faqItems} />
+          <FAQAccordion items={uniqueFaqs} />
 
           <!-- Related Posts Cluster Redesign -->
           {relatedArticles.length > 0 && (

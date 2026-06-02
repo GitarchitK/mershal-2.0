@@ -60,13 +60,14 @@ if (session?.value !== 'authenticated') return Astro.redirect('/admin');
             <th class="px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Category</th>
             <th class="px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Status</th>
             <th class="px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Stats</th>
+            <th class="px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">SEO Health</th>
             <th class="px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Published</th>
             <th class="px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider text-right">Actions</th>
           </tr>
         </thead>
         <tbody id="posts-table-body" class="divide-y divide-gray-800/50">
           <tr>
-            <td colspan="6" class="px-6 py-12 text-center">
+            <td colspan="7" class="px-6 py-12 text-center">
               <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-800/50 mb-4">
                 <svg class="w-6 h-6 text-gray-400 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
               </div>
@@ -75,6 +76,52 @@ if (session?.value !== 'authenticated') return Astro.redirect('/admin');
           </tr>
         </tbody>
       </table>
+    </div>
+  </div>
+
+  <!-- SEO Audit Modal -->
+  <div id="seo-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black/70 backdrop-blur-sm p-4">
+    <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-800 bg-gray-950/40">
+        <h3 class="text-sm font-bold text-white flex items-center gap-2">
+          <svg class="w-5 h-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          SEO Optimization Audit
+        </h3>
+        <button onclick="window.closeSeoAudit()" class="text-gray-400 hover:text-white p-1 rounded-lg hover:bg-gray-800 transition-colors cursor-pointer">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="p-6 max-h-[70vh] overflow-y-auto space-y-6">
+        <!-- Title and score -->
+        <div>
+          <h4 id="seo-modal-title" class="text-base font-semibold text-white truncate mb-2">Article Title</h4>
+          <div class="flex items-center gap-3">
+            <span class="text-xs text-gray-400">SEO Health Score:</span>
+            <span id="seo-modal-score" class="text-base font-black px-2 py-0.5 rounded">100/100</span>
+          </div>
+        </div>
+        
+        <!-- Alerts / Warnings -->
+        <div>
+          <h5 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Critical Alerts</h5>
+          <div id="seo-modal-warnings" class="space-y-2"></div>
+        </div>
+
+        <!-- Recommendations -->
+        <div>
+          <h5 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Recommendations</h5>
+          <div id="seo-modal-recommendations" class="space-y-2"></div>
+        </div>
+
+        <!-- Internal Linking -->
+        <div>
+          <h5 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Internal Linking Suggestions</h5>
+          <div id="seo-modal-linking" class="space-y-2"></div>
+        </div>
+      </div>
+      <div class="px-6 py-4 border-t border-gray-800 bg-gray-950/40 flex justify-end">
+        <button onclick="window.closeSeoAudit()" class="bg-gray-800 hover:bg-gray-750 border border-gray-700 text-white rounded-xl px-5 py-2 text-xs font-semibold transition-all cursor-pointer">Close Audit</button>
+      </div>
     </div>
   </div>
 
@@ -92,7 +139,7 @@ if (session?.value !== 'authenticated') return Astro.redirect('/admin');
         console.error('Failed to load posts:', error);
         document.getElementById('posts-table-body')!.innerHTML = `
           <tr>
-            <td colspan="6" class="px-6 py-12 text-center text-red-400">
+            <td colspan="7" class="px-6 py-12 text-center text-red-400">
               Failed to load posts. Please try refreshing the page.
             </td>
           </tr>
@@ -114,7 +161,7 @@ if (session?.value !== 'authenticated') return Astro.redirect('/admin');
       if (!posts.length) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="6" class="px-6 py-16 text-center">
+            <td colspan="7" class="px-6 py-16 text-center">
               <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-800/30 mb-4">
                 <svg class="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5L18.5 7M4 13h16M4 18h16"/></svg>
               </div>
@@ -135,6 +182,17 @@ if (session?.value !== 'authenticated') return Astro.redirect('/admin');
         const dateFormatted = p.publishedAt 
           ? new Date(p.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) 
           : '<span class="text-gray-600">—</span>';
+
+        // SEO Badge configuration
+        const seoScore = p.seo?.score ?? 100;
+        let seoClass = 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+        if (seoScore < 50) {
+          seoClass = 'bg-rose-500/10 text-rose-400 border border-rose-500/20';
+        } else if (seoScore < 85) {
+          seoClass = 'bg-amber-500/10 text-amber-400 border border-amber-500/20';
+        }
+
+        const seoBadge = `<button onclick="window.showSeoAudit('${p.id}')" class="inline-flex items-center gap-1.5 py-1 px-2.5 rounded-full text-xs font-bold ${seoClass} hover:opacity-85 transition cursor-pointer select-none">${seoScore}/100</button>`;
 
         return `
           <tr class="group hover:bg-gray-800/40 transition-colors">
@@ -163,6 +221,9 @@ if (session?.value !== 'authenticated') return Astro.redirect('/admin');
                 ${p.wordCount || 0}
               </div>
             </td>
+            <td class="px-6 py-4">
+              ${seoBadge}
+            </td>
             <td class="px-6 py-4 text-sm text-gray-400 whitespace-nowrap">
               ${dateFormatted}
             </td>
@@ -171,7 +232,7 @@ if (session?.value !== 'authenticated') return Astro.redirect('/admin');
                 <a href="/admin/posts/edit?id=${p.id}" class="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors" title="Edit Post">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                 </a>
-                <button onclick="window.deletePost('${p.id}', '${p.title.replace(/'/g, "\\'")}')" class="p-2 text-gray-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors" title="Delete Post">
+                <button onclick="window.deletePost('${p.id}', '${p.title.replace(/'/g, "\\'")}')" class="p-2 text-gray-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors cursor-pointer" title="Delete Post">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.8627m5 4v6m4-6v6m1-10V4a1 11v3M4 7h16"/></svg>
                 </button>
               </div>
@@ -197,6 +258,82 @@ if (session?.value !== 'authenticated') return Astro.redirect('/admin');
       
       renderTable(filtered);
     }
+
+    // Modal control functions
+    (window as any).showSeoAudit = function(id: string) {
+      const post = allPosts.find((p: any) => p.id === id);
+      if (!post) return;
+      
+      const modal = document.getElementById('seo-modal');
+      const modalTitle = document.getElementById('seo-modal-title');
+      const modalScore = document.getElementById('seo-modal-score');
+      const modalWarnings = document.getElementById('seo-modal-warnings');
+      const modalRecs = document.getElementById('seo-modal-recommendations');
+      const modalLinking = document.getElementById('seo-modal-linking');
+      
+      if (!modal || !modalTitle || !modalScore || !modalWarnings || !modalRecs || !modalLinking) return;
+      
+      modalTitle.textContent = post.title;
+      
+      const score = post.seo?.score ?? 100;
+      modalScore.textContent = `${score}/100`;
+      
+      if (score < 50) {
+        modalScore.className = 'text-base font-black text-rose-400 bg-rose-500/10 border border-rose-500/20 px-2 py-0.5 rounded';
+      } else if (score < 85) {
+        modalScore.className = 'text-base font-black text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded';
+      } else {
+        modalScore.className = 'text-base font-black text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded';
+      }
+      
+      // Warnings list
+      const warnings = post.seo?.warnings || [];
+      if (warnings.length === 0) {
+        modalWarnings.innerHTML = '<p class="text-emerald-400 text-xs flex items-center gap-1.5 font-medium">✓ No critical warnings. Content elements are fully optimized.</p>';
+      } else {
+        modalWarnings.innerHTML = warnings.map((w: string) => `
+          <div class="flex items-start gap-2 bg-red-950/20 border border-red-900/30 text-red-300 rounded-xl p-3 text-xs leading-relaxed">
+            <span class="text-red-400 font-bold select-none">⚠</span>
+            <span>${w}</span>
+          </div>
+        `).join('');
+      }
+      
+      // Recommendations list
+      const recs = post.seo?.recommendations || [];
+      if (recs.length === 0) {
+        modalRecs.innerHTML = '<p class="text-gray-500 text-xs">No further actions required.</p>';
+      } else {
+        modalRecs.innerHTML = recs.map((r: string) => `
+          <div class="flex items-start gap-2 bg-blue-950/20 border border-blue-900/30 text-blue-300 rounded-xl p-3 text-xs leading-relaxed">
+            <span class="text-blue-400 font-bold select-none">ℹ</span>
+            <span>${r}</span>
+          </div>
+        `).join('');
+      }
+
+      // Internal links suggestions
+      const linking = post.seo?.internalLinkingSuggestions || [];
+      if (linking.length === 0) {
+        modalLinking.innerHTML = '<p class="text-gray-500 text-xs">No other guides in this category to link to yet.</p>';
+      } else {
+        modalLinking.innerHTML = linking.map((l: string) => `
+          <div class="flex items-center gap-2 bg-gray-950/40 border border-gray-800 text-gray-300 rounded-xl px-3 py-2.5 text-xs">
+            <span class="text-rose-500 font-bold">🔗</span>
+            <span class="truncate">${l}</span>
+          </div>
+        `).join('');
+      }
+      
+      modal.classList.remove('hidden');
+    };
+    
+    (window as any).closeSeoAudit = function() {
+      const modal = document.getElementById('seo-modal');
+      if (modal) {
+        modal.classList.add('hidden');
+      }
+    };
 
     (window as any).deletePost = async function(id: string, title: string) {
       if (isDeleting) return;
@@ -227,3 +364,4 @@ if (session?.value !== 'authenticated') return Astro.redirect('/admin');
     loadPosts();
   </script>
 </AdminLayout>
+

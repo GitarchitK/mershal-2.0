@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import { adminDb } from '../../../lib/firebase-admin';
 import admin from 'firebase-admin';
 import { google } from 'googleapis';
+import { auditArticle } from '../../../lib/seo-validator';
 
 function isAuthenticated(cookies: any) {
   return cookies.get('admin_session')?.value === 'authenticated';
@@ -63,6 +64,17 @@ export const GET: APIRoute = async ({ url, cookies }) => {
       if (!doc.exists) return new Response(JSON.stringify({ error: 'Not found' }), { status: 404 });
       
       const d = doc.data() || {};
+      const audit = auditArticle({
+        title: d.title || '',
+        excerpt: d.excerpt || '',
+        content: d.content || '',
+        category: d.category || 'AI Tools',
+        featured_image: d.featured_image || d.featuredImage || '',
+        meta_title: d.meta_title || d.seoTitle || '',
+        meta_description: d.meta_description || d.seoDescription || '',
+        faq_items: d.faq_items || []
+      });
+
       return new Response(JSON.stringify({
         id: doc.id,
         title: d.title,
@@ -78,6 +90,11 @@ export const GET: APIRoute = async ({ url, cookies }) => {
         meta_description: d.meta_description || d.seoDescription || '',
         faq_items: d.faq_items || [],
         schema_data: d.schema_data || {},
+        seo: {
+          score: audit.score,
+          warnings: audit.warnings,
+          recommendations: audit.recommendations
+        }
       }), {
         headers: { 'Content-Type': 'application/json' },
       });
@@ -91,8 +108,66 @@ export const GET: APIRoute = async ({ url, cookies }) => {
       snapshot = await adminDb.collection('posts').orderBy('publishedAt', 'desc').limit(100).get();
     }
 
+    // To check duplicate titles and descriptions, we collect them first
+    const titlesMap = new Map<string, string[]>();
+    const descMap = new Map<string, string[]>();
+    
+    snapshot.docs.forEach(doc => {
+      const d = doc.data();
+      const metaTitle = (d.meta_title || d.seoTitle || d.title || '').trim().toLowerCase();
+      const metaDesc = (d.meta_description || d.seoDescription || d.excerpt || '').trim().toLowerCase();
+      
+      if (metaTitle) {
+        if (!titlesMap.has(metaTitle)) titlesMap.set(metaTitle, []);
+        titlesMap.get(metaTitle)!.push(doc.id);
+      }
+      if (metaDesc) {
+        if (!descMap.has(metaDesc)) descMap.set(metaDesc, []);
+        descMap.get(metaDesc)!.push(doc.id);
+      }
+    });
+
     const posts = snapshot.docs.map(doc => {
       const d = doc.data();
+      const audit = auditArticle({
+        title: d.title || '',
+        excerpt: d.excerpt || '',
+        content: d.content || '',
+        category: d.category || 'AI Tools',
+        featured_image: d.featured_image || d.featuredImage || '',
+        meta_title: d.meta_title || d.seoTitle || '',
+        meta_description: d.meta_description || d.seoDescription || '',
+        faq_items: d.faq_items || []
+      });
+
+      // Check for duplicate titles and descriptions
+      const metaTitle = (d.meta_title || d.seoTitle || d.title || '').trim().toLowerCase();
+      const metaDesc = (d.meta_description || d.seoDescription || d.excerpt || '').trim().toLowerCase();
+      
+      if (metaTitle && titlesMap.has(metaTitle) && titlesMap.get(metaTitle)!.length > 1) {
+        audit.score = Math.max(0, audit.score - 10);
+        audit.warnings.push('Duplicate SEO Meta Title shared with other articles');
+        audit.recommendations.push('Write a unique SEO Meta Title to avoid search cannibalization.');
+      }
+      if (metaDesc && descMap.has(metaDesc) && descMap.get(metaDesc)!.length > 1) {
+        audit.score = Math.max(0, audit.score - 10);
+        audit.warnings.push('Duplicate SEO Meta Description shared with other articles');
+        audit.recommendations.push('Write a unique SEO Meta Description to differentiate search snippets.');
+      }
+
+      // Generate internal linking suggestions
+      const suggestions: string[] = [];
+      const currentCategory = d.category || '';
+      snapshot.docs.forEach(otherDoc => {
+        if (otherDoc.id !== doc.id) {
+          const od = otherDoc.data();
+          if (od.category === currentCategory) {
+            suggestions.push(`Link to: "${od.title}" (/articles/${od.slug || otherDoc.id})`);
+          }
+        }
+      });
+      const internalLinkingSuggestions = suggestions.slice(0, 3);
+
       return {
         id: doc.id,
         title: d.title,
@@ -102,12 +177,19 @@ export const GET: APIRoute = async ({ url, cookies }) => {
         author: d.author,
         publishedAt: d.publish_date?.toDate?.()?.toISOString() || d.publishedAt?.toDate?.()?.toISOString() || null,
         wordCount: d.wordCount || d.word_count || 0,
+        seo: {
+          score: audit.score,
+          warnings: audit.warnings,
+          recommendations: audit.recommendations,
+          internalLinkingSuggestions
+        }
       };
     });
 
     return new Response(JSON.stringify(posts), {
       headers: { 'Content-Type': 'application/json' },
     });
+
   } catch (e: any) {
     return new Response(JSON.stringify({ error: e.message }), { status: 550 });
   }
