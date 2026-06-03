@@ -6,6 +6,10 @@ function isAuthenticated(cookies: any) {
 }
 
 export const POST: APIRoute = async ({ request, cookies }) => {
+  const sessionVal = cookies.get('admin_session')?.value;
+  console.log('[Upload API] Cookie admin_session:', sessionVal);
+  console.log('[Upload API] Request cookie header:', request.headers.get('cookie'));
+
   if (!isAuthenticated(cookies)) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
   }
