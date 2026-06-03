@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { adminStorage } from '../../../lib/firebase-admin';
+import { cloudinary } from '../../../lib/cloudinary';
 
 function isAuthenticated(cookies: any) {
   return cookies.get('admin_session')?.value === 'authenticated';
@@ -10,8 +10,10 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
   }
 
-  if (!adminStorage) {
-    return new Response(JSON.stringify({ error: 'Storage bucket not configured' }), { status: 503 });
+  // Check if Cloudinary is configured
+  const cloudName = process.env.CLOUDINARY_CLOUD_NAME || import.meta.env.CLOUDINARY_CLOUD_NAME;
+  if (!cloudName) {
+    return new Response(JSON.stringify({ error: 'Cloudinary credentials not configured' }), { status: 503 });
   }
 
   try {
@@ -24,28 +26,36 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    const bucket = adminStorage.bucket();
-    const filename = `${folder}/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
-    const fileUpload = bucket.file(filename);
 
-    await fileUpload.save(buffer, {
-      metadata: {
-        contentType: file.type,
-      },
-    });
+    // Upload buffer to Cloudinary using upload_stream
+    const uploadToCloudinary = (fileBuffer: Buffer, folderName: string): Promise<string> => {
+      return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          {
+            folder: folderName,
+            resource_type: 'image',
+          },
+          (error, result) => {
+            if (result) {
+              resolve(result.secure_url);
+            } else {
+              reject(error || new Error('Cloudinary upload failed'));
+            }
+          }
+        );
+        stream.write(fileBuffer);
+        stream.end();
+      });
+    };
 
-    // Make the file publicly readable
-    await fileUpload.makePublic();
+    const secureUrl = await uploadToCloudinary(buffer, folder);
 
-    // Direct Google Cloud Storage public URL
-    const publicUrl = `https://storage.googleapis.com/${bucket.name}/${filename}`;
-
-    return new Response(JSON.stringify({ url: publicUrl }), {
+    return new Response(JSON.stringify({ url: secureUrl }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (error: any) {
-    console.error('File upload error:', error);
+    console.error('Cloudinary upload API error:', error);
     return new Response(JSON.stringify({ error: error.message }), { status: 500 });
   }
 };
