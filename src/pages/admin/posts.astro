@@ -10,68 +10,74 @@ if (session?.value !== 'authenticated') return Astro.redirect('/admin');
   <!-- Header Section -->
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
     <div>
-      <h1 class="text-3xl font-bold text-white tracking-tight">Posts</h1>
-      <p class="text-gray-400 text-sm mt-1 flex items-center gap-2">
-        <span id="post-count" class="font-medium text-gray-300">Loading...</span>
-        <span class="text-gray-600">•</span>
-        <span>Manage and publish your content</span>
+      <h1 class="text-3xl font-black font-outfit text-white tracking-tight">Posts</h1>
+      <p class="text-slate-450 text-sm mt-1 flex items-center gap-2 font-outfit">
+        <span id="post-count" class="font-bold text-slate-200">Loading...</span>
+        <span class="text-slate-700">•</span>
+        <span>Manage and publish your articles</span>
       </p>
     </div>
-    <a href="/admin/posts/new" class="inline-flex items-center gap-2 bg-rose-600 hover:bg-rose-500 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-lg shadow-rose-600/20 active:scale-95">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+    <a href="/admin/posts/new" class="inline-flex items-center gap-2 bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-550 hover:to-rose-655 hover:shadow-lg hover:shadow-rose-600/10 text-white px-5 py-2.5 rounded-xl text-sm font-bold font-outfit transition-all active:scale-[0.98]">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
       Create Post
     </a>
   </div>
 
   <!-- Filters Section -->
-  <div class="bg-gray-900/50 border border-gray-800/60 rounded-2xl p-4 mb-6 backdrop-blur-sm">
+  <div class="bg-slate-900/40 border border-slate-850/60 rounded-2xl p-4 mb-6 backdrop-blur-md">
     <div class="flex flex-col sm:flex-row gap-4">
       <div class="relative flex-1">
-        <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-        <input id="search" type="text" placeholder="Search by title or slug..." class="w-full bg-gray-950/50 border border-gray-700/50 text-white rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/50 focus:border-rose-500 transition-all placeholder-gray-500" />
+        <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input id="search" type="text" placeholder="Search by title or slug..." class="w-full bg-slate-950/40 border border-slate-800 text-white rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 transition-all placeholder-slate-600 font-outfit" />
       </div>
       <div class="flex gap-3">
-        <select id="filter-status" class="bg-gray-950/50 border border-gray-700/50 text-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/50 focus:border-rose-500 transition-all min-w-[140px] appearance-none cursor-pointer">
-          <option value="">All Statuses</option>
-          <option value="published">Published</option>
-          <option value="draft">Draft</option>
-        </select>
-        <select id="filter-category" class="bg-gray-950/50 border border-gray-700/50 text-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/50 focus:border-rose-500 transition-all min-w-[140px] appearance-none cursor-pointer">
-          <option value="">All Categories</option>
-          <option value="AI Tools">AI Tools</option>
-          <option value="SaaS Reviews">SaaS Reviews</option>
-          <option value="Productivity">Productivity</option>
-          <option value="Freelancing">Freelancing</option>
-          <option value="Online Business">Online Business</option>
-          <option value="CRM Software">CRM Software</option>
-          <option value="Digital Marketing">Digital Marketing</option>
-        </select>
+        <div class="relative">
+          <select id="filter-status" class="bg-slate-950/40 border border-slate-800 text-slate-300 rounded-xl pl-4 pr-10 py-2.5 text-sm focus:outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 transition-all min-w-[140px] appearance-none cursor-pointer font-outfit">
+            <option value="">All Statuses</option>
+            <option value="published">Published</option>
+            <option value="draft">Draft</option>
+          </select>
+          <svg class="w-4 h-4 text-slate-500 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+        </div>
+        <div class="relative">
+          <select id="filter-category" class="bg-slate-950/40 border border-slate-800 text-slate-300 rounded-xl pl-4 pr-10 py-2.5 text-sm focus:outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 transition-all min-w-[140px] appearance-none cursor-pointer font-outfit">
+            <option value="">All Categories</option>
+            <option value="AI Tools">AI Tools</option>
+            <option value="SaaS Reviews">SaaS Reviews</option>
+            <option value="Productivity">Productivity</option>
+            <option value="Freelancing">Freelancing</option>
+            <option value="Online Business">Online Business</option>
+            <option value="CRM Software">CRM Software</option>
+            <option value="Digital Marketing">Digital Marketing</option>
+          </select>
+          <svg class="w-4 h-4 text-slate-500 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- Table Section -->
-  <div class="bg-gray-900/40 border border-gray-800/60 rounded-2xl overflow-hidden shadow-xl backdrop-blur-sm">
+  <div class="bg-slate-900/40 border border-slate-850/60 rounded-2xl overflow-hidden shadow-xl backdrop-blur-sm">
     <div class="overflow-x-auto">
       <table class="w-full text-left border-collapse">
         <thead>
-          <tr class="bg-gray-900/80 border-b border-gray-800/60">
-            <th class="px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider w-1/3">Post Details</th>
-            <th class="px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Category</th>
-            <th class="px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Status</th>
-            <th class="px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Stats</th>
-            <th class="px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">SEO Health</th>
-            <th class="px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Published</th>
-            <th class="px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider text-right">Actions</th>
+          <tr class="bg-slate-950/40 border-b border-slate-900 text-xs font-bold text-slate-500 uppercase tracking-widest font-outfit">
+            <th class="px-6 py-4 w-1/3">Post Details</th>
+            <th class="px-6 py-4">Category</th>
+            <th class="px-6 py-4">Status</th>
+            <th class="px-6 py-4">Stats</th>
+            <th class="px-6 py-4">SEO Health</th>
+            <th class="px-6 py-4">Published</th>
+            <th class="px-6 py-4 text-right">Actions</th>
           </tr>
         </thead>
-        <tbody id="posts-table-body" class="divide-y divide-gray-800/50">
+        <tbody id="posts-table-body" class="divide-y divide-slate-900/60">
           <tr>
-            <td colspan="7" class="px-6 py-12 text-center">
-              <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-800/50 mb-4">
-                <svg class="w-6 h-6 text-gray-400 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+            <td colspan="7" class="px-6 py-16 text-center">
+              <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-slate-950/60 border border-slate-850 mb-4">
+                <svg class="w-5 h-5 text-rose-500 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
               </div>
-              <p class="text-gray-400 text-sm">Loading posts...</p>
+              <p class="text-slate-400 text-sm font-outfit">Loading posts...</p>
             </td>
           </tr>
         </tbody>
@@ -80,47 +86,49 @@ if (session?.value !== 'authenticated') return Astro.redirect('/admin');
   </div>
 
   <!-- SEO Audit Modal -->
-  <div id="seo-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black/70 backdrop-blur-sm p-4">
-    <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-800 bg-gray-950/40">
-        <h3 class="text-sm font-bold text-white flex items-center gap-2">
-          <svg class="w-5 h-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+  <div id="seo-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-slate-950/80 backdrop-blur-md p-4">
+    <div class="bg-[#0b0f19] border border-slate-800 rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200 relative">
+      <div class="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-rose-500/50 to-amber-500/30"></div>
+      
+      <div class="flex items-center justify-between px-6 py-5 border-b border-slate-900 bg-slate-950/20">
+        <h3 class="text-md font-bold font-outfit text-white flex items-center gap-2">
+          <svg class="w-5 h-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
           SEO Optimization Audit
         </h3>
-        <button onclick="window.closeSeoAudit()" class="text-gray-400 hover:text-white p-1 rounded-lg hover:bg-gray-800 transition-colors cursor-pointer">
+        <button onclick="window.closeSeoAudit()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-900 transition-colors cursor-pointer">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
       </div>
-      <div class="p-6 max-h-[70vh] overflow-y-auto space-y-6">
+      <div class="p-6 max-h-[65vh] overflow-y-auto space-y-6">
         <!-- Title and score -->
         <div>
-          <h4 id="seo-modal-title" class="text-base font-semibold text-white truncate mb-2">Article Title</h4>
-          <div class="flex items-center gap-3">
-            <span class="text-xs text-gray-400">SEO Health Score:</span>
-            <span id="seo-modal-score" class="text-base font-black px-2 py-0.5 rounded">100/100</span>
+          <h4 id="seo-modal-title" class="text-base font-bold text-white truncate mb-2 font-outfit">Article Title</h4>
+          <div class="flex items-center gap-3 bg-slate-950/40 border border-slate-900 rounded-xl px-4 py-3">
+            <span class="text-xs font-bold text-slate-450 uppercase tracking-wider font-outfit">SEO Health Score:</span>
+            <span id="seo-modal-score" class="text-sm font-black font-outfit px-2.5 py-0.5 rounded-full">100/100</span>
           </div>
         </div>
         
         <!-- Alerts / Warnings -->
         <div>
-          <h5 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Critical Alerts</h5>
-          <div id="seo-modal-warnings" class="space-y-2"></div>
+          <h5 class="text-xs font-bold text-slate-500 uppercase tracking-widest font-outfit mb-3">Critical Alerts</h5>
+          <div id="seo-modal-warnings" class="space-y-2.5"></div>
         </div>
 
         <!-- Recommendations -->
         <div>
-          <h5 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Recommendations</h5>
-          <div id="seo-modal-recommendations" class="space-y-2"></div>
+          <h5 class="text-xs font-bold text-slate-500 uppercase tracking-widest font-outfit mb-3">Recommendations</h5>
+          <div id="seo-modal-recommendations" class="space-y-2.5"></div>
         </div>
 
         <!-- Internal Linking -->
         <div>
-          <h5 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Internal Linking Suggestions</h5>
-          <div id="seo-modal-linking" class="space-y-2"></div>
+          <h5 class="text-xs font-bold text-slate-500 uppercase tracking-widest font-outfit mb-3">Internal Linking Suggestions</h5>
+          <div id="seo-modal-linking" class="space-y-2.5"></div>
         </div>
       </div>
-      <div class="px-6 py-4 border-t border-gray-800 bg-gray-950/40 flex justify-end">
-        <button onclick="window.closeSeoAudit()" class="bg-gray-800 hover:bg-gray-750 border border-gray-700 text-white rounded-xl px-5 py-2 text-xs font-semibold transition-all cursor-pointer">Close Audit</button>
+      <div class="px-6 py-4 border-t border-slate-900 bg-slate-950/20 flex justify-end">
+        <button onclick="window.closeSeoAudit()" class="bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white rounded-xl px-5 py-2.5 text-xs font-bold font-outfit transition-all cursor-pointer">Close Audit</button>
       </div>
     </div>
   </div>
@@ -139,7 +147,7 @@ if (session?.value !== 'authenticated') return Astro.redirect('/admin');
         console.error('Failed to load posts:', error);
         document.getElementById('posts-table-body')!.innerHTML = `
           <tr>
-            <td colspan="7" class="px-6 py-12 text-center text-red-400">
+            <td colspan="7" class="px-6 py-12 text-center text-rose-455 font-outfit font-semibold">
               Failed to load posts. Please try refreshing the page.
             </td>
           </tr>
@@ -162,11 +170,11 @@ if (session?.value !== 'authenticated') return Astro.redirect('/admin');
         tbody.innerHTML = `
           <tr>
             <td colspan="7" class="px-6 py-16 text-center">
-              <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-800/30 mb-4">
-                <svg class="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5L18.5 7M4 13h16M4 18h16"/></svg>
+              <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-950/60 border border-slate-850 mb-4">
+                <svg class="w-7 h-7 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
               </div>
-              <h3 class="text-white text-lg font-medium mb-1">No posts found</h3>
-              <p class="text-gray-500 text-sm">Try adjusting your filters or create a new post.</p>
+              <h3 class="text-white text-lg font-bold font-outfit mb-1">No posts found</h3>
+              <p class="text-slate-500 text-sm font-outfit">Try adjusting your filters or create a new post.</p>
             </td>
           </tr>
         `;
@@ -176,64 +184,64 @@ if (session?.value !== 'authenticated') return Astro.redirect('/admin');
       tbody.innerHTML = posts.map((p: any) => {
         const isPublished = p.status === 'published';
         const statusBadge = isPublished
-          ? `<span class="inline-flex items-center gap-1.5 py-1 px-2.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Published</span>`
-          : `<span class="inline-flex items-center gap-1.5 py-1 px-2.5 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Draft</span>`;
+          ? `<span class="inline-flex items-center gap-1.5 py-1 px-2.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-450 border border-emerald-500/20"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Published</span>`
+          : `<span class="inline-flex items-center gap-1.5 py-1 px-2.5 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-450 border border-amber-500/20"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Draft</span>`;
 
         const dateFormatted = p.publishedAt 
           ? new Date(p.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) 
-          : '<span class="text-gray-600">—</span>';
+          : '<span class="text-slate-650 font-outfit">—</span>';
 
         // SEO Badge configuration
         const seoScore = p.seo?.score ?? 100;
         let seoClass = 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
         if (seoScore < 50) {
-          seoClass = 'bg-rose-500/10 text-rose-400 border border-rose-500/20';
+          seoClass = 'bg-rose-500/10 text-rose-455 border border-rose-500/20';
         } else if (seoScore < 85) {
           seoClass = 'bg-amber-500/10 text-amber-400 border border-amber-500/20';
         }
 
-        const seoBadge = `<button onclick="window.showSeoAudit('${p.id}')" class="inline-flex items-center gap-1.5 py-1 px-2.5 rounded-full text-xs font-bold ${seoClass} hover:opacity-85 transition cursor-pointer select-none">${seoScore}/100</button>`;
+        const seoBadge = `<button onclick="window.showSeoAudit('${p.id}')" class="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-black font-outfit ${seoClass} hover:opacity-80 transition cursor-pointer select-none">${seoScore}/100</button>`;
 
         return `
-          <tr class="group hover:bg-gray-800/40 transition-colors">
-            <td class="px-6 py-4">
+          <tr class="group hover:bg-slate-900/20 transition-colors">
+            <td class="px-6 py-4.5">
               <div class="flex flex-col gap-1">
-                <a href="/admin/posts/edit?id=${p.id}" class="text-sm font-medium text-gray-200 group-hover:text-rose-400 transition-colors line-clamp-1">${p.title}</a>
-                <div class="flex items-center gap-2 text-xs text-gray-500 font-mono">
-                  <span class="truncate max-w-[200px]">/articles/${p.slug}</span>
-                  <a href="/articles/${p.slug}" target="_blank" class="text-gray-600 hover:text-gray-400 transition-colors" title="Open in new tab">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                <a href="/admin/posts/edit?id=${p.id}" class="text-sm font-semibold text-slate-200 group-hover:text-rose-400 transition-colors line-clamp-1">${p.title}</a>
+                <div class="flex items-center gap-2 text-xs text-slate-500 font-mono">
+                  <span class="truncate max-w-[240px]">/articles/${p.slug}</span>
+                  <a href="/articles/${p.slug}" target="_blank" class="text-slate-600 hover:text-slate-400 transition-colors" title="Open in new tab">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
                   </a>
                 </div>
               </div>
             </td>
-            <td class="px-6 py-4">
-              <span class="inline-flex items-center px-2 py-1 rounded-md bg-gray-800 text-xs font-medium text-gray-300 capitalize border border-gray-700">
+            <td class="px-6 py-4.5">
+              <span class="inline-flex items-center px-2 py-0.5 rounded-md bg-slate-950 text-xs font-semibold text-slate-400 capitalize border border-slate-850">
                 ${p.category || 'Uncategorized'}
               </span>
             </td>
-            <td class="px-6 py-4">
+            <td class="px-6 py-4.5">
               ${statusBadge}
             </td>
-            <td class="px-6 py-4 text-sm text-gray-400">
+            <td class="px-6 py-4.5 text-sm text-slate-400 font-outfit">
               <div class="flex items-center gap-1.5">
-                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 ${p.wordCount || 0}
               </div>
             </td>
-            <td class="px-6 py-4">
+            <td class="px-6 py-4.5">
               ${seoBadge}
             </td>
-            <td class="px-6 py-4 text-sm text-gray-400 whitespace-nowrap">
+            <td class="px-6 py-4.5 text-sm text-slate-400 whitespace-nowrap font-outfit">
               ${dateFormatted}
             </td>
-            <td class="px-6 py-4 text-right whitespace-nowrap">
-              <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <a href="/admin/posts/edit?id=${p.id}" class="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors" title="Edit Post">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            <td class="px-6 py-4.5 text-right whitespace-nowrap">
+              <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                <a href="/admin/posts/edit?id=${p.id}" class="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors" title="Edit Post">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/></svg>
                 </a>
-                <button onclick="window.deletePost('${p.id}', '${p.title.replace(/'/g, "\\'")}')" class="p-2 text-gray-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors cursor-pointer" title="Delete Post">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.8627m5 4v6m4-6v6m1-10V4a1 11v3M4 7h16"/></svg>
+                <button onclick="window.deletePost('${p.id}', '${p.title.replace(/'/g, "\\'")}')" class="p-2 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors cursor-pointer" title="Delete Post">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                 </button>
               </div>
             </td>
@@ -279,21 +287,21 @@ if (session?.value !== 'authenticated') return Astro.redirect('/admin');
       modalScore.textContent = `${score}/100`;
       
       if (score < 50) {
-        modalScore.className = 'text-base font-black text-rose-400 bg-rose-500/10 border border-rose-500/20 px-2 py-0.5 rounded';
+        modalScore.className = 'text-sm font-black text-rose-455 bg-rose-500/10 border border-rose-500/20 px-2.5 py-0.5 rounded-full font-outfit';
       } else if (score < 85) {
-        modalScore.className = 'text-base font-black text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded';
+        modalScore.className = 'text-sm font-black text-amber-450 bg-amber-500/10 border border-amber-500/20 px-2.5 py-0.5 rounded-full font-outfit';
       } else {
-        modalScore.className = 'text-base font-black text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded';
+        modalScore.className = 'text-sm font-black text-emerald-450 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full font-outfit';
       }
       
       // Warnings list
       const warnings = post.seo?.warnings || [];
       if (warnings.length === 0) {
-        modalWarnings.innerHTML = '<p class="text-emerald-400 text-xs flex items-center gap-1.5 font-medium">✓ No critical warnings. Content elements are fully optimized.</p>';
+        modalWarnings.innerHTML = '<p class="text-emerald-400 text-xs flex items-center gap-1.5 font-bold font-outfit">✓ No critical warnings. Content elements are fully optimized.</p>';
       } else {
         modalWarnings.innerHTML = warnings.map((w: string) => `
-          <div class="flex items-start gap-2 bg-red-950/20 border border-red-900/30 text-red-300 rounded-xl p-3 text-xs leading-relaxed">
-            <span class="text-red-400 font-bold select-none">⚠</span>
+          <div class="flex items-start gap-2 bg-rose-950/10 border border-rose-900/20 text-rose-350 rounded-xl p-3 text-xs leading-relaxed font-outfit">
+            <span class="text-rose-400 font-bold select-none">⚠</span>
             <span>${w}</span>
           </div>
         `).join('');
@@ -302,10 +310,10 @@ if (session?.value !== 'authenticated') return Astro.redirect('/admin');
       // Recommendations list
       const recs = post.seo?.recommendations || [];
       if (recs.length === 0) {
-        modalRecs.innerHTML = '<p class="text-gray-500 text-xs">No further actions required.</p>';
+        modalRecs.innerHTML = '<p class="text-slate-500 text-xs font-outfit">No further actions required.</p>';
       } else {
         modalRecs.innerHTML = recs.map((r: string) => `
-          <div class="flex items-start gap-2 bg-blue-950/20 border border-blue-900/30 text-blue-300 rounded-xl p-3 text-xs leading-relaxed">
+          <div class="flex items-start gap-2 bg-blue-950/10 border border-blue-900/20 text-blue-350 rounded-xl p-3 text-xs leading-relaxed font-outfit">
             <span class="text-blue-400 font-bold select-none">ℹ</span>
             <span>${r}</span>
           </div>
@@ -315,10 +323,10 @@ if (session?.value !== 'authenticated') return Astro.redirect('/admin');
       // Internal links suggestions
       const linking = post.seo?.internalLinkingSuggestions || [];
       if (linking.length === 0) {
-        modalLinking.innerHTML = '<p class="text-gray-500 text-xs">No other guides in this category to link to yet.</p>';
+        modalLinking.innerHTML = '<p class="text-slate-500 text-xs font-outfit">No other guides in this category to link to yet.</p>';
       } else {
         modalLinking.innerHTML = linking.map((l: string) => `
-          <div class="flex items-center gap-2 bg-gray-950/40 border border-gray-800 text-gray-300 rounded-xl px-3 py-2.5 text-xs">
+          <div class="flex items-center gap-2 bg-slate-950/40 border border-slate-900 text-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-outfit">
             <span class="text-rose-500 font-bold">🔗</span>
             <span class="truncate">${l}</span>
           </div>
@@ -364,4 +372,3 @@ if (session?.value !== 'authenticated') return Astro.redirect('/admin');
     loadPosts();
   </script>
 </AdminLayout>
-

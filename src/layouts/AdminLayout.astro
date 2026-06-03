@@ -17,55 +17,82 @@ const navItems = [
 ---
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark selection:bg-rose-500/30 selection:text-rose-200">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{title} — Mershal Admin</title>
   <meta name="robots" content="noindex, nofollow" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+    .font-outfit {
+      font-family: 'Outfit', sans-serif;
+    }
+  </style>
 </head>
-<body class="bg-gray-950 text-white min-h-screen flex">
+<body class="bg-[#0b0f19] text-slate-100 min-h-screen flex antialiased overflow-x-hidden">
+
+  <!-- Ambient Glow Backgrounds -->
+  <div class="fixed top-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-rose-500/5 blur-[120px] pointer-events-none z-0"></div>
+  <div class="fixed bottom-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-amber-500/3 blur-[120px] pointer-events-none z-0"></div>
 
   <!-- Sidebar -->
-  <aside class="w-60 bg-gray-900 border-r border-gray-800 flex flex-col fixed h-full z-10">
-    <div class="p-6 border-b border-gray-800">
-      <a href="/" class="text-xl font-black text-rose-500">Mershal</a>
-      <p class="text-xs text-gray-500 mt-0.5">Mershal Admin</p>
+  <aside class="w-64 bg-slate-950/60 backdrop-blur-xl border-r border-slate-900 flex flex-col fixed h-full z-20">
+    <div class="p-6 border-b border-slate-900/60 flex items-center justify-between">
+      <div>
+        <a href="/" class="text-2xl font-black font-outfit tracking-wider bg-gradient-to-r from-rose-500 to-amber-500 bg-clip-text text-transparent">Mershal</a>
+        <p class="text-[10px] font-bold font-outfit uppercase tracking-widest text-slate-500 mt-0.5">Control Center</p>
+      </div>
+      <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
     </div>
 
-    <nav class="flex-1 p-4 space-y-1">
-      {navItems.map(item => (
-        <a
-          href={item.href}
-          class={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition ${
-            activeNav === item.id
-              ? 'bg-gray-800 text-white'
-              : 'text-gray-400 hover:bg-gray-800 hover:text-white'
-          }`}
-        >
-          <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-            <path d={item.icon} fill-rule="evenodd" clip-rule="evenodd" />
-          </svg>
-          {item.label}
-        </a>
-      ))}
+    <nav class="flex-1 p-4 space-y-1.5">
+      {navItems.map(item => {
+        const isActive = activeNav === item.id;
+        return (
+          <a
+            href={item.href}
+            class={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 relative group ${
+              isActive
+                ? 'bg-rose-500/10 text-rose-400 border-l-2 border-rose-500 pl-3.5'
+                : 'text-slate-400 hover:bg-slate-900/60 hover:text-slate-100 border-l-2 border-transparent hover:pl-3.5'
+            }`}
+          >
+            <svg class={`w-4 h-4 flex-shrink-0 transition-transform duration-300 group-hover:scale-110 ${isActive ? 'text-rose-400' : 'text-slate-500 group-hover:text-slate-300'}`} fill="currentColor" viewBox="0 0 20 20">
+              <path d={item.icon} fill-rule="evenodd" clip-rule="evenodd" />
+            </svg>
+            <span class="font-outfit font-medium">{item.label}</span>
+            {isActive && (
+              <span class="absolute right-3 w-1.5 h-1.5 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.6)]"></span>
+            )}
+          </a>
+        );
+      })}
     </nav>
 
-    <div class="p-4 border-t border-gray-800 space-y-1">
-      <a href="/" target="_blank" class="flex items-center gap-2 px-3 py-2 text-gray-500 hover:text-gray-300 text-xs transition">
-        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"/><path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"/></svg>
-        View Site
+    <div class="p-4 border-t border-slate-900/60 space-y-1 bg-slate-950/40">
+      <a href="/" target="_blank" class="flex items-center gap-2.5 px-3 py-2 text-slate-450 hover:text-slate-200 text-xs font-outfit font-medium transition-all group">
+        <svg class="w-4 h-4 text-slate-500 group-hover:text-slate-350 transition-colors" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"/>
+          <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"/>
+        </svg>
+        View Website
       </a>
-      <button id="logout-btn" class="flex items-center gap-2 px-3 py-2 text-gray-500 hover:text-red-400 text-xs transition w-full text-left">
-        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"/></svg>
-        Logout
+      <button id="logout-btn" class="flex items-center gap-2.5 px-3 py-2 text-slate-450 hover:text-rose-450 text-xs font-outfit font-medium transition-all w-full text-left cursor-pointer group">
+        <svg class="w-4 h-4 text-slate-500 group-hover:text-rose-550 transition-colors" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd" />
+        </svg>
+        Sign Out
       </button>
     </div>
   </aside>
 
   <!-- Page Content -->
-  <main class="ml-60 flex-1 p-8">
+  <main class="ml-64 flex-1 p-8 min-h-screen relative z-10 flex flex-col">
     <slot />
   </main>
 

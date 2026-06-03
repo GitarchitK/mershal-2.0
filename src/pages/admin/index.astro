@@ -7,60 +7,77 @@ if (session?.value === 'authenticated') return Astro.redirect('/admin/dashboard'
 ---
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Login — Mershal</title>
   <meta name="robots" content="noindex, nofollow" />
   <link rel="icon" type="image/png" href="/favicon-32x32.png" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+    .font-outfit {
+      font-family: 'Outfit', sans-serif;
+    }
+  </style>
 </head>
-<body class="min-h-screen bg-slate-950 flex items-center justify-center p-4 font-sans text-slate-300">
-  <div class="w-full max-w-md">
+<body class="min-h-screen bg-[#070913] flex items-center justify-center p-4 antialiased overflow-hidden relative">
+
+  <!-- Ambient Glow Effects -->
+  <div class="absolute top-[20%] left-[20%] w-[450px] h-[450px] rounded-full bg-rose-500/10 blur-[130px] pointer-events-none"></div>
+  <div class="absolute bottom-[20%] right-[20%] w-[450px] h-[450px] rounded-full bg-amber-500/5 blur-[130px] pointer-events-none"></div>
+
+  <div class="w-full max-w-md relative z-10 animate-in fade-in slide-in-from-bottom-6 duration-700">
     <div class="text-center mb-8">
-      <img src="/logo.png" alt="Mershal Logo" class="h-6 mx-auto object-contain brightness-0 invert mb-2" />
-      <p class="text-slate-500 text-xs font-black uppercase tracking-widest">Authority Publisher Console</p>
+      <h1 class="text-3xl font-black font-outfit tracking-wider bg-gradient-to-r from-rose-500 to-amber-500 bg-clip-text text-transparent mb-1">Mershal</h1>
+      <p class="text-slate-500 text-[10px] font-bold font-outfit uppercase tracking-widest">Authority Publisher Console</p>
     </div>
 
-    <div class="bg-slate-900/50 backdrop-blur-md rounded-2xl p-8 border border-slate-800 shadow-2xl">
-      <h2 class="text-xl font-bold text-white mb-6">Publisher Login</h2>
+    <div class="bg-[#0b0f19]/70 backdrop-blur-xl rounded-2xl p-8 border border-slate-800/80 shadow-2xl relative">
+      <!-- Glow border line -->
+      <div class="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-rose-500/50 to-amber-500/30 rounded-t-2xl"></div>
 
-      <div id="error" class="hidden mb-4 p-3 bg-red-950/50 border border-red-800 text-red-300 rounded-xl text-xs font-semibold"></div>
+      <h2 class="text-2xl font-black font-outfit text-white mb-1">Publisher Login</h2>
+      <p class="text-slate-400 text-xs font-outfit mb-6">Enter credentials to access administrative tools</p>
+
+      <div id="error" class="hidden mb-5 p-4 bg-rose-950/20 border border-rose-800/40 text-rose-300 rounded-xl text-xs font-semibold leading-relaxed"></div>
 
       <form id="login-form" class="space-y-5">
         <div>
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Email Address</label>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 font-outfit mb-1.5">Email Address</label>
           <input
             type="email"
             id="email"
             placeholder="name@mershal.in"
-            class="w-full bg-slate-850 border border-slate-700 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary-gold focus:ring-1 focus:ring-primary-gold transition"
+            class="w-full bg-slate-950/40 border border-slate-800 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 transition-all font-outfit placeholder-slate-650"
             required
           />
         </div>
         <div>
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Password</label>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 font-outfit mb-1.5">Password</label>
           <input
             type="password"
             id="password"
             placeholder="••••••••"
-            class="w-full bg-slate-850 border border-slate-700 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary-gold focus:ring-1 focus:ring-primary-gold transition"
+            class="w-full bg-slate-950/40 border border-slate-800 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 transition-all font-outfit placeholder-slate-650"
             required
           />
         </div>
         <button
           type="submit"
           id="submit-btn"
-          class="w-full bg-primary-crimson hover:bg-primary-crimson/95 text-white font-bold py-3.5 rounded-xl text-sm transition shadow-lg hover:shadow-primary-crimson/10"
+          class="w-full bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-550 hover:to-amber-550 hover:shadow-lg hover:shadow-rose-600/10 text-white font-bold py-3.5 rounded-xl text-sm transition-all active:scale-[0.98] cursor-pointer"
         >
           Sign In
         </button>
       </form>
     </div>
 
-    <p class="text-center text-slate-600 text-xs mt-6">
-      <a href="/" class="hover:text-slate-400 transition">← Back to website</a>
+    <p class="text-center text-xs mt-6 font-outfit">
+      <a href="/" class="text-slate-500 hover:text-slate-300 transition-colors">← Back to website</a>
     </p>
   </div>
 
