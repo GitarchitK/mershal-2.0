@@ -2,6 +2,7 @@ export const prerender = false;
 
 import type { APIRoute } from 'astro';
 import { adminDb } from '../lib/firebase-admin';
+import { getFeaturedImageUrl } from '../lib/utils';
 
 function escapeXml(text: string): string {
   return text
@@ -36,7 +37,7 @@ export const GET: APIRoute = async () => {
       articles = snapshot.docs.map(doc => ({
         slug: doc.data().slug || doc.id,
         title: doc.data().title || '',
-        featuredImage: doc.data().featured_image || doc.data().featuredImage || '',
+        featuredImage: getFeaturedImageUrl(doc.data().featured_image || doc.data().featuredImage || ''),
         updatedAt: doc.data().updated_date?.toDate?.() || doc.data().updatedAt?.toDate?.() || new Date(),
       }));
     } catch (error) {

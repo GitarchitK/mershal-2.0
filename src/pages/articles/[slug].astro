@@ -10,6 +10,7 @@ import AuthorCard from '../../components/AuthorCard.astro';
 import FAQAccordion from '../../components/FAQAccordion.astro';
 import { Image } from 'astro:assets';
 import { adminDb } from '../../lib/firebase-admin';
+import { getFeaturedImageUrl } from '../../lib/utils';
 
 const { slug } = Astro.params;
 
@@ -47,7 +48,7 @@ if (adminDb && slug) {
         content: d.content || '',
         metaTitle: d.meta_title || d.seoTitle || d.title,
         metaDescription: d.meta_description || d.seoDescription || d.excerpt,
-        featuredImage: d.featured_image || d.featuredImage || 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200',
+        featuredImage: getFeaturedImageUrl(d.featured_image || d.featuredImage),
         category: d.category || 'AI Tools',
         categorySlug: (d.category || 'ai-tools').toLowerCase().replace(/[^a-z0-9]+/g, '-'),
         author: d.author || 'Mershal Editorial Team',
@@ -100,7 +101,7 @@ if (adminDb && slug) {
             slug: d.slug || doc.id,
             title: d.title || '',
             category: d.category || 'AI Tools',
-            featuredImage: d.featured_image || d.featuredImage || 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=200',
+            featuredImage: getFeaturedImageUrl(d.featured_image || d.featuredImage),
             readingTime: d.readingTime || d.reading_time || 5,
           };
         })

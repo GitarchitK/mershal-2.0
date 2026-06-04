@@ -8,6 +8,7 @@ import AdUnit from '../../components/AdUnit.astro';
 import ArticleCard from '../../components/ArticleCard.astro';
 import { Image } from 'astro:assets';
 import { adminDb } from '../../lib/firebase-admin';
+import { getFeaturedImageUrl } from '../../lib/utils';
 
 const { slug } = Astro.params;
 
@@ -48,7 +49,7 @@ if (adminDb && slug) {
           slug: d.slug || doc.id,
           title: d.title || '',
           excerpt: d.excerpt || '',
-          featuredImage: d.featured_image || d.featuredImage || 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800',
+          featuredImage: getFeaturedImageUrl(d.featured_image || d.featuredImage),
           category: d.category || 'AI Tools',
           categorySlug: (d.category || 'ai-tools').toLowerCase().replace(/[^a-z0-9]+/g, '-'),
           author: d.author || 'Mershal Editorial Team',

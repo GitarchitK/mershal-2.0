@@ -7,6 +7,7 @@ import Footer from '../../components/Footer.astro';
 import AdUnit from '../../components/AdUnit.astro';
 import ArticleCard from '../../components/ArticleCard.astro';
 import { adminDb } from '../../lib/firebase-admin';
+import { getFeaturedImageUrl } from '../../lib/utils';
 
 const { category } = Astro.params;
 
@@ -58,7 +59,7 @@ if (adminDb) {
         slug: d.slug || doc.id,
         title: d.title || '',
         excerpt: d.excerpt || '',
-        featuredImage: d.featured_image || d.featuredImage || 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800',
+        featuredImage: getFeaturedImageUrl(d.featured_image || d.featuredImage),
         category: d.category || meta.name,
         categorySlug: categorySlug,
         author: d.author || 'Mershal Editorial Team',
